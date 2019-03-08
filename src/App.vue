@@ -1,0 +1,262 @@
+<template>
+  <div id="app">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">ادارة اليوميات</a>
+      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Exit</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar" >
+          <div class="sidebar-sticky">
+              <br/>
+            <h3 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>يومية -6 مارس</span> 
+            </h3>
+            <ul class="nav flex-column">
+
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/">
+                  <span class="fa fa-sign-in-alt"></span>
+                  الوارد <span class="sr-only">(current)</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/out">
+                  <span class="fa fa-sign-out-alt"></span>
+                  الصادر <span class="sr-only">(current)</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/daily_transactions">
+                  <span class="fa fa-money-bill-wave"></span>
+                  المعاملات 
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/suppliers_receipts">
+                  <span class="fa fa-receipt"></span>
+                  فواتير العملاء  
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/customers_accounts">
+                  <span class="fa fa-cash-register"></span>
+                  حساب الزمم / البائعين
+                </router-link>
+              </li>
+            </ul>
+            <br/>
+            <h3 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>مدير النظام</span>
+              <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+              </a>
+            </h3>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/suppliers">
+                  <span class="fa fa-th-list"></span>
+                  ادارة العملاء <span class="sr-only">(current)</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/products">
+                  <span class="fa fa-apple-alt"></span>
+                  ادارة الاصناف <span class="sr-only">(current)</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/customers">
+                  <span class="fa fa-handshake"></span>
+                  ادارة البائعين <span class="sr-only">(current)</span>
+                </router-link>
+              </li>
+            </ul>
+            <!--
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Current month
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Last quarter
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Social engagement
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Year-end sale
+                </a>
+              </li>
+            </ul>
+            -->
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 mr-sm-auto col-lg-10 px-0" >
+          <router-view/>
+        </main>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+//<router-view/>
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+export default {
+  
+}
+</script>
+<style>
+body {
+  direction: rtl;
+  text-align: right;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+  position: relative;
+  font-size: large;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+  .sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #999;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+ * Content
+ */
+
+[role="main"] {
+  padding-top: 133px; /* Space for fixed navbar */
+}
+
+@media (min-width: 768px) {
+  [role="main"] {
+    padding-top: 48px; /* Space for fixed navbar */
+  }
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: 1rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+/*
+#app {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  max-width: 90%;
+  padding:10px;
+  margin:10px;
+}
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
+*/
+</style>
