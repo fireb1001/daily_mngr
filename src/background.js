@@ -19,7 +19,7 @@ protocol.registerStandardSchemes(['app'], { secure: true })
 function createMainWindow () {
   const window = new BrowserWindow({
     webPreferences: { webSecurity: false },
-    icon:  'assets/logo.png'
+    icon:  'assets/icon.png'
   })
 
   const image = new BrowserWindow({ width: 400, height: 400, parent: window, show: false})

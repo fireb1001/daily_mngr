@@ -1,43 +1,4 @@
 // Data Types and classes
-export class Incoming {
-    static table_name = 'incoming'
-    data = {
-      id: 0,
-      date: '',
-      supplier: '',
-      count: 0,
-      product: 0,
-      notes: ''
-    }
-  
-    constructor (data) {
-      this.data.id = data.id ? data.id : this.data.id
-      this.data.date = data.date ? data.date : this.data.date
-      this.data.supplier = data.supplier ? data.supplier : this.data.supplier
-      this.data.count = data.count ? data.count : this.data.count
-      this.data.product = data.product ? data.product : this.data.product
-      this.data.notes = data.notes ? data.notes : this.data.notes
-    }
-  
-    static sql_types () {
-      var instance = new this({})
-      var keys = Object.keys(instance.data)
-      var create_sql_cols = ''
-      keys.forEach(col =>{
-        if(col =='id')
-          create_sql_cols += 'id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-        else if(instance.data[col] === 0)
-          create_sql_cols += col+ ' INT ,'
-        else 
-          create_sql_cols += col+ ' VARCHAR(256),'
-      })
-      return create_sql_cols.replace(/,\s*$/, "")
-    }
-  
-    static createTableQ () {
-      return `CREATE TABLE ${this.table_name} ( ${this.sql_types()}) ;`
-    }
-}
 
 export class Outgoing {
     static table_name = 'outgoing'

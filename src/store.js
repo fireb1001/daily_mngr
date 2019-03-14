@@ -5,10 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
+    day: {}
   },
   mutations: {
-
+    setDay (state, day) {
+      state.day = day
+    }
   },
   actions: {
 

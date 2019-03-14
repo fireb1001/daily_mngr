@@ -1,5 +1,5 @@
 <template>
-  <section class="src-views-customers-accounts">
+  <section class="accounts bg-accounts minh90">
     <h1>src-views-customers-accounts Component</h1>
   </section>
 </template>
@@ -8,7 +8,7 @@
 // import { db } from '../main'
 
 export default {
-  name: 'src-views-customers-accounts',
+  name: 'accounts',
   data () {
     return {}
   },

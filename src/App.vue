@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" >
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">ادارة اليوميات</a>
       <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
@@ -11,47 +11,59 @@
     </nav>
 
     <div class="container-fluid">
-      <div class="row">
+      <div class="row" style="max-width: 100%;">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar" >
           <div class="sidebar-sticky">
               <br/>
-            <h3 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>يومية -6 مارس</span> 
-            </h3>
+            <h4 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>يومية {{day_comp.formated}}</span> 
+            </h4>
             <ul class="nav flex-column">
 
-              <li class="nav-item">
+              <li class="nav-item bg-incoming ">
                 <router-link class="nav-link active" to="/">
-                  <span class="fa fa-sign-in-alt"></span>
+                  <span class="fa fa-sign-in-alt "></span>
                   الوارد <span class="sr-only">(current)</span>
                 </router-link>
               </li>
-              <li class="nav-item">
-                <router-link class="nav-link active" to="/out">
+              <li class="nav-item bg-outgoing ">
+                <router-link class="nav-link active" to="/outgoing">
                   <span class="fa fa-sign-out-alt"></span>
-                  الصادر <span class="sr-only">(current)</span>
+                  المبيعات <span class="sr-only">(current)</span>
                 </router-link>
               </li>
-              <li class="nav-item">
-                <router-link class="nav-link active" to="/daily_transactions">
-                  <span class="fa fa-money-bill-wave"></span>
-                  المعاملات 
-                </router-link>
-              </li>
-              <li class="nav-item">
+              <li class="nav-item bg-receipts">
                 <router-link class="nav-link active" to="/suppliers_receipts">
                   <span class="fa fa-receipt"></span>
                   فواتير العملاء  
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item bg-accounts">
                 <router-link class="nav-link active" to="/customers_accounts">
                   <span class="fa fa-cash-register"></span>
                   حساب الزمم / البائعين
                 </router-link>
               </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/payments">
+                  <span class="fa fa-money-bill-wave"></span>
+                  مدفوعات 
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/collecting">
+                  <span class="fa fa-credit-card"></span>
+                  تحصيلات 
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/expensess">
+                  <span class="fa fa-money-bill-wave"></span>
+                  مصروفات 
+                </router-link>
+              </li>
             </ul>
-            <br/>
+
             <h3 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
               <span>مدير النظام</span>
               <a class="d-flex align-items-center text-muted" href="#">
@@ -66,15 +78,21 @@
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link class="nav-link active" to="/products">
-                  <span class="fa fa-apple-alt"></span>
-                  ادارة الاصناف <span class="sr-only">(current)</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
                 <router-link class="nav-link active" to="/customers">
                   <span class="fa fa-handshake"></span>
                   ادارة البائعين <span class="sr-only">(current)</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/products">
+                  <span class="fa fa-apple-alt"></span>
+                   الاصناف والوحدات<span class="sr-only">(current)</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/developer">
+                  <span class="fa fa-code"></span>
+                   Developer<span class="sr-only">(current)</span>
                 </router-link>
               </li>
             </ul>
@@ -121,7 +139,20 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 export default {
-  
+  data() {
+    return {
+    }
+  },
+  beforeMount () {
+    let formated = require('moment')().format('YYYY-MM-DD')
+    if ( ! this.$store.state.day.now)
+      this.$store.commit('setDay' ,{now: Date.now(), formated: formated})
+  },
+  computed: {
+    day_comp : function () {
+      return this.$store.state.day
+    }
+  }
 }
 </script>
 <style>
@@ -232,6 +263,26 @@ body {
 .form-control-dark:focus {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+.minh90 {
+  min-height: 90vh;
+}
+
+.bg-incoming {
+  background-color: #cff9c4;
+  border-radius: 0 10px 10px 0 ;
+}
+.bg-outgoing {
+  background-color: #f5c5b6;
+  border-radius: 0 10px 10px 0 ;
+}
+.bg-receipts {
+  background-color: #f1e1e1;
+  border-radius: 0 10px 10px 0 ;
+}
+.bg-accounts {
+  background-color: #c2c9da;
+  border-radius: 0 10px 10px 0 ;
 }
 
 /*

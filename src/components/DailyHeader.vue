@@ -1,6 +1,6 @@
 <template>
   <section class="src-components-daily-header">
-    <h1>يومية {{day}}</h1>
+    <h1 @click="setToday">يومية {{day.formated}}</h1>
   </section>
 </template>
 
@@ -11,13 +11,17 @@ export default {
   name: 'daily-header',
   data () {
     return {
-      day:'6/3/2019'
+      day: this.$store.state.day
     }
   },
   firestore () {
     return {}
   },
   methods: {
+    setToday () {
+      let formated = require('moment')().format('YYYY-MM-DD')
+      this.$store.commit('setDay' ,{now: Date.now(), formated: formated})
+    }
   },
   components: {
   }

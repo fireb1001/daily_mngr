@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Incoming from './views/Incoming.vue'
-import Out from './views/Out.vue'
+
 import Products from './views/Products.vue'
 import Suppliers from './views/Suppliers.vue'
 import Customers from './views/Customers.vue'
 import SuppliersReceipts from './views/SuppliersReceipts.vue'
 import CustomersAccounts from './views/CustomersAccounts.vue'
+import Outgoing from './views/Outgoing.vue'
+import Cashflow from './views/Cashflow.vue'
+import DeveloperTools from './views/DeveloperTools.vue'
 
 Vue.use(Router)
 
@@ -20,9 +23,9 @@ export default new Router({
       component: Incoming
     },
     {
-      path: '/out',
-      name: 'out',
-      component: Out
+      path: '/outgoing',
+      name: 'outgoing',
+      component: Outgoing
     },
     {
       path: '/customers_accounts',
@@ -48,6 +51,26 @@ export default new Router({
       path: '/customers',
       name: 'customers',
       component: Customers
+    },
+    {
+      path: '/expensess',
+      name: 'expensess',
+      component: Cashflow
+    },
+    {
+      path: '/payments',
+      name: 'payments',
+      component: Cashflow
+    },
+    {
+      path: '/collecting',
+      name: 'collecting',
+      component: Cashflow
+    },
+    {
+      path: '/developer',
+      name: 'developer',
+      component: DeveloperTools
     },
     {
       path: '/about',

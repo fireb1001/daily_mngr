@@ -3,13 +3,39 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import BootstrapVue from 'bootstrap-vue'
-import {Incoming, Outgoing, Product} from './sql_classes'
+import { Outgoing, Product} from './sql_classes'
+import { IncomingDB } from './db/IncomingDB'
+import Dexie from 'dexie'
 
-Vue.use(BootstrapVue);
+Vue.use(BootstrapVue)
 console.log(process.versions.electron)
 Vue.config.productionTip = false
 
-var mysql      = require('mysql');
+export const dexie = new Dexie('daily_mngr')
+
+dexie.version(1).stores({
+  suppliers: '++id, balance',
+  incomings: '++id, product_id, supplier_id',
+  outgoings: '++id, product_id, supplier_id, customer_id',
+  products: '++id',
+  customers: '++id, balance',
+  incomings_header: '++id, supplier_id, product_id, day, total_count, current_count',
+  outgoings_header: '++id, supplier_id, product_id, total_count, sell_com, total_weight, kg_price, incoming_header_id, day, total_value',
+  cashflow: '++id, amount, state'
+  // benefit of a compound index [day+product_id+supplier_id]
+})
+/*
+export const SupplierDX = dexie.suppliers.defineClass({
+  id: Number,
+  balance: Number
+})
+
+SupplierDX.prototype.save = function () {
+  return db_config.suppliers.put(this)
+}
+*/
+
+var mysql      = require('mysql')
 var util = require('util')
 /*
 var conn = mysql.createConnection({
@@ -26,6 +52,9 @@ var db_config = {
   database: 'daily_mngr',
 }
 
+export const appConfig = {
+  db_engine: ''
+}
 
 function create_db () {
   db_config.database=''
@@ -36,7 +65,7 @@ function create_db () {
     , (error)=>console.error(error)
   )
   conn.changeUser({database: 'daily_mngr'}, (error)=>console.error(error))
-  conn.query(Incoming.createTableQ() ,(error)=>console.error(error))
+  conn.query(IncomingDB.createTableQ() ,(error)=>console.error(error))
   conn.query(Outgoing.createTableQ() ,(error)=>console.error(error))
   conn.query(Product.createTableQ() ,(error)=>console.error(error))
 }
