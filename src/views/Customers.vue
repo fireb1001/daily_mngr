@@ -26,6 +26,27 @@
       </div>
 
       <div class="form-group row">
+        <label class="col-sm-2">تليفون</label>
+        <div class="col-sm-10">
+          <input v-model="customer_form.phone" class="form-control "  placeholder="التليفون">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2">عنوان</label>
+        <div class="col-sm-10">
+          <input v-model="customer_form.address" class="form-control "  placeholder="ادخال العنوان">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2">مبلغ المديونية</label>
+        <div class="col-sm-10">
+          <input v-model="customer_form.debt" class="form-control"  placeholder="ادخل المبلغ">
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label class="col-sm-2">ملاحظات</label>
         <div class="col-sm-10">
           <input v-model="customer_form.notes" class="form-control "  placeholder="ادخال الملاحظات">
@@ -61,7 +82,7 @@
               <td>{{item.id}}</td>
               <td>{{item.name}}</td>
               <td>{{item.phone}}</td>
-              <td>{{item.balance}}</td>
+              <td>{{item.debt}}</td>
               <td>{{item.notes}}</td>
               <td>
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">
@@ -117,7 +138,6 @@ export default {
     },
     async refresh_all() {
       this.customers_arr = await CustomersDB.getAll()
-      console.log(this.customer_form)
     }
   },
   async mounted() {

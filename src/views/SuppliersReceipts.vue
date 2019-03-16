@@ -1,11 +1,13 @@
 <template>
-  <section class="receipts bg-receipts minh90">
+  <section class="receipts bg-receipts minh90 m-1">
     <h1>src-views-suppliers-receipts Component</h1>
+
+    {{suppliers_arr}}
   </section>
 </template>
 
 <script >
-import {SuppliersDB} from '../db/SuppliersDB.js'
+import { SuppliersDB } from '../db/SuppliersDB.js'
 
 export default {
   name: 'receipts',
@@ -16,16 +18,16 @@ export default {
   },
   methods: {
     async refresh_daily_suppliers() {
-      // TODO
-      this.suppliers_arr = SuppliersDB.getAll({
-
+      this.suppliers_arr = await SuppliersDB.getAll({
+        last_incoming_day: this.$store.state.day.formated
       })
+      console.log(this.suppliers_arr)
     }
   },
   components: {
   },
   mounted() {
-    this.refresh_daily_suppliers
+    this.refresh_daily_suppliers()
   }
 }
 </script>

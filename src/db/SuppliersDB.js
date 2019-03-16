@@ -6,6 +6,8 @@ export class SupplierDAO {
   id = 0
   name = ''
   date_created = ''
+  last_incoming_date 
+  last_incoming_day
   date_updated
   total_count = 0
   balance = 0
@@ -16,6 +18,7 @@ export class SupplierDAO {
 
   static get INIT_DAO() {
     return {
+      active: 1
     }
   }
 
@@ -42,7 +45,7 @@ export class SuppliersDB {
     return await dexie.suppliers.update(id, payload)
   }
 
-  static async updateCounts(id, payload) {
+  static async updateIncomings(id, payload) {
     let supplierDAO = await this.getDAOById(id)
     if(payload.count && supplierDAO.total_count){
       supplierDAO.parseTypes()
@@ -51,7 +54,8 @@ export class SuppliersDB {
     else {
       supplierDAO.total_count = parseInt(payload.count)
     }
-      
+    supplierDAO.last_incoming_date = payload.last_incoming_date
+    supplierDAO.last_incoming_day = payload.last_incoming_day
     return await dexie.suppliers.update(id, supplierDAO)
   }
 
@@ -60,9 +64,17 @@ export class SuppliersDB {
     return new SupplierDAO(supplierObj)
   }
 
-  static async getAll() {
+  static async getAll(data) {
     let all = []
-    all = await dexie.suppliers.toArray()
+    if(data) {
+      if(data.active === 1)
+        all = await dexie.suppliers.where({active: 1}).toArray()
+      if(data.last_incoming_day)
+        all = await dexie.suppliers.where({last_incoming_day: data.last_incoming_day}).toArray()
+    }
+    else {
+      all = await dexie.suppliers.toArray()
+    }
     return all
   }
 }

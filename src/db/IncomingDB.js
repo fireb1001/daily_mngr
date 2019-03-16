@@ -1,5 +1,5 @@
 // import { conn_pool } from '../main'
-import { dexie } from '../main'
+import { dexie, store } from '../main'
 import { IncomingsHeaderDB, IncomingsHeaderDAO } from './IncomingsHeaderDB'
 import { CashflowDB, CashflowDAO} from './CashflowDB'
 import { SuppliersDB } from './SuppliersDB';
@@ -151,7 +151,11 @@ export class IncomingDB {
     }
 
     // Update Supplier Info
-    await SuppliersDB.updateCounts(data.supplier_id, {count: data.count})
+    await SuppliersDB.updateIncomings(data.supplier_id, {
+      count: data.count,
+      last_incoming_date : Date.now(),
+      last_incoming_day : store.state.day.formated
+    })
 
     /*
       let instert_q = 

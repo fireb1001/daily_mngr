@@ -1,7 +1,8 @@
 <template>
   <section class="src-views-developer-tools m-1">
     <br/>
-    <button class="btn btn-danger" type="button" @click="remove_daily()"> Remove Daily </button>
+    <button class="btn btn-danger" type="button" @click="remove('daily')"> Remove Daily </button>
+    <button class="btn btn-danger" type="button" @click="remove('all')"> Remove All </button>
   </section>
 </template>
 
@@ -17,9 +18,11 @@ export default {
     return {}
   },
   methods: {
-    async remove_daily(){
-      console.log('remove_daily')
-      await AdminDB.removeDaily()
+    async remove(what){
+      if(what ==='daily')
+        await AdminDB.removeDaily()
+      else if (what === 'all')
+        await AdminDB.removeAll()
     }
   },
   components: {

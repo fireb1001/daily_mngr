@@ -1,4 +1,6 @@
 import { dexie } from '../main'
+// eslint-disable-next-line no-unused-vars
+import Dexie from 'dexie';
 
 export class CashflowDAO {
 
@@ -47,13 +49,21 @@ export class CashflowDB {
   }
 
   static async getAll(data) {
-
+    // console.log(data.state, Array.isArray( data.state))
     let all = []
+    /**@type {Dexie.Table} */
+    let table = dexie.cashflow
     if(data.state){
-      all = await dexie.cashflow.where({state:data.state}).toArray()
+      if (Array.isArray( data.state)) {
+        // multible 
+        all = await table.where('state').anyOf(data.state).toArray()
+      } 
+      else {
+        all = await dexie.cashflow.where({state:data.state}).toArray()
+      }
     }
     else {
-      all = await dexie.cashflow.toArray()
+      // all = await dexie.cashflow.toArray()
     }
 
     return all

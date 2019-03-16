@@ -1,5 +1,5 @@
 <template>
-  <div class="out row ">
+  <div class="out row m-1">
     <div class="col-6 bg-outgoing minh90" v-if="detailed === false">
     <br/>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> 
@@ -70,7 +70,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
   </div>
 
   <div class="form-group row">
-    <label :class="{ 'text-danger':  outgoing_form.kg_price > 50 }" class="col-sm-2">سعر الكيلو</label>
+    <label :class="{ 'text-danger':  outgoing_form.kg_price > 150 }" class="col-sm-2">سعر الكيلو</label>
     <div class="col-sm-10">
       <input v-model="outgoing_form.kg_price" class="form-control" placeholder="ادخل القيمة">
     </div>
@@ -273,7 +273,7 @@ export default {
     }
   },
   async mounted() {
-    this.active_customers = await CustomersDB.getAll()
+    this.active_customers = await CustomersDB.getAll({active: 1})
     this.reinit_form()
     this.refresh_outgoings()
     this.refresh_incoming_headers()

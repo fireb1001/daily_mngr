@@ -42,10 +42,21 @@ export default {
   },
   methods: {
     async refresh_cashflow_arr() {
-      // TODO OR
+      let state = null
+      if(this.$route.name == 'expensess') {
+        state = ['given','expense']
+      }
+      else if(this.$route.name == 'collecting') {
+        state = 'collecting' // ['given','expense']
+      }
+      else if (this.$route.name == 'payments') {
+        state = ['nolon','payment']
+      }
+      
+      // console.log( this.$route.name ,state)
       this.cashflow_arr = await CashflowDB.getAll({
-        state:this.$route.name
-        // state: 'given'
+        // state:this.$route.name
+        state: state
       })
     }
   },

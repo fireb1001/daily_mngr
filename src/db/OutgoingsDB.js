@@ -103,7 +103,10 @@ export class OutgoingsDB {
 
       // Update debit
       if(data.customer_id) {
-        await CustomersDB.updateBalance(data.customer_id, {amount: data.value_calc })
+        await CustomersDB.updateDebt(data.customer_id, {
+          amount: data.value_calc,
+          outgoing_id: outgoing_id
+        })
       }
 
       // cashflow part
@@ -119,8 +122,11 @@ export class OutgoingsDB {
         }
         cashDAO.actor_id = data.customer_id
         cashDAO.actor_name = data.customer_name
-        await CashflowDB.addNew(cashDAO)
-        await CustomersDB.updateBalance(data.customer_id, {amount: -parseFloat(data.collecting) })
+        let cashflow_id = await CashflowDB.addNew(cashDAO)
+        await CustomersDB.updateDebt(data.customer_id, {
+          amount: - parseFloat(data.collecting),
+          cashflow_id: cashflow_id
+        })
       }
   
     }

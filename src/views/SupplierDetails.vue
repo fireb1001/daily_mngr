@@ -1,12 +1,21 @@
 <template>
-  <section class="suppliers row m-1">
+  <section class="suppliers row m-3">
       <h3>ملف العميل : {{supplier.name}}</h3>
-      <table>
+
+      <table class="table table-bordered">
+        <tr>
+          <th>تليفون العميل</th>
+          <td>{{supplier.phone}}</td>
+        </tr>
         <tr>
           <th>عنوان العميل</th>
           <td>{{supplier.address}}</td>
         </tr>
+
       </table>
+      <div class="m-2">
+        <button class="btn btn-primary" @click="$router.go(-1)">العودة</button>
+      </div>
   </section>
 </template>
 
@@ -22,7 +31,7 @@ export default {
   },
   methods: {
     async getSupplier() {
-      let supp_obj = await SuppliersDB.getDAOById(1)
+      let supp_obj = await SuppliersDB.getDAOById(this.$route.params.id)
       this.supplier = new SupplierDAO(supp_obj)
     }
   },
@@ -36,6 +45,3 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-
-</style>

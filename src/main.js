@@ -12,29 +12,21 @@ console.log(process.versions.electron)
 Vue.config.productionTip = false
 
 export const dexie = new Dexie('daily_mngr')
-
+export { store }
 // TODO collect all todos !
 // TODO clear daily_mngr data from bedos
 // TODO go mysql go
 
-dexie.version(1).stores({
-  suppliers: '++id, balance',
-  incomings: '++id, product_id, supplier_id',
-  outgoings: '++id, product_id, supplier_id, customer_id',
-  products: '++id',
-  customers: '++id, balance',
-  incomings_header: '++id, supplier_id, product_id, day, total_count, current_count',
-  outgoings_header: '++id, supplier_id, product_id, total_count, sell_com, total_weight, kg_price, incoming_header_id, day, total_value',
-  cashflow: '++id, amount, state'
-  // benefit of a compound index [day+product_id+supplier_id]
-})
 
-dexie.version(9).stores({
-  suppliers: '++id, balance',
+dexie.version(0.1).stores({
+  
   incomings: '++id, product_id, supplier_id',
   outgoings: '++id, product_id, supplier_id, customer_id',
-  products: '++id',
-  customers: '++id, balance',
+  suppliers: '++id, balance, active, last_incoming_day',
+  products: '++id, active',
+  customers: '++id, debt, active',
+  customer_trans: '++id, debt_after',
+  supplier_trans: '++id, balance_after',
   incomings_header: '++id, supplier_id, product_id, day, total_count, current_count',
   outgoings_header: '++id, supplier_id, product_id, total_count, sell_com, total_weight, kg_price, incoming_header_id, day, total_value',
   cashflow: '++id, amount, state'

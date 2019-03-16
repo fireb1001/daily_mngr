@@ -74,7 +74,7 @@ export default new Router({
       component: DeveloperTools
     },
     {
-      path: '/supplier_details',
+      path: '/supplier_details/:id',
       name: 'supplier_details',
       component: SupplierDetails
     },

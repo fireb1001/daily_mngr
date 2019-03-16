@@ -9,4 +9,8 @@ export class AdminDB {
         dexie.outgoings_header.clear()
         dexie.cashflow.clear()
     }
+
+    static async removeAll() {
+        return await dexie.delete()
+    }
   }

@@ -26,17 +26,17 @@
       <div class="form-group row">
         <label  class="col-sm-2">اسم الصنف</label>
         <div class="col-sm-10">
-          <input v-model="product_form.name" class="form-control "  placeholder="Enter date">
+          <input v-model="product_form.name" class="form-control "  placeholder="ادخل اسم الصنف">
         </div>
       </div>
-
+<!--
       <div class="form-group row">
         <label for="notes1" class="col-sm-2">ملاحظات</label>
         <div class="col-sm-10">
           <input v-model="product_form.notes" class="form-control " id="notes1"  placeholder="ادخال الملاحظات">
         </div>
       </div>
-
+-->
       <button type="submit" class="btn btn-success">اضافة</button>
     </form>
     </div>

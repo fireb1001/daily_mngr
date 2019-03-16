@@ -2,7 +2,7 @@
   <section class="suppliers row">
     <div class="col-6">
     <br/>
-<button v-b-toggle.collapse2 class="btn btn-primary m-1">
+<button v-b-toggle.collapse_it class="btn btn-primary m-1">
   ادخال عميل جديد 
   &nbsp; <span class="fa fa-address-book"></span>
 </button>
@@ -16,7 +16,7 @@
 </button>
 
   <!-- Element to collapse -->
-  <b-collapse id="collapse2" style="padding:25px;">
+  <b-collapse id="collapse_it" style="padding:25px;">
     <div class="entry-form">
     <form  @submit="addNewSupplier">
       <div class="form-group row">
@@ -47,7 +47,10 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-success">اضافة</button>
+      <button type="submit" class="btn btn-success">
+        <template v-if="! edit_id"> اضافة</template>
+        <template v-if="edit_id"> حفظ </template>
+      </button>
     </form>
     </div>
   </b-collapse>
@@ -75,7 +78,7 @@
             <tr v-for="(item, idx) in comp_suppliers_arr" :key='idx' >
               <td>{{item.id}}</td>
               <td>
-                <router-link class="nav-link " to="/supplier_details">
+                <router-link class="nav-link " :to="{name:'supplier_details', params: {id: item.id}}">
                   {{item.name}}
                 </router-link>
                </td>
@@ -105,13 +108,13 @@
 </template>
 
 <script >
-import { SuppliersDB } from '../db/SuppliersDB.js'
+import { SuppliersDB, SupplierDAO } from '../db/SuppliersDB.js'
 
 export default {
   name: 'suppliers',
   data () {
     return {
-      supplier_form: {},
+      supplier_form: new SupplierDAO(SupplierDAO.INIT_DAO),
       suppliers_arr: [],
       edit_id: 0,
       show_active: true,
@@ -124,14 +127,27 @@ export default {
   methods: {
     async addNewSupplier(evt) {
       evt.preventDefault()
-      
-      // this.supplier_form['active'] = 1
-      SuppliersDB.addNew(this.supplier_form)
+      console.log(this.supplier_form)
+      if( this.edit_id !==0 && this.edit_id === this.supplier_form.id) {
+        // Edit 
+        SuppliersDB.saveById(this.supplier_form.id, this.supplier_form)
+      }
+      else {
+        // New 
+        SuppliersDB.addNew(this.supplier_form)
+      }
+      this.$root.$emit('bv::toggle::collapse', 'collapse_it')
       this.refresh_all()
-      this.supplier_form = {}
+      this.supplier_form = new SupplierDAO(SupplierDAO.INIT_DAO)
+      this.edit_id  = 0
     },
     async edit(id) {
       this.edit_id = id
+      let edit_supp_obj = this.suppliers_arr.filter( element =>{
+        return element.id == id
+      })
+      this.supplier_form = new SupplierDAO(edit_supp_obj[0])
+      this.$root.$emit('bv::toggle::collapse', 'collapse_it')
       // TODO collabse from js and check active for new supp
     },
     async archive(id, undo = '') {

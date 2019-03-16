@@ -174,7 +174,7 @@ export default {
     delete this.incoming_form.id 
     this.incoming_form.date = this.store_day.formated
     this.refresh_inc_arr()
-    this.active_suppliers = await SuppliersDB.getAll()
+    this.active_suppliers = await SuppliersDB.getAll({active:1})
     this.active_products = await ProductsDB.getAll()
   },
   computed: {
