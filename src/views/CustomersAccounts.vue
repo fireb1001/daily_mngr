@@ -4,20 +4,26 @@
   </section>
 </template>
 
-<script lang="js">
+<script >
 // import { db } from '../main'
-
+import {OutgoingsDB} from '../db/OutgoingsDB'
 export default {
   name: 'accounts',
   data () {
-    return {}
-  },
-  firestore () {
-    return {}
+    return {
+      daily_customers: []
+    }
   },
   methods: {
+    async refresh_daily_customers () {
+      // TODO get unique daily customers
+      OutgoingsDB.getAll({})
+    }
   },
   components: {
+  },
+  mounted() {
+    this.refresh_daily_customers()
   }
 }
 </script>

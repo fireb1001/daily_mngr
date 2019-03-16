@@ -15,8 +15,8 @@
           <tbody>
             <tr v-for="(item, idx) in cashflow_arr" :key='idx'>
               <td>{{item.id}}</td>
-              <td>{{item.actor_name}}</td>
               <td>{{item.amount}}</td>
+              <td>{{item.actor_name}}</td>
               <td>{{item.state}}</td>
               <td>{{item.notes}}</td>
             </tr>
@@ -42,8 +42,11 @@ export default {
   },
   methods: {
     async refresh_cashflow_arr() {
-      this.cashflow_arr = []
-      this.cashflow_arr = await CashflowDB.getAll({state:this.$route.name})
+      // TODO OR
+      this.cashflow_arr = await CashflowDB.getAll({
+        state:this.$route.name
+        // state: 'given'
+      })
     }
   },
   components: {

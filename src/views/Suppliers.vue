@@ -27,6 +27,20 @@
       </div>
 
       <div class="form-group row">
+        <label  class="col-sm-2">رقم التليفون</label>
+        <div class="col-sm-10">
+          <input v-model="supplier_form.phone" class="form-control"  placeholder="رقم التليفون" >
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label  class="col-sm-2">العنوان </label>
+        <div class="col-sm-10">
+          <input v-model="supplier_form.address" class="form-control"  placeholder="ادخل عنوان العميل" >
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label for="notes1" class="col-sm-2">ملاحظات</label>
         <div class="col-sm-10">
           <input v-model="supplier_form.notes" class="form-control " id="notes1"  placeholder="ادخال الملاحظات">
@@ -52,15 +66,21 @@
             <tr>
               <th> كود العميل </th>
               <th>اسم العميل</th>
-              <th>ملاحظات</th>
+              <th>رقم التليفون </th>
+
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, idx) in comp_suppliers_arr" :key='idx' >
               <td>{{item.id}}</td>
-              <td>{{item.name}}</td>
-              <td>{{item.notes}}</td>
+              <td>
+                <router-link class="nav-link " to="/supplier_details">
+                  {{item.name}}
+                </router-link>
+               </td>
+              <td>{{item.phone}}</td>
+
               <td>
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">
                   <span class="fa fa-archive "></span> 
@@ -71,6 +91,9 @@
                   <span class="fa fa-undo "></span> 
                   <template v-if="! confirm_step[item.id]"> استرجاع</template>
                   <template v-if="confirm_step[item.id]"> تأكيد </template>
+                </button>
+                <button class="btn text-primary" @click="edit(item.id)">
+                  تعديل
                 </button>
               </td>
             </tr>
@@ -90,6 +113,7 @@ export default {
     return {
       supplier_form: {},
       suppliers_arr: [],
+      edit_id: 0,
       show_active: true,
       confirm_step: []
     }
@@ -101,10 +125,14 @@ export default {
     async addNewSupplier(evt) {
       evt.preventDefault()
       
-      this.supplier_form['active'] = 1
+      // this.supplier_form['active'] = 1
       SuppliersDB.addNew(this.supplier_form)
       this.refresh_all()
       this.supplier_form = {}
+    },
+    async edit(id) {
+      this.edit_id = id
+      // TODO collabse from js and check active for new supp
     },
     async archive(id, undo = '') {
       if( this.confirm_step[id] ) {

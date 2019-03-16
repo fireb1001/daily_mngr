@@ -1,6 +1,6 @@
 <template>
-  <div class="out row">
-    <div class="col-6 bg-outgoing minh90" >
+  <div class="out row ">
+    <div class="col-6 bg-outgoing minh90" v-if="detailed === false">
     <br/>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> 
     <HelloWorld msg="Welcome to Your Vue.js App"/>
@@ -122,6 +122,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
 </div>
 
 </div>
+<!-- conditional class col-6 -->
 <div class="col-6">
   <br/>
   <h2>بيع اليوم</h2>
@@ -131,29 +132,31 @@ class="btn btn-lg btn-primary m-1 btn-block">
             <tr>
               <th>#</th>
               <th>عدد</th>
-              <th>الوزن</th>
-              <th>السعر</th>
+              <th v-if="detailed ">الوزن</th>
+              <th v-if="detailed ">السعر</th>
               <th>زرع العميل</th>
               <th>الصنف</th>
               <th>البائع</th>
               <th>المبلغ</th>
-              <th>ملاحظات</th>
+              <th v-if="detailed ">ملاحظات</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, idx) in outgoings_arr" :key='idx'>
               <td>{{item.id}}</td>
               <td>{{item.count}}</td>
-              <td>{{item.weight}}</td>
-              <td>{{item.kg_price}}</td>
+              <td v-if="detailed ">{{item.weight}}</td>
+              <td v-if="detailed ">{{item.kg_price}}</td>
               <td>{{item.supplier_name}}</td>
               <td>{{item.product_name}}</td>
               <td>{{item.customer_name}}</td>
               <td>{{item.value_calc}}</td>
-              <td>{{item.notes}}</td>
+              <td v-if="detailed ">{{item.notes}}</td>
             </tr>
           </tbody>
         </table>
+        <button class="btn btn-primary" v-if="detailed === false" @click="show_details()"> عرض التفاصيل </button>
+        <button class="btn btn-primary" v-if="detailed !== false" @click="detailed= false"> العودة للبيع </button>
       </div>
   </div>
 </div>
@@ -176,7 +179,8 @@ export default {
       store_day: this.$store.state.day,
       incoming_headers: [],
       selected_inc_hdr: new IncomingsHeaderDAO({}),
-      outgoing_form: new OutgoingDAO(OutgoingDAO.INIT_DAO)
+      outgoing_form: new OutgoingDAO(OutgoingDAO.INIT_DAO),
+      detailed: false
     }
   },
   computed: {
@@ -241,6 +245,9 @@ export default {
       this.refresh_outgoings()
       this.refresh_incoming_headers()
 
+    },
+    show_details() {
+      this.detailed = true
     },
     reinit_form() {
       this.selected_inc_hdr = new IncomingsHeaderDAO({})

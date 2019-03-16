@@ -50,6 +50,7 @@
             <tr>
               <th> كود البائع </th>
               <th>اسم البائع</th>
+              <th>التليفون</th>
               <th>المديونية</th>
               <th>ملاحظات</th>
               <th></th>
@@ -59,6 +60,7 @@
             <tr v-for="(item, idx) in comp_customers_arr" :key='idx' >
               <td>{{item.id}}</td>
               <td>{{item.name}}</td>
+              <td>{{item.phone}}</td>
               <td>{{item.balance}}</td>
               <td>{{item.notes}}</td>
               <td>

@@ -4,20 +4,28 @@
   </section>
 </template>
 
-<script lang="js">
-// import { db } from '../main'
+<script >
+import {SuppliersDB} from '../db/SuppliersDB.js'
 
 export default {
   name: 'receipts',
   data () {
-    return {}
-  },
-  firestore () {
-    return {}
+    return {
+      suppliers_arr: []
+    }
   },
   methods: {
+    async refresh_daily_suppliers() {
+      // TODO
+      this.suppliers_arr = SuppliersDB.getAll({
+
+      })
+    }
   },
   components: {
+  },
+  mounted() {
+    this.refresh_daily_suppliers
   }
 }
 </script>

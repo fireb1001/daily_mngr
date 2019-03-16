@@ -10,6 +10,7 @@ import CustomersAccounts from './views/CustomersAccounts.vue'
 import Outgoing from './views/Outgoing.vue'
 import Cashflow from './views/Cashflow.vue'
 import DeveloperTools from './views/DeveloperTools.vue'
+import SupplierDetails from './views/SupplierDetails.vue'
 
 Vue.use(Router)
 
@@ -71,6 +72,11 @@ export default new Router({
       path: '/developer',
       name: 'developer',
       component: DeveloperTools
+    },
+    {
+      path: '/supplier_details',
+      name: 'supplier_details',
+      component: SupplierDetails
     },
     {
       path: '/about',

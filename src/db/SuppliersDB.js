@@ -9,6 +9,7 @@ export class SupplierDAO {
   date_updated
   total_count = 0
   balance = 0
+  address = ''
   notes = ''
   phone = ''
   active = 1

@@ -7,6 +7,7 @@ export class CustomerDAO {
   name = ''
   date_created = ''
   balance = 0
+  phone = ''
   notes = ''
   active = 1
 
