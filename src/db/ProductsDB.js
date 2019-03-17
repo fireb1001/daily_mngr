@@ -5,17 +5,15 @@ export class ProductDAO {
 
     id = 0
     name = ''
-    season = ''
-    active = 0
+    season 
+    date_created
+    active = 1
     notes = ''
     collection = ''
 
   static get INIT_DAO() {
     return {
-      date_created: '',
-      active: 1,
-      name: '',
-      notes: ''
+      active: 1
     }
   }
 

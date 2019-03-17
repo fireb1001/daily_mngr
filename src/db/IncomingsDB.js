@@ -9,8 +9,8 @@ import { SuppliersDB } from './SuppliersDB';
 export class IncomingDAO {
 
   id = 0
-  date = ''
-  date_created = 0
+  day
+  date_created
 
   supplier_select = {}
   supplier_id = 0
@@ -28,23 +28,13 @@ export class IncomingDAO {
   // Constant member
   static get INIT_DAO() {
     return {
-      date_created: Date.now() ,
+      //date_created: Date.now() ,
       //nolon: 0,given: 0,
     }
   }
 
   constructor (data) {
     Object.assign(this, data)
-    /*
-    this.id = data.id!== null ? data.id : this.id
-    this.date = data.date!== null ? data.date : this.date
-    this.supplier_id = data.supplier_id!== null ? data.supplier_id : this.supplier_id
-    this.product_id = data.product_id!== null ? data.product_id : this.product_id
-    this.count = data.count!== null ? data.count : this.count
-    this.given = data.given!== null ? data.given : this.given
-    this.nolon = data.nolon!== null ? data.nolon : this.nolon
-    this.notes = data.notes!== null ? data.notes : this.notes
-    */
   }
 
   parseTypes() {
@@ -64,31 +54,12 @@ export class IncomingDAO {
   }
 }
 
-export class IncomingDB {
+export class IncomingsDB {
 
-  static TABLE_NAME = 'incoming'
-  /*
-  data = {
-    id: 0,
-    date: '',
-    supplier_id: '',
-    product_id: 0,
-    count: 0,
-    notes: ''
-  }
-
-  constructor (data) {
-    this.data.id = data.id!== null ? data.id : this.data.id
-    this.data.date = data.date!== null ? data.date : this.data.date
-    this.data.supplier_id = data.supplier_id!== null ? data.supplier_id : this.data.supplier_id
-    this.data.count = data.count!== null ? data.count : this.data.count
-    this.data.product_id = data.product_id!== null ? data.product_id : this.data.product_id
-    this.data.notes = data.notes!== null ? data.notes : this.data.notes
-  }
-  */
+  static TABLE_NAME = 'incomings'
 
   static sql_types () {
-    var instance = new this({})
+    var instance = new IncomingDAO({})
     var keys = Object.keys(instance.data)
     var create_sql_cols = ''
     keys.forEach(col =>{
@@ -113,8 +84,7 @@ export class IncomingDB {
     data.selectFromObjects()
     data.parseTypes()
 
-    let incoming_id = await dexie.incomings.add(data)
-    data.day= data.date
+    let incoming_id = await dexie[this.TABLE_NAME].add(data)
     let incDAO = new IncomingsHeaderDAO(data)
 
     // update Incoming Header  let header_id = 
@@ -132,6 +102,7 @@ export class IncomingDB {
         supplier_name: data.supplier_name
       }
       cashDAO.actor_id = data.supplier_id
+      cashDAO.actor_name = data.supplier_name
       await CashflowDB.addNew(cashDAO)
     }
 
@@ -153,8 +124,7 @@ export class IncomingDB {
     // Update Supplier Info
     await SuppliersDB.updateIncomings(data.supplier_id, {
       count: data.count,
-      last_incoming_date : Date.now(),
-      last_incoming_day : store.state.day.formated
+      curr_incoming_day : store.state.day.formated
     })
 
     /*
@@ -174,17 +144,17 @@ export class IncomingDB {
   }
 
   static async saveById(id, payload) {
-    let updated = await dexie.incomings.update(id, payload)
+    let updated = await dexie[this.TABLE_NAME].update(id, payload)
 
     return updated
   }
 
   static async getAll() {
     let all = []
-    all = await dexie.incomings.toArray()
+    all = await dexie[this.TABLE_NAME].toArray()
     /*
     try {
-      var results = await conn_pool.query('SELECT * FROM '+IncomingDB.TABLE_NAME)
+      var results = await conn_pool.query('SELECT * FROM '+IncomingsDB.TABLE_NAME)
       this.incomings_arr = []
       results.forEach( item => {
         all.push(new IncomingDAO(item))

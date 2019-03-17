@@ -4,6 +4,7 @@ import { dexie } from '../main'
 export class CustomerTransDAO {
 
   id
+  day
   customer_id
   outgoing_id
   cashflow_id
@@ -25,7 +26,7 @@ export class CustomerTransDB {
   static TABLE_NAME = 'customer_trans'
 
   static async saveById(id, payload) {
-    return await dexie.customer_trans.update(id, payload)
+    return await dexie[this.TABLE_NAME].update(id, payload)
   }
 
   static async addNew(data) {

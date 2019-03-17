@@ -31,17 +31,17 @@ export class DailyDB {
   static async addNew(data) {
     delete data.id
     data.parseTypes()
-    dexie.daily.add(data)
+    dexie[this.TABLE_NAME].add(data)
   }
 
   static async saveById(id, payload) {
-    let updated = await dexie.daily.update(id, payload)
+    let updated = await dexie[this.TABLE_NAME].update(id, payload)
     return updated
   }
 
   static async getAll() {
     let all = []
-    all = await dexie.daily.toArray()
+    all = await dexie[this.TABLE_NAME].toArray()
     return all
   }
 }

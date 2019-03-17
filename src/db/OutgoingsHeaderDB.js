@@ -8,8 +8,8 @@ export class OutgoingHeaderDAO {
   supplier_id = 0
   product_name
   supplier_name
-  day = ''
-  
+  day 
+  date_created
   total_count
   total_sell_com
   sell_com_details

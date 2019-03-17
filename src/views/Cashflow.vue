@@ -1,5 +1,5 @@
 <template>
-  <section class="cashflow">
+  <section class="cashflow m-3">
     <br/>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
@@ -47,7 +47,7 @@ export default {
         state = ['given','expense']
       }
       else if(this.$route.name == 'collecting') {
-        state = 'collecting' // ['given','expense']
+        state = ['collecting','outgoing_cash'] // ['given','expense']
       }
       else if (this.$route.name == 'payments') {
         state = ['nolon','payment']

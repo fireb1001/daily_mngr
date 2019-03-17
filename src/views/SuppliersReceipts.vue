@@ -18,10 +18,9 @@ export default {
   },
   methods: {
     async refresh_daily_suppliers() {
-      this.suppliers_arr = await SuppliersDB.getAll({
-        last_incoming_day: this.$store.state.day.formated
-      })
-      console.log(this.suppliers_arr)
+      this.suppliers_arr = await SuppliersDB.getAll()
+      // last_incoming_day: this.$store.state.day.formate
+      // console.log(this.suppliers_arr)
     }
   },
   components: {

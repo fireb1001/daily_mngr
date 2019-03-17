@@ -1,12 +1,16 @@
-import { dexie } from '../main'
+import { dexie, store } from '../main'
 import { IncomingsHeaderDB } from './IncomingsHeaderDB'
 import { CashflowDB, CashflowDAO } from './CashflowDB'
 import { CustomersDB } from './CustomersDB'
+// eslint-disable-next-line no-unused-vars
+import Dexie from 'dexie';
 
 export class OutgoingDAO {
 
   id = 0
-  date = ''
+  day = ''
+  date_created = 0
+  
   supplier_id = 0
   supplier_name
   product_id = 0
@@ -39,8 +43,8 @@ export class OutgoingDAO {
     if(this.customer_select && this.customer_select.id) {
       this.customer_id = this.customer_select.id
       this.customer_name = this.customer_select.name
-      delete this.customer_select
     }
+    delete this.customer_select
   }
 
   // Constant member
@@ -85,6 +89,8 @@ export class OutgoingDAO {
  
 export class OutgoingsDB {
     static TABLE_NAME = 'outgoings'
+    /**@type {Dexie.Table} */
+    //static TABLE = dexie['outgoings']
 
     /**@param {OutgoingDAO} data*/
     static async addNew(data) {
@@ -95,7 +101,7 @@ export class OutgoingsDB {
       data.selectFromObjects()
 
       data.sell_com_value = data.count * data.sell_com
-      let outgoing_id = await dexie.outgoings.add(data)
+      let outgoing_id = await dexie[this.TABLE_NAME].add(data)
       // decrease Incoming 
       let inc_header = await IncomingsHeaderDB.getById(data.incoming_header_id)
       inc_header.current_count -= parseInt(data.count)
@@ -105,8 +111,20 @@ export class OutgoingsDB {
       if(data.customer_id) {
         await CustomersDB.updateDebt(data.customer_id, {
           amount: data.value_calc,
-          outgoing_id: outgoing_id
+          outgoing_id: outgoing_id,
+          trans_type: 'outgoing',
+          curr_incoming_day : store.state.day.formated
         })
+      }
+      else {
+        let cashDAO = new CashflowDAO()
+        cashDAO.amount = data.value_calc
+        cashDAO.sum = '+'
+        cashDAO.state = 'outgoing_cash'
+        cashDAO.state_data = {
+          outgoing_id: outgoing_id
+        }
+        await CashflowDB.addNew(cashDAO)
       }
 
       // cashflow part
@@ -125,20 +143,32 @@ export class OutgoingsDB {
         let cashflow_id = await CashflowDB.addNew(cashDAO)
         await CustomersDB.updateDebt(data.customer_id, {
           amount: - parseFloat(data.collecting),
+          trans_type: 'collecting',
           cashflow_id: cashflow_id
         })
       }
-  
     }
   
     static async saveById(id, payload) {
-      let updated = await dexie.outgoings.update(id, payload)
+      let updated = await dexie[this.TABLE_NAME].update(id, payload)
       return updated
+    }
+
+    static async getDailyCustomers(data) {
+      let all_obj = {}
+      /**@type {Dexie.Table} */
+      let table = dexie['outgoings']
+      await table.where({day:data.day}).each( item => {
+        if(item.customer_id){
+          all_obj[item.customer_id] = item.customer_id
+        }
+      })
+      return Object.values(all_obj)
     }
   
     static async getAll() {
       let all = []
-      all = await dexie.outgoings.toArray()
+      all = await dexie[this.TABLE_NAME].toArray()
       return all
     }
   }

@@ -5,7 +5,8 @@ import Dexie from 'dexie';
 export class CashflowDAO {
 
     id = 0
-    type = ''
+    // type = ''
+    day
     state = ''
     state_data = ''
     actor_id
@@ -40,11 +41,11 @@ export class CashflowDB {
   static async addNew(data) {
     delete data.id
     data.parseTypes()
-    dexie.cashflow.add(data)
+    return await dexie[this.TABLE_NAME].add(data)
   }
 
   static async saveById(id, payload) {
-    let updated = await dexie.cashflow.update(id, payload)
+    let updated = await dexie[this.TABLE_NAME].update(id, payload)
     return updated
   }
 
@@ -52,14 +53,14 @@ export class CashflowDB {
     // console.log(data.state, Array.isArray( data.state))
     let all = []
     /**@type {Dexie.Table} */
-    let table = dexie.cashflow
+    let table = dexie[this.TABLE_NAME]
     if(data.state){
       if (Array.isArray( data.state)) {
         // multible 
         all = await table.where('state').anyOf(data.state).toArray()
       } 
       else {
-        all = await dexie.cashflow.where({state:data.state}).toArray()
+        all = await table.where({state:data.state}).toArray()
       }
     }
     else {

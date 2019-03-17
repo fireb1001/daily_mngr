@@ -25,7 +25,7 @@
   <div class="form-group row">
     <label class="col-sm-2">التاريخ</label>
     <div class="col-sm-10">
-      <input v-model="incoming_form.date" class="form-control" disabled>
+      <input v-model="incoming_form.day" class="form-control" disabled>
     </div>
   </div>
 
@@ -121,7 +121,7 @@
           <tbody>
             <tr v-for="(incom, idx) in incomings_arr" :key='idx'>
               <td>{{incom.id}}</td>
-              <td>{{incom.date}}</td>
+              <td>{{incom.day}}</td>
               <td>{{incom.supplier_name}}</td>
               <td>{{incom.product_name}}</td>
               <td>{{incom.count}}</td>
@@ -138,7 +138,7 @@
 <script>
 // @ is an alias to /src
 import DailyHeader from '@/components/DailyHeader.vue'
-import {IncomingDB, IncomingDAO} from '../db/IncomingDB.js'
+import { IncomingsDB, IncomingDAO } from '../db/IncomingsDB.js'
 import { SuppliersDB } from '../db/SuppliersDB.js'
 import { ProductsDB } from '../db/ProductsDB.js'
 
@@ -160,19 +160,19 @@ export default {
     async addNewIncoming(evt){
       evt.preventDefault()
       console.log(this.incoming_form)
-      await IncomingDB.addNew(this.incoming_form)
+      await IncomingsDB.addNew(this.incoming_form)
       this.incoming_form = new IncomingDAO(IncomingDAO.INIT_DAO)
-      this.incoming_form.date = this.store_day.formated
+      this.incoming_form.day = this.store_day.formated
       this.refresh_inc_arr()
     },
     async refresh_inc_arr() {
       // console.log(require('moment')(this.store_day.formated).format("X"))
-      this.incomings_arr = await IncomingDB.getAll()
+      this.incomings_arr = await IncomingsDB.getAll()
     }
   },
   async mounted() {
     delete this.incoming_form.id 
-    this.incoming_form.date = this.store_day.formated
+    this.incoming_form.day = this.store_day.formated
     this.refresh_inc_arr()
     this.active_suppliers = await SuppliersDB.getAll({active:1})
     this.active_products = await ProductsDB.getAll()

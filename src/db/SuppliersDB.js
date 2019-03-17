@@ -5,9 +5,8 @@ export class SupplierDAO {
 
   id = 0
   name = ''
-  date_created = ''
-  last_incoming_date 
-  last_incoming_day
+  date_created
+  curr_incoming_day
   date_updated
   total_count = 0
   balance = 0
@@ -38,11 +37,11 @@ export class SuppliersDB {
 
   static async addNew(data) {
     delete data.id
-    dexie.suppliers.add(data)
+    dexie[this.TABLE_NAME].add(data)
   }
 
   static async saveById(id, payload) {
-    return await dexie.suppliers.update(id, payload)
+    return await dexie[this.TABLE_NAME].update(id, payload)
   }
 
   static async updateIncomings(id, payload) {
@@ -54,13 +53,12 @@ export class SuppliersDB {
     else {
       supplierDAO.total_count = parseInt(payload.count)
     }
-    supplierDAO.last_incoming_date = payload.last_incoming_date
-    supplierDAO.last_incoming_day = payload.last_incoming_day
-    return await dexie.suppliers.update(id, supplierDAO)
+    supplierDAO.curr_incoming_day = payload.curr_incoming_day
+    return await dexie[this.TABLE_NAME].update(id, supplierDAO)
   }
 
   static async getDAOById(id) {
-    let supplierObj = await dexie.suppliers.get(id)
+    let supplierObj = await dexie[this.TABLE_NAME].get(id)
     return new SupplierDAO(supplierObj)
   }
 
@@ -68,12 +66,11 @@ export class SuppliersDB {
     let all = []
     if(data) {
       if(data.active === 1)
-        all = await dexie.suppliers.where({active: 1}).toArray()
-      if(data.last_incoming_day)
-        all = await dexie.suppliers.where({last_incoming_day: data.last_incoming_day}).toArray()
+        all = await dexie[this.TABLE_NAME].where({active: 1}).toArray()
+
     }
     else {
-      all = await dexie.suppliers.toArray()
+      all = await dexie[this.TABLE_NAME].toArray()
     }
     return all
   }

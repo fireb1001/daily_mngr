@@ -4,25 +4,25 @@ import router from './router'
 import store from './store'
 import BootstrapVue from 'bootstrap-vue'
 import { Outgoing, Product} from './sql_classes'
-import { IncomingDB } from './db/IncomingDB'
+import { IncomingsDB } from './db/IncomingsDB'
 import Dexie from 'dexie'
 
 Vue.use(BootstrapVue)
 console.log(process.versions.electron)
 Vue.config.productionTip = false
-
-export const dexie = new Dexie('daily_mngr')
+const db_version = 1
+export const dexie = new Dexie('daily_mngr_'+db_version)
 export { store }
 // TODO collect all todos !
-// TODO clear daily_mngr data from bedos
+// TODO clear daily_mngr data from bedos // rename !
 // TODO go mysql go
+// TODO cashflow text detailed && cashflow after
 
-
-dexie.version(0.1).stores({
+dexie.version(db_version).stores({
   
-  incomings: '++id, product_id, supplier_id',
-  outgoings: '++id, product_id, supplier_id, customer_id',
-  suppliers: '++id, balance, active, last_incoming_day',
+  incomings: '++id, product_id, supplier_id, day',
+  outgoings: '++id, product_id, supplier_id, customer_id, day',
+  suppliers: '++id, balance, active ',
   products: '++id, active',
   customers: '++id, debt, active',
   customer_trans: '++id, debt_after',
@@ -73,7 +73,7 @@ function create_db () {
     , (error)=>console.error(error)
   )
   conn.changeUser({database: 'daily_mngr'}, (error)=>console.error(error))
-  conn.query(IncomingDB.createTableQ() ,(error)=>console.error(error))
+  conn.query(IncomingsDB.createTableQ() ,(error)=>console.error(error))
   conn.query(Outgoing.createTableQ() ,(error)=>console.error(error))
   conn.query(Product.createTableQ() ,(error)=>console.error(error))
 }

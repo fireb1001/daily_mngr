@@ -42,7 +42,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
   <div class="form-group row">
     <label class="col-sm-2">التاريخ</label>
     <div class="col-sm-10">
-      <input v-model="outgoing_form.date" class="form-control"  placeholder="Enter date" disabled>
+      <input v-model="outgoing_form.day" class="form-control" disabled>
     </div>
   </div>
 
@@ -75,7 +75,6 @@ class="btn btn-lg btn-primary m-1 btn-block">
       <input v-model="outgoing_form.kg_price" class="form-control" placeholder="ادخل القيمة">
     </div>
   </div>
-
 
 <hr/>
 
@@ -133,10 +132,10 @@ class="btn btn-lg btn-primary m-1 btn-block">
               <th>#</th>
               <th>عدد</th>
               <th v-if="detailed ">الوزن</th>
-              <th v-if="detailed ">السعر</th>
+              <th>السعر</th>
               <th>زرع العميل</th>
               <th>الصنف</th>
-              <th>البائع</th>
+              <th>اسم البياع</th>
               <th>المبلغ</th>
               <th v-if="detailed ">ملاحظات</th>
             </tr>
@@ -146,7 +145,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
               <td>{{item.id}}</td>
               <td>{{item.count}}</td>
               <td v-if="detailed ">{{item.weight}}</td>
-              <td v-if="detailed ">{{item.kg_price}}</td>
+              <td>{{item.kg_price}}</td>
               <td>{{item.supplier_name}}</td>
               <td>{{item.product_name}}</td>
               <td>{{item.customer_name}}</td>
@@ -220,8 +219,8 @@ export default {
       /*
       let values = this.outgoing.data
       let instert_q = ` INSERT INTO ${Outgoing.table_name} 
-      (date, supplier, count, product, notes) 
-      VALUES ('${values.date}',${values.supplier},${values.count},${values.product},'${values.notes}')
+      (day, supplier, count, product, notes) 
+      VALUES ('${values.day}',${values.supplier},${values.count},${values.product},'${values.notes}')
 `
       try {
         await conn_pool.query(instert_q)
@@ -252,7 +251,7 @@ export default {
     reinit_form() {
       this.selected_inc_hdr = new IncomingsHeaderDAO({})
       this.outgoing_form =new OutgoingDAO(OutgoingDAO.INIT_DAO)
-      this.outgoing_form.date = this.store_day.formated
+      this.outgoing_form.day = this.store_day.formated
     },
     async refresh_outgoings() {
       this.outgoings_arr = await OutgoingsDB.getAll()
