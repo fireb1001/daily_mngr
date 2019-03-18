@@ -16,6 +16,12 @@ export class CustomerTransDAO {
     Object.assign(this, data)
   }
 
+  static get COLLECTING_DAO() {
+    return {
+      trans_type: 'collecting'
+    }
+  }
+
   parseTypes () {
     // this.total_count = parseInt(this.total_count)
   }
@@ -34,9 +40,15 @@ export class CustomerTransDB {
     return await dexie[this.TABLE_NAME].add(data)
   }
 
-  static async getAll() {
+  static async getAll(data) {
     let all = []
-    all = await dexie[this.TABLE_NAME].toArray()
+    if(data.customer_id) {
+      all = await dexie[this.TABLE_NAME].where({customer_id: data.customer_id}).toArray()
+      console.log(all)
+    }
+    else {
+      all = await dexie[this.TABLE_NAME].toArray()
+    }
     return all
   }
 }

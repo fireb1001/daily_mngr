@@ -32,6 +32,20 @@ dexie.version(db_version).stores({
   cashflow: '++id, amount, state'
   // benefit of a compound index [day+product_id+supplier_id]
 })
+dexie.version(2).stores({
+  
+  incomings: '++id, product_id, supplier_id, day',
+  outgoings: '++id, product_id, supplier_id, customer_id, day',
+  suppliers: '++id, balance, active ',
+  products: '++id, active',
+  customers: '++id, debt, active',
+  customer_trans: '++id, debt_after, customer_id',
+  supplier_trans: '++id, balance_after',
+  incomings_header: '++id, supplier_id, product_id, day, total_count, current_count',
+  outgoings_header: '++id, supplier_id, product_id, total_count, sell_com, total_weight, kg_price, incoming_header_id, day, total_value',
+  cashflow: '++id, amount, state'
+  // benefit of a compound index [day+product_id+supplier_id]
+})
 /*
 export const SupplierDX = dexie.suppliers.defineClass({
   id: Number,
@@ -64,6 +78,16 @@ export const appConfig = {
   db_engine: ''
 }
 
+export const APP_LABELS = {
+  given: 'وهبة',
+  nolon: 'نولون',
+  outgoing_cash: 'بيع كاش',
+  trans: {
+    outgoing: 'بيع اجل',
+    collecting: 'تحصيل',
+    init: 'رصيد مديونية'
+  }
+}
 function create_db () {
   db_config.database=''
   var conn = mysql.createConnection(db_config)

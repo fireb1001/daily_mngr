@@ -21,6 +21,13 @@ export class CashflowDAO {
     }
   }
 
+  static get COLLECTING_DAO() {
+    return {
+      sum: '+',
+      state: 'collecting'
+    }
+  }
+
   parseTypes () {
     this.amount = parseFloat(this.amount)
     if(typeof this.state_data === 'object')

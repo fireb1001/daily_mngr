@@ -17,7 +17,7 @@
               <td>{{item.id}}</td>
               <td>{{item.amount}}</td>
               <td>{{item.actor_name}}</td>
-              <td>{{item.state}}</td>
+              <td>{{app_labels[item.state]}}</td>
               <td>{{item.notes}}</td>
             </tr>
           </tbody>
@@ -29,12 +29,14 @@
 
 <script>
 // import { db } from '../main'
-import {CashflowDB} from '../db/CashflowDB.js'
+import { CashflowDB} from '../db/CashflowDB.js'
+import { APP_LABELS } from '../main.js'
 export default {
   name: 'cashflow',
   data () {
     return {
-      cashflow_arr: []
+      cashflow_arr: [],
+      app_labels : APP_LABELS
     }
   },
   firestore () {

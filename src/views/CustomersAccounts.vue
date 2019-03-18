@@ -2,7 +2,12 @@
   <section class="accounts bg-accounts minh90 p-3">
     <h1>حسابات البائعين - معاملات اليوم</h1>
 
-    {{ daily_customers }}
+<router-link  v-for="(customer, idx) in daily_customers" :to="{name:'customer_details', params: {id: customer.id}}"  :key="idx" 
+class="btn btn-lg btn-primary m-1 btn-block">
+  <span class="fa fa-shopping-cart"></span> &nbsp; 
+  عرض حساب البياع - {{customer.name}}
+</router-link>
+
   </section>
 </template>
 

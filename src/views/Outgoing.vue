@@ -1,5 +1,5 @@
 <template>
-  <div class="out row m-1">
+  <div class="out row p-1">
     <div class="col-6 bg-outgoing minh90" v-if="detailed === false">
     <br/>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> 

@@ -14,7 +14,7 @@
       <div class="row" style="max-width: 100%;">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar" >
           <div class="sidebar-sticky">
-              <br/>
+
             <h4 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
               <span>يومية {{day_comp.formated}}</span> 
             </h4>
@@ -41,7 +41,7 @@
               <li class="nav-item bg-accounts">
                 <router-link class="nav-link active" to="/customers_accounts">
                   <span class="fa fa-cash-register"></span>
-                  حساب الزمم / البائعين
+                  حساب البائعين
                 </router-link>
               </li>
               <li class="nav-item">
@@ -86,7 +86,8 @@
               <li class="nav-item">
                 <router-link class="nav-link active" to="/products">
                   <span class="fa fa-apple-alt"></span>
-                   الاصناف والوحدات<span class="sr-only">(current)</span>
+                   ادارة الاصناف 
+                   <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item">
@@ -149,6 +150,7 @@ export default {
       this.$store.commit('setDay' ,{now: Date.now(), formated: formated})
   },
   computed: {
+    // TODO 21 مارس
     day_comp : function () {
       return this.$store.state.day
     }
