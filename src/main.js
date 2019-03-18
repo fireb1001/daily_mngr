@@ -135,3 +135,6 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+Vue.prototype.vue_window = window
+Vue.prototype.vue_document = document

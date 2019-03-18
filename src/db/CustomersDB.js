@@ -1,5 +1,5 @@
 // import { conn_pool } from '../main'
-import { dexie } from '../main'
+import { dexie, store } from '../main'
 import { CustomerTransDB, CustomerTransDAO} from './CustomerTransDB'
 
 export class CustomerDAO {
@@ -37,21 +37,22 @@ export class CustomersDB {
   /**@param {CustomerDAO} data */
   static async addNew(data) {
     delete data.id
+    // init with amount or zero
+    data.debt = data.debt ? data.debt : 0
     data.parseTypes()
     let id = await dexie[this.TABLE_NAME].add(data)
-    if(data.debt) {
+    if(data.debt >=0 ) {
       let customerTransDao = new CustomerTransDAO()
       customerTransDao.customer_id = id
       customerTransDao.trans_type = 'init'
+      customerTransDao.day = store.state.day.formated
       customerTransDao.amount = data.debt
       customerTransDao.debt_after = data.debt
       CustomerTransDB.addNew(customerTransDao)
     }
   }
 
-  static async addCustomerTrans() {
-
-  }
+  static async addCustomerTrans() { }
 
   static async saveById(id, payload) {
     let updated = await dexie[this.TABLE_NAME].update(id, payload)
@@ -59,19 +60,29 @@ export class CustomersDB {
   }
 
   static async updateDebt(id, payload) {
-    console.log("payload", payload)
-    /*
     let customerDAO = await this.getDAOById(id)
     if( payload.amount ){
       customerDAO.parseTypes()
+      // updating debt after
       if (! customerDAO.debt) customerDAO.debt = 0
       customerDAO.debt += parseFloat(payload.amount)
-      if( payload.trans_type === 'collecting') { 
+
+      if ( payload.constructor && payload.constructor.name == 'CashflowDAO'){
+        let customerTransDao = new CustomerTransDAO(CustomerTransDAO.COLLECTING_DAO)
+        customerTransDao.customer_id = id
+        customerTransDao.cashflow_id = payload.id
+        customerTransDao.amount = payload.amount
+        customerTransDao.day = payload.day
+        customerTransDao.debt_after = customerDAO.debt
+        CustomerTransDB.addNew(customerTransDao)
+      }
+      else if( payload.trans_type === 'collecting') { 
         // payload.amount < 0 && payload.cashflow_id &&
         let customerTransDao = new CustomerTransDAO(CustomerTransDAO.COLLECTING_DAO)
         customerTransDao.customer_id = id
         customerTransDao.cashflow_id = payload.cashflow_id
         customerTransDao.amount = payload.amount
+        customerTransDao.day = payload.day
         customerTransDao.debt_after = customerDAO.debt
         CustomerTransDB.addNew(customerTransDao)
       }
@@ -81,6 +92,7 @@ export class CustomersDB {
         customerTransDao.trans_type = payload.trans_type
         customerTransDao.outgoing_id = payload.outgoing_id
         customerTransDao.amount = payload.amount
+        customerTransDao.day = payload.day
         customerTransDao.debt_after = customerDAO.debt
         CustomerTransDB.addNew(customerTransDao)
       }
@@ -90,7 +102,6 @@ export class CustomersDB {
     }
 
     this.saveById(id, customerDAO)
-    */
   }
 
   static async getDAOById(id) {

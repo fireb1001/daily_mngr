@@ -65,9 +65,10 @@ export class SuppliersDB {
   static async getAll(data) {
     let all = []
     if(data) {
+      if (Array.isArray(data))
+        all = await dexie[this.TABLE_NAME].where('id').anyOf(data).toArray()
       if(data.active === 1)
         all = await dexie[this.TABLE_NAME].where({active: 1}).toArray()
-
     }
     else {
       all = await dexie[this.TABLE_NAME].toArray()

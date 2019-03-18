@@ -36,6 +36,12 @@ export class OutgoingHeaderDAO {
     if(data.count) {
         this.total_count = parseInt(data.count)
     }
+    if(data.weight) {
+      this.total_weight = parseFloat(data.weight)
+    }
+    if(data.value_calc) {
+      this.total_value = parseFloat(data.value_calc)
+    }
   }
 
 }
@@ -49,47 +55,59 @@ export class OutgoingsHeaderDB {
 /** @param {OutgoingHeaderDAO} data */
 
   static async addPlus(data) {
-    let head = await this.getDayHeader(data)
-    if ( ! head ) {
-        let added = await this.addNew(data)
-        console.log(added)
+    let headDAO = await this.getDayHeader(data)
+    if ( ! headDAO ) {
+        let header_id = await this.addNew(data)
+        return header_id
     } // else update
     else {
-        console.log(head)
-        head.total_count += data.total_count
-        this.saveById(head.id, head)
+        console.log(headDAO)
+        headDAO.total_count += data.total_count
+        headDAO.total_weight += data.total_weight
+        headDAO.total_value += data.total_value
+        this.saveById(headDAO.id, headDAO)
+        return headDAO.id
     }
   }
 
 /** @param {OutgoingHeaderDAO} data */
   static async addNew(data) {
     delete data.id
-    dexie.outgoings_header.add(data)
+    return await dexie[this.TABLE_NAME].add(data)
   }
 
   static async saveById(id, payload) {
-    return await dexie.outgoings_header.update(id, payload)
+    return await dexie[this.TABLE_NAME].update(id, payload)
   }
 
   static async getById(id) {
     /**@type {Dexie.Table} */
-    let table = dexie.outgoings_header
+    let table = dexie[this.TABLE_NAME]
     return await table.get(id)
   }
 
   static async getDayHeader(data) {
     console.log(data)
-    let head = await dexie.outgoings_header.get({
+    let head = await dexie[this.TABLE_NAME].get({
       day:data.day,
       incoming_header_id: data.incoming_header_id,
       kg_price: data.kg_price,
     })
-    return head
+    if (head)
+      return new OutgoingHeaderDAO(head)
+    else 
+      return null
   }
 
-  static async getAll() {
+  static async getAll(data) {
     let all = []
-    all = await dexie.outgoings_header.toArray()
+    if(data) {
+      if(data.day && data.supplier_id)
+        all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
+    }
+    else {
+      all = await dexie[this.TABLE_NAME].toArray()
+    }
     return all
   }
 }

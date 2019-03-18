@@ -59,31 +59,37 @@ export class IncomingsHeaderDB {
 /** @param {IncomingsHeaderDAO} data */
   static async addNew(data) {
     delete data.id
-    return await dexie.incomings_header.add(data)
+    return await dexie[this.TABLE_NAME].add(data)
   }
 
   static async saveById(id, payload) {
-    return await dexie.incomings_header.update(id, payload)
+    return await dexie[this.TABLE_NAME].update(id, payload)
   }
 
   static async getById(id) {
     /**@type {Dexie.Table} */
-    let table = dexie.incomings_header
+    let table = dexie[this.TABLE_NAME]
     return await table.get(id)
   }
 
   static async getDayHeader(data) {
     // console.log(data)
-    let head = await dexie.incomings_header.get({day:data.day, product_id: data.product_id, supplier_id: data.supplier_id})
+    let head = await dexie[this.TABLE_NAME].get({day:data.day, product_id: data.product_id, supplier_id: data.supplier_id})
     return head
   }
 
   static async getAll(data) {
+
     let all = []
-    if(data.current_count == '> 0')
-        all = await dexie.incomings_header.where('current_count').above(0).toArray()
-    else
-        all = await dexie.incomings_header.toArray()
+    if(data) {
+      if(data.current_count == '> 0')
+        all = await dexie[this.TABLE_NAME].where('current_count').above(0).toArray()
+      if(data.day && data.supplier_id)
+        all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
+    }
+    else {
+      all = await dexie[this.TABLE_NAME].toArray()
+    }
     return all
   }
 }

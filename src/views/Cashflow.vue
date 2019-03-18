@@ -5,7 +5,7 @@
         <table class="table table-striped table-sm">
           <thead>
             <tr>
-              <th>#</th>
+              <th>التاريخ</th>
               <th>المبلغ</th>
               <th>من</th>
               <th>نوع</th>
@@ -14,7 +14,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in cashflow_arr" :key='idx'>
-              <td>{{item.id}}</td>
+              <td>{{item.day}}</td>
               <td>{{item.amount}}</td>
               <td>{{item.actor_name}}</td>
               <td>{{app_labels[item.state]}}</td>

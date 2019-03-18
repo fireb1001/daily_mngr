@@ -85,10 +85,10 @@ export class IncomingsDB {
     data.parseTypes()
 
     let incoming_id = await dexie[this.TABLE_NAME].add(data)
-    let incDAO = new IncomingsHeaderDAO(data)
+    let incHeadDAO = new IncomingsHeaderDAO(data)
 
     // update Incoming Header  let header_id = 
-    await IncomingsHeaderDB.addPlus(incDAO)
+    await IncomingsHeaderDB.addPlus(incHeadDAO)
 
     // Update Cashflow
     if(data.nolon) {
@@ -101,6 +101,7 @@ export class IncomingsDB {
         supplier_id: data.supplier_id,
         supplier_name: data.supplier_name
       }
+      cashDAO.day = store.state.day.formated
       cashDAO.actor_id = data.supplier_id
       cashDAO.actor_name = data.supplier_name
       await CashflowDB.addNew(cashDAO)
@@ -109,6 +110,7 @@ export class IncomingsDB {
     if(data.given) {
       let cashDAO = new CashflowDAO()
       cashDAO.amount = data.given
+      cashDAO.day = store.state.day.formated
       cashDAO.sum = '-'
       cashDAO.state = 'given'
       cashDAO.state_data = {
@@ -148,6 +150,17 @@ export class IncomingsDB {
 
     return updated
   }
+
+  static async getDailySuppliers(data) {
+    let all_obj = {}
+    await dexie[this.TABLE_NAME].where({day:data.day}).each( item => {
+      if(item.supplier_id){
+        all_obj[item.supplier_id] = item.supplier_id
+      }
+    })
+    return Object.values(all_obj)
+  }
+
 
   static async getAll() {
     let all = []

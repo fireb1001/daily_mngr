@@ -1,6 +1,6 @@
 <template>
   <div class="home row">
-    <div class="col-6 bg-incoming minh90">
+    <div class="col-6 bg-incoming minh90 d-print-none">
     <br/>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> 
     <HelloWorld msg="Welcome to Your Vue.js App"/>
@@ -102,9 +102,9 @@
   
 </form>
 </div>
-<div class="col-6">
+<div class="col-6 col-print-10 pr-me" >
   <br/>
-  <h2>وارد اليوم</h2>
+  <h2>وارد اليوم {{store_day.formated}}</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
@@ -113,8 +113,7 @@
               <th>التاريخ</th>
               <th>العميل</th>
               <th>الصنف</th>
-              <th>عدد</th>
-              <th>وحدة</th>
+              <th>عدد الطرود</th>
               <th>ملاحظات</th>
             </tr>
           </thead>
@@ -125,12 +124,15 @@
               <td>{{incom.supplier_name}}</td>
               <td>{{incom.product_name}}</td>
               <td>{{incom.count}}</td>
-              <td>{{incom.unit}}</td>
               <td>{{incom.notes}}</td>
             </tr>
           </tbody>
         </table>
-      </div>
+        <button class="btn btn-success pr-hideme" 
+        @click="clipboard.writeText('وارد اليوم '+ store_day.formated);vue_window.print()">
+          <span class="fa fa-print"></span> طباعة
+        </button>
+      </div> 
   </div>
 </div>
 </template>
@@ -141,6 +143,7 @@ import DailyHeader from '@/components/DailyHeader.vue'
 import { IncomingsDB, IncomingDAO } from '../db/IncomingsDB.js'
 import { SuppliersDB } from '../db/SuppliersDB.js'
 import { ProductsDB } from '../db/ProductsDB.js'
+import { clipboard } from 'electron';
 
 export default {
   name: 'home',
@@ -153,11 +156,13 @@ export default {
       store_day: this.$store.state.day,
       active_suppliers: [],
       active_products: [],
+      clipboard: clipboard,
       incoming_form: new IncomingDAO(IncomingDAO.INIT_DAO) // set defaults 
     }
   },
   methods: {
     async addNewIncoming(evt){
+      
       evt.preventDefault()
       console.log(this.incoming_form)
       await IncomingsDB.addNew(this.incoming_form)
@@ -186,3 +191,4 @@ export default {
   }
 }
 </script>
+

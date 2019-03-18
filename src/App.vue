@@ -1,6 +1,6 @@
 <template>
   <div id="app" >
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow d-print-none">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">ادارة اليوميات</a>
       <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
@@ -10,9 +10,9 @@
       </ul>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container-fluid ">
       <div class="row" style="max-width: 100%;">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar" >
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar d-print-none" >
           <div class="sidebar-sticky">
 
             <h4 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -128,7 +128,7 @@
           </div>
         </nav>
 
-        <main role="main" class="col-md-9 mr-sm-auto col-lg-10 px-0" >
+        <main role="main" class="col-md-9 mr-sm-auto col-lg-10 px-0 col-print-12" >
           <router-view/>
         </main>
       </div>
@@ -312,4 +312,72 @@ body {
   color: #42b983;
 }
 */
+
+/* printing */
+@media print {
+  .col-print-1 {
+    flex: 0 0 8.33333%;
+    max-width: 8.33333%; } }
+
+@media print {
+  .col-print-2 {
+    flex: 0 0 16.66667%;
+    max-width: 16.66667%; } }
+
+@media print {
+  .col-print-3 {
+    flex: 0 0 25%;
+    max-width: 25%; } }
+
+@media print {
+  .col-print-4 {
+    flex: 0 0 33.33333%;
+    max-width: 33.33333%; } }
+
+@media print {
+  .col-print-5 {
+    flex: 0 0 41.66667%;
+    max-width: 41.66667%; } }
+
+@media print {
+  .col-print-6 {
+    flex: 0 0 50%;
+    max-width: 50%; } }
+
+@media print {
+  .col-print-7 {
+    flex: 0 0 58.33333%;
+    max-width: 58.33333%; } }
+
+@media print {
+  .col-print-8 {
+    flex: 0 0 66.66667%;
+    max-width: 66.66667%; } }
+
+@media print {
+  .col-print-9 {
+    flex: 0 0 75%;
+    max-width: 75%; } }
+
+@media print {
+  .col-print-10 {
+    flex: 0 0 83.33333%;
+    max-width: 83.33333%; } }
+
+@media print {
+  .col-print-11 {
+    flex: 0 0 91.66667%;
+    max-width: 91.66667%; } }
+
+@media print {
+  .col-print-12 {
+    flex: 0 0 100%;
+    max-width: 100%; } }
+
+@media print {
+  .pr-me {
+    font-size: x-large }
+  .pr-hideme {
+    display: none
+  }}
 </style>

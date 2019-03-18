@@ -4,6 +4,7 @@ import { CashflowDB, CashflowDAO } from './CashflowDB'
 import { CustomersDB } from './CustomersDB'
 // eslint-disable-next-line no-unused-vars
 import Dexie from 'dexie';
+import { OutgoingsHeaderDB, OutgoingHeaderDAO } from './OutgoingsHeaderDB';
 
 export class OutgoingDAO {
 
@@ -106,13 +107,17 @@ export class OutgoingsDB {
       let inc_header = await IncomingsHeaderDB.getById(data.incoming_header_id)
       inc_header.current_count -= parseInt(data.count)
       await IncomingsHeaderDB.saveById(inc_header.id, inc_header)
-
+      // Add outgoing header according to price
+      let outHeadDAO = new OutgoingHeaderDAO(data)
+      console.log("outHeadDAO", outHeadDAO)
+      await OutgoingsHeaderDB.addPlus(outHeadDAO)
       // Update debit
       if(data.customer_id) {
         await CustomersDB.updateDebt(data.customer_id, {
           amount: data.value_calc,
           outgoing_id: outgoing_id,
           trans_type: 'outgoing',
+          day: store.state.day.formated,
           curr_incoming_day : store.state.day.formated
         })
       }
@@ -124,15 +129,15 @@ export class OutgoingsDB {
         cashDAO.state_data = {
           outgoing_id: outgoing_id
         }
+        cashDAO.day = store.state.day.formated
         await CashflowDB.addNew(cashDAO)
       }
 
       // cashflow part
       if(data.collecting) {
-        let cashDAO = new CashflowDAO()
+        let cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
         cashDAO.amount = data.collecting
-        cashDAO.sum = '+'
-        cashDAO.state = 'collecting'
+        cashDAO.day = store.state.day.formated
         cashDAO.state_data = {
           outgoing_id: outgoing_id,
           customer_id: data.customer_id,
@@ -140,12 +145,9 @@ export class OutgoingsDB {
         }
         cashDAO.actor_id = data.customer_id
         cashDAO.actor_name = data.customer_name
-        let cashflow_id = await CashflowDB.addNew(cashDAO)
-        await CustomersDB.updateDebt(data.customer_id, {
-          amount: - parseFloat(data.collecting),
-          trans_type: 'collecting',
-          cashflow_id: cashflow_id
-        })
+        await CashflowDB.addNew(cashDAO)
+        cashDAO.amount = - (cashDAO.amount)
+        await CustomersDB.updateDebt(data.customer_id, cashDAO)
       }
     }
   

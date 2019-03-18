@@ -33,8 +33,9 @@
             </tr>
           </tbody>
         </table>
-  <button v-b-toggle.collapse2 class="btn btn-primary m-1">تحصيل مبلغ
-    &nbsp; <span class="fa fa-apple-alt"></span>
+  <button v-b-toggle.collapse2 class="btn btn-primary m-1">
+    <span class="fa fa-credit-card"></span> &nbsp; 
+    تحصيل مبلغ
   </button>
 
 
@@ -57,7 +58,7 @@
 
 <script >
 import { CustomersDB, CustomerDAO } from '../db/CustomersDB.js'
-import { CustomerTransDB, CustomerTransDAO } from '../db/CustomerTransDB.js';
+import { CustomerTransDB } from '../db/CustomerTransDB.js';
 import { APP_LABELS } from '../main.js';
 import { CashflowDAO, CashflowDB } from '../db/CashflowDB.js';
 
@@ -67,6 +68,7 @@ export default {
     return {
       customer: {},
       collect_form: {},
+      store_day: this.$store.state.day,
       customer_trans: null,
       customer_id: this.$route.params.id,
       labels: APP_LABELS
@@ -82,11 +84,14 @@ export default {
     async addCollecting(evt ) {
       evt.preventDefault()
       let cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
+      cashDAO.day = this.store_day.formated
       cashDAO.amount = parseFloat(this.collect_form.amount)
       cashDAO.actor_id = this.customer_id
       cashDAO.actor_name = this.customer.name
-      let cash_id = await CashflowDB.addNew(cashDAO)
-      CustomersDB.updateDebt(this.customer_id, cashDAO)
+      await CashflowDB.addNew(cashDAO)
+      cashDAO.amount = - (cashDAO.amount)
+      await CustomersDB.updateDebt(this.customer_id, cashDAO)
+      this.getCustomerDetails()
       /*
       let transDAO = new CustomerTransDAO(CustomerTransDAO.COLLECTING_DAO)
       transDAO.cashflow_id = cash_id
