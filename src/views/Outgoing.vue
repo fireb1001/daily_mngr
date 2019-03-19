@@ -129,7 +129,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
 <div class="p-3 col-print-12 pr-me" :class="{ 'col-6': ! detailed , 'col-10':  detailed }">
   <br/>
   <div class="m-3  ">
-  <h2>بيع اليوم {{store_day.formated}}</h2>
+  <h2>بيع اليوم {{store_day.arab}}</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
@@ -271,7 +271,7 @@ export default {
       this.outgoing_form.day = this.store_day.formated
     },
     async refresh_outgoings() {
-      this.outgoings_arr = await OutgoingsDB.getAll()
+      this.outgoings_arr = await OutgoingsDB.getAll({day: this.store_day.formated})
       /*
       try {
         var results = await conn_pool.query('SELECT * FROM '+Outgoing.table_name)

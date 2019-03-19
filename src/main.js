@@ -9,10 +9,21 @@ import Dexie from 'dexie'
 
 Vue.use(BootstrapVue)
 console.log(process.versions.electron)
+
+import Datetime from 'vue-datetime'
+// You need a specific loader for CSS files
+import 'vue-datetime/dist/vue-datetime.css'
+
+Vue.use(Datetime)
+import { Settings, DateTime } from 'luxon'
+
+Settings.defaultLocale = 'ar'
+console.log( DateTime.local().locale)
+
 Vue.config.productionTip = false
 const db_version = 1
 export const dexie = new Dexie('daily_mngr_'+db_version)
-export { store }
+export { store, DateTime }
 // TODO collect all todos !
 // TODO clear daily_mngr data from bedos // rename !
 // TODO go mysql go

@@ -16,8 +16,9 @@
           <div class="sidebar-sticky">
 
             <h4 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>يومية {{day_comp.formated}}</span> 
+              <span>يومية {{day_comp.arab}}</span> 
             </h4>
+            <datetime v-model="luxon_date" @close="change_luxon_date"></datetime>
             <ul class="nav flex-column">
 
               <li class="nav-item bg-incoming ">
@@ -139,21 +140,47 @@
 //<router-view/>
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import { DateTime } from './main'
+
 export default {
   data() {
     return {
+      luxon_date: null
     }
   },
   beforeMount () {
     let formated = require('moment')().format('YYYY-MM-DD')
+    // let arab = DateTime.fromISO(formated).toLocaleString(DateTime.DATE_FULL)
+    let arab =  DateTime.fromISO(formated).toLocaleString(DateTime.DATE_FULL)
+    this.luxon_date = DateTime.local().toString()
     if ( ! this.$store.state.day.now)
-      this.$store.commit('setDay' ,{now: Date.now(), formated: formated})
+      this.$store.commit('setDay' ,{now: Date.now(), formated: formated, arab: arab })
+  },
+  methods: {
+    change_luxon_date(){
+      console.log('change_luxon_date ', this.luxon_date)
+      let dateTime = DateTime.fromISO(this.luxon_date)
+      /*
+      console.log('formated ', dateTime.toISODate())
+      console.log('timestamp ', dateTime.valueOf())
+      console.log('arab ', dateTime.toLocaleString(DateTime.DATE_FULL))
+      */
+      this.$store.commit('setDay' ,{
+        now: dateTime.valueOf(),
+        formated: dateTime.toISODate(),
+        arab: dateTime.toLocaleString(DateTime.DATE_FULL) 
+      })
+      
+    }
   },
   computed: {
     // TODO 21 مارس
     day_comp : function () {
       return this.$store.state.day
     }
+  },
+  watch :{
+    // luxon_date: function() {}
   }
 }
 </script>

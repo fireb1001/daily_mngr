@@ -168,9 +168,15 @@ export class OutgoingsDB {
       return Object.values(all_obj)
     }
   
-    static async getAll() {
+    static async getAll(data) {
       let all = []
-      all = await dexie[this.TABLE_NAME].toArray()
+      if(data) {
+        if(data.day) 
+          all = await dexie[this.TABLE_NAME].where({day: data.day}).toArray()
+      }
+      else {
+        all = await dexie[this.TABLE_NAME].toArray()
+      }
       return all
     }
   }

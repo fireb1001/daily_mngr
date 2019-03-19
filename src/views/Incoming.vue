@@ -104,7 +104,7 @@
 </div>
 <div class="col-6 col-print-10 pr-me" >
   <br/>
-  <h2>وارد اليوم {{store_day.formated}}</h2>
+  <h2>وارد اليوم {{store_day.arab}}</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
@@ -172,15 +172,23 @@ export default {
     },
     async refresh_inc_arr() {
       // console.log(require('moment')(this.store_day.formated).format("X"))
-      this.incomings_arr = await IncomingsDB.getAll()
+      this.incomings_arr = await IncomingsDB.getAll({day: this.store_day.formated})
     }
   },
   async mounted() {
-    delete this.incoming_form.id 
+
     this.incoming_form.day = this.store_day.formated
     this.refresh_inc_arr()
     this.active_suppliers = await SuppliersDB.getAll({active:1})
     this.active_products = await ProductsDB.getAll()
+    this.$store.subscribe( (mutation, state) => {
+      console.log(mutation)
+      if(mutation.type =='setDay') {
+        this.store_day = state.day
+        this.incoming_form.day = this.store_day.formated
+        this.refresh_inc_arr()
+      }
+    })
   },
   computed: {
     valid_form: function() {

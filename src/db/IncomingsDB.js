@@ -162,9 +162,15 @@ export class IncomingsDB {
   }
 
 
-  static async getAll() {
+  static async getAll(data) {
     let all = []
-    all = await dexie[this.TABLE_NAME].toArray()
+    if(data) {
+      if(data.day) 
+        all = await dexie[this.TABLE_NAME].where({day: data.day}).toArray()
+    }
+    else {
+      all = await dexie[this.TABLE_NAME].toArray()
+    }
     /*
     try {
       var results = await conn_pool.query('SELECT * FROM '+IncomingsDB.TABLE_NAME)
