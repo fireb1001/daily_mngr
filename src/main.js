@@ -21,40 +21,26 @@ Settings.defaultLocale = 'ar'
 console.log( DateTime.local().locale)
 
 Vue.config.productionTip = false
-const db_version = 1
-export const dexie = new Dexie('daily_mngr_'+db_version)
+
+export const dexie = new Dexie('daily_mngr')
 export { store, DateTime }
 // TODO collect all todos !
 // TODO clear daily_mngr data from bedos // rename !
 // TODO go mysql go
 // TODO cashflow text detailed && cashflow after
 
-dexie.version(db_version).stores({
+dexie.version(1).stores({
   
   incomings: '++id, product_id, supplier_id, day',
   outgoings: '++id, product_id, supplier_id, customer_id, day',
-  suppliers: '++id, balance, active ',
-  products: '++id, active',
-  customers: '++id, debt, active',
-  customer_trans: '++id, debt_after',
-  supplier_trans: '++id, balance_after',
-  incomings_header: '++id, supplier_id, product_id, day, total_count, current_count',
-  outgoings_header: '++id, supplier_id, product_id, total_count, sell_com, total_weight, kg_price, incoming_header_id, day, total_value',
-  cashflow: '++id, amount, state'
-  // benefit of a compound index [day+product_id+supplier_id]
-})
-dexie.version(2).stores({
-  
-  incomings: '++id, product_id, supplier_id, day',
-  outgoings: '++id, product_id, supplier_id, customer_id, day',
-  suppliers: '++id, balance, active ',
+  suppliers: '++id, balance, active',
   products: '++id, active',
   customers: '++id, debt, active',
   customer_trans: '++id, debt_after, customer_id',
   supplier_trans: '++id, balance_after',
   incomings_header: '++id, supplier_id, product_id, day, total_count, current_count',
   outgoings_header: '++id, supplier_id, product_id, total_count, sell_com, total_weight, kg_price, incoming_header_id, day, total_value',
-  cashflow: '++id, amount, state'
+  cashflow: '++id, amount, state, day'
   // benefit of a compound index [day+product_id+supplier_id]
 })
 /*

@@ -101,7 +101,7 @@ export class IncomingsDB {
         supplier_id: data.supplier_id,
         supplier_name: data.supplier_name
       }
-      cashDAO.day = store.state.day.formated
+      cashDAO.day = store.state.day.iso
       cashDAO.actor_id = data.supplier_id
       cashDAO.actor_name = data.supplier_name
       await CashflowDB.addNew(cashDAO)
@@ -110,7 +110,7 @@ export class IncomingsDB {
     if(data.given) {
       let cashDAO = new CashflowDAO()
       cashDAO.amount = data.given
-      cashDAO.day = store.state.day.formated
+      cashDAO.day = store.state.day.iso
       cashDAO.sum = '-'
       cashDAO.state = 'given'
       cashDAO.state_data = {
@@ -126,7 +126,7 @@ export class IncomingsDB {
     // Update Supplier Info
     await SuppliersDB.updateIncomings(data.supplier_id, {
       count: data.count,
-      curr_incoming_day : store.state.day.formated
+      curr_incoming_day : store.state.day.iso
     })
 
     /*

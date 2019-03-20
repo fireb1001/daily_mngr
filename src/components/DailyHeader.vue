@@ -1,6 +1,6 @@
 <template>
   <section class="src-components-daily-header">
-    <h1 @click="setToday">يومية {{day.formated}}</h1>
+    <h1 @click="setToday">يومية {{day.iso}}</h1>
   </section>
 </template>
 
@@ -19,8 +19,8 @@ export default {
   },
   methods: {
     setToday () {
-      let formated = require('moment')().format('YYYY-MM-DD')
-      this.$store.commit('setDay' ,{now: Date.now(), formated: formated})
+      // let iso = require('moment')().format('YYYY-MM-DD')
+      // this.$store.commit('setDay' ,{now: Date.now(), iso: iso})
     }
   },
   components: {

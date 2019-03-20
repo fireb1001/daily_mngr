@@ -117,8 +117,8 @@ export class OutgoingsDB {
           amount: data.value_calc,
           outgoing_id: outgoing_id,
           trans_type: 'outgoing',
-          day: store.state.day.formated,
-          curr_incoming_day : store.state.day.formated
+          day: store.state.day.iso,
+          curr_incoming_day : store.state.day.iso
         })
       }
       else {
@@ -129,7 +129,7 @@ export class OutgoingsDB {
         cashDAO.state_data = {
           outgoing_id: outgoing_id
         }
-        cashDAO.day = store.state.day.formated
+        cashDAO.day = store.state.day.iso
         await CashflowDB.addNew(cashDAO)
       }
 
@@ -137,7 +137,7 @@ export class OutgoingsDB {
       if(data.collecting) {
         let cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
         cashDAO.amount = data.collecting
-        cashDAO.day = store.state.day.formated
+        cashDAO.day = store.state.day.iso
         cashDAO.state_data = {
           outgoing_id: outgoing_id,
           customer_id: data.customer_id,

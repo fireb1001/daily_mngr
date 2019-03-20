@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Incoming from './views/Incoming.vue'
-
+import Daily from './views/Daily.vue'
 import Products from './views/Products.vue'
 import Suppliers from './views/Suppliers.vue'
 import Customers from './views/Customers.vue'
@@ -23,6 +23,11 @@ export default new Router({
       path: '/',
       name: 'incoming',
       component: Incoming
+    },
+    {
+      path: '/daily',
+      name: 'daily',
+      component: Daily
     },
     {
       path: '/outgoing',

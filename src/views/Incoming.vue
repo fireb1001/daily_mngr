@@ -102,7 +102,7 @@
   
 </form>
 </div>
-<div class="col-6 col-print-10 pr-me" >
+<div class="col-6 p-3 col-print-10 pr-me" >
   <br/>
   <h2>وارد اليوم {{store_day.arab}}</h2>
       <div class="table-responsive">
@@ -129,7 +129,7 @@
           </tbody>
         </table>
         <button class="btn btn-success pr-hideme" 
-        @click="clipboard.writeText('وارد اليوم '+ store_day.formated);vue_window.print()">
+        @click="clipboard.writeText('وارد اليوم '+ store_day.iso);vue_window.print()">
           <span class="fa fa-print"></span> طباعة
         </button>
       </div> 
@@ -167,28 +167,30 @@ export default {
       console.log(this.incoming_form)
       await IncomingsDB.addNew(this.incoming_form)
       this.incoming_form = new IncomingDAO(IncomingDAO.INIT_DAO)
-      this.incoming_form.day = this.store_day.formated
+      this.incoming_form.day = this.store_day.iso
       this.refresh_inc_arr()
     },
     async refresh_inc_arr() {
-      // console.log(require('moment')(this.store_day.formated).format("X"))
-      this.incomings_arr = await IncomingsDB.getAll({day: this.store_day.formated})
+      // console.log(require('moment')(this.store_day.iso).format("X"))
+      this.incomings_arr = await IncomingsDB.getAll({day: this.store_day.iso})
     }
   },
   async mounted() {
 
-    this.incoming_form.day = this.store_day.formated
+    this.incoming_form.day = this.store_day.iso
     this.refresh_inc_arr()
     this.active_suppliers = await SuppliersDB.getAll({active:1})
     this.active_products = await ProductsDB.getAll()
+    /*
     this.$store.subscribe( (mutation, state) => {
       console.log(mutation)
       if(mutation.type =='setDay') {
         this.store_day = state.day
-        this.incoming_form.day = this.store_day.formated
+        this.incoming_form.day = this.store_day.iso
         this.refresh_inc_arr()
       }
     })
+    */
   },
   computed: {
     valid_form: function() {

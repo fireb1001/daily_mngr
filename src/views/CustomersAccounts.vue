@@ -26,7 +26,7 @@ export default {
   methods: {
     async refresh_daily_customers () {
       // TODO get unique daily customers
-      let unique_daily_customers_ids = await OutgoingsDB.getDailyCustomers({day: this.store_day.formated})
+      let unique_daily_customers_ids = await OutgoingsDB.getDailyCustomers({day: this.store_day.iso})
       this.daily_customers = await CustomersDB.getAll(unique_daily_customers_ids)
     }
   },

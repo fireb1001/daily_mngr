@@ -127,7 +127,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
 </div>
 <!-- conditional class col-6 -->
 <div class="p-3 col-print-12 pr-me" :class="{ 'col-6': ! detailed , 'col-10':  detailed }">
-  <br/>
+
   <div class="m-3  ">
   <h2>بيع اليوم {{store_day.arab}}</h2>
       <div class="table-responsive">
@@ -165,7 +165,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
         </table>
         <button class="btn btn-primary pr-hideme" v-if="detailed === false" @click="show_details()"> عرض التفاصيل </button>
         <button class="btn btn-success pr-hideme" v-if="detailed !== false" 
-        @click="clipboard.writeText('بيع اليوم '+store_day.formated);vue_window.print()">
+        @click="clipboard.writeText('بيع اليوم '+store_day.iso);vue_window.print()">
           <span class="fa fa-print"></span> طباعة
         </button>
         &nbsp;
@@ -268,10 +268,10 @@ export default {
     reinit_form() {
       this.selected_inc_hdr = new IncomingsHeaderDAO({})
       this.outgoing_form =new OutgoingDAO(OutgoingDAO.INIT_DAO)
-      this.outgoing_form.day = this.store_day.formated
+      this.outgoing_form.day = this.store_day.iso
     },
     async refresh_outgoings() {
-      this.outgoings_arr = await OutgoingsDB.getAll({day: this.store_day.formated})
+      this.outgoings_arr = await OutgoingsDB.getAll({day: this.store_day.iso})
       /*
       try {
         var results = await conn_pool.query('SELECT * FROM '+Outgoing.table_name)
@@ -285,7 +285,7 @@ export default {
       */
     },
     async refresh_incoming_headers() {
-      this.incoming_headers = await IncomingsHeaderDB.getAll({current_count: '> 0'})
+      this.incoming_headers = await IncomingsHeaderDB.getAll({current_count: '> 0', day: this.store_day.iso})
     }
   },
   async mounted() {

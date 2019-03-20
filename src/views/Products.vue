@@ -1,6 +1,6 @@
 <template>
   <section class="products row">
-    <div class="col-6">
+    <div class="col-5">
     <br/>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> 
     <HelloWorld msg="Welcome to Your Vue.js App"/>
@@ -37,14 +37,14 @@
         </div>
       </div>
 -->
-      <button type="submit" class="btn btn-success">اضافة</button>
+      <button type="submit" class="btn btn-success" :disabled="! product_form.name">اضافة</button>
     </form>
     </div>
   </b-collapse>
 </div>
 </div>
 
-  <div class="col-6">
+  <div class="col-7">
     <br/>
     <h2 :class="{ 'text-danger': ! show_active }">
       <span v-if="show_active"> ادارة </span>
@@ -116,7 +116,6 @@ export default {
       await ProductsDB.addNew(this.product_form)
       this.product_form = new ProductDAO(ProductDAO.INIT_DAO)
       this.refresh_products()
-
     },
     async refresh_products() {
       this.products_arr = await ProductsDB.getAll()

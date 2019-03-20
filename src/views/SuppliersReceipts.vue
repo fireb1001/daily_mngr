@@ -29,7 +29,7 @@ export default {
       // this.suppliers_arr = await SuppliersDB.getAll()
       // last_incoming_day: this.$store.state.day.formate
       // console.log(this.suppliers_arr)
-      let unique_daily_suppliers_ids = await IncomingsDB.getDailySuppliers({day: this.store_day.formated})
+      let unique_daily_suppliers_ids = await IncomingsDB.getDailySuppliers({day: this.store_day.iso})
       this.suppliers_arr = await SuppliersDB.getAll(unique_daily_suppliers_ids)
     }
   },

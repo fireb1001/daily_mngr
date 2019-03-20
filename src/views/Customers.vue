@@ -1,6 +1,6 @@
 <template>
   <section class="customers row">
-    <div class="col-6">
+    <div class="col-5">
     <br/>
 <button v-b-toggle.collapse_it class="btn btn-primary m-1">
   ادخال بياع جديد 
@@ -65,7 +65,7 @@
     </div>
   </b-collapse>
   </div>
-  <div class="col-6">
+  <div class="col-7">
     <br/>
   <h2 :class="{ 'text-danger': ! show_active }">
     <span v-if="show_active"> ادارة </span>

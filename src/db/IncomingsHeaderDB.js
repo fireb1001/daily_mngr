@@ -82,10 +82,15 @@ export class IncomingsHeaderDB {
 
     let all = []
     if(data) {
-      if(data.current_count == '> 0')
-        all = await dexie[this.TABLE_NAME].where('current_count').above(0).toArray()
-      if(data.day && data.supplier_id)
+      if(data.current_count == '> 0' && data.day){
+        // all = await dexie[this.TABLE_NAME].where('current_count').above(0).toArray()
+        all = await dexie[this.TABLE_NAME].where({day:data.day}).and( row => {
+          return row.current_count > 0 
+        }).toArray()
+      }
+      if(data.day && data.supplier_id) {
         all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
+      }
     }
     else {
       all = await dexie[this.TABLE_NAME].toArray()

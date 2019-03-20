@@ -45,7 +45,7 @@ export class CustomersDB {
       let customerTransDao = new CustomerTransDAO()
       customerTransDao.customer_id = id
       customerTransDao.trans_type = 'init'
-      customerTransDao.day = store.state.day.formated
+      customerTransDao.day = store.state.day.iso
       customerTransDao.amount = data.debt
       customerTransDao.debt_after = data.debt
       CustomerTransDB.addNew(customerTransDao)

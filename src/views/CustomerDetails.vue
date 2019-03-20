@@ -84,7 +84,7 @@ export default {
     async addCollecting(evt ) {
       evt.preventDefault()
       let cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
-      cashDAO.day = this.store_day.formated
+      cashDAO.day = this.store_day.iso
       cashDAO.amount = parseFloat(this.collect_form.amount)
       cashDAO.actor_id = this.customer_id
       cashDAO.actor_name = this.customer.name

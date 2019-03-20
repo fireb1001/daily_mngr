@@ -13,12 +13,22 @@
     <div class="container-fluid ">
       <div class="row" style="max-width: 100%;">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar d-print-none" >
-          <div class="sidebar-sticky">
-
-            <h4 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>يومية {{day_comp.arab}}</span> 
-            </h4>
+          <div class="sidebar-sticky mt-3">
+            <b class=" text-muted">
+              {{ day_comp.d_week }}
+            </b>
+            <h3 class="d-flex justify-content-between align-items-center px-3  mb-1 text-muted">
+              <span> {{day_comp.arab}}</span> 
+            </h3>
+            <b class="m-3 ">
+              <router-link class="text-muted" to="/daily" style="float:left;padding: 0 10px;">
+              تغيير اليوم
+              </router-link>
+            </b>
+            <div><br></div>
+            <!--
             <datetime v-model="luxon_date" @close="change_luxon_date"></datetime>
+            -->
             <ul class="nav flex-column">
 
               <li class="nav-item bg-incoming ">
@@ -145,33 +155,18 @@ import { DateTime } from './main'
 export default {
   data() {
     return {
-      luxon_date: null
+
     }
   },
   beforeMount () {
-    let formated = require('moment')().format('YYYY-MM-DD')
-    // let arab = DateTime.fromISO(formated).toLocaleString(DateTime.DATE_FULL)
-    let arab =  DateTime.fromISO(formated).toLocaleString(DateTime.DATE_FULL)
-    this.luxon_date = DateTime.local().toString()
+    let iso = require('moment')().format('YYYY-MM-DD')
+    let arab =  DateTime.fromISO(iso).toLocaleString(DateTime.DATE_FULL)
+    let d_week = DateTime.fromISO(iso).toLocaleString({ weekday: 'long'})
     if ( ! this.$store.state.day.now)
-      this.$store.commit('setDay' ,{now: Date.now(), formated: formated, arab: arab })
+      this.$store.commit('setDay' ,{ts: Date.now(), iso: iso, arab: arab, d_week: d_week })
   },
   methods: {
-    change_luxon_date(){
-      console.log('change_luxon_date ', this.luxon_date)
-      let dateTime = DateTime.fromISO(this.luxon_date)
-      /*
-      console.log('formated ', dateTime.toISODate())
-      console.log('timestamp ', dateTime.valueOf())
-      console.log('arab ', dateTime.toLocaleString(DateTime.DATE_FULL))
-      */
-      this.$store.commit('setDay' ,{
-        now: dateTime.valueOf(),
-        formated: dateTime.toISODate(),
-        arab: dateTime.toLocaleString(DateTime.DATE_FULL) 
-      })
-      
-    }
+
   },
   computed: {
     // TODO 21 مارس
@@ -188,6 +183,10 @@ export default {
 body {
   direction: rtl;
   text-align: right;
+}
+
+h1,h2,h3,h4,h5 {
+  color: #666
 }
 
 .feather {
@@ -312,6 +311,13 @@ body {
 .bg-accounts {
   background-color: #c2c9da;
   border-radius: 0 10px 10px 0 ;
+}
+
+.vdatetime-input{
+  padding: 8px 10px;
+  font-size: 18px;
+  border: solid 1px #ddd;
+  color: #444;
 }
 
 /*

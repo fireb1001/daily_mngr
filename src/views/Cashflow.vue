@@ -58,6 +58,7 @@ export default {
       // console.log( this.$route.name ,state)
       this.cashflow_arr = await CashflowDB.getAll({
         // state:this.$route.name
+        day: this.$store.state.day.iso,
         state: state
       })
     }

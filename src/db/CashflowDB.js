@@ -61,17 +61,21 @@ export class CashflowDB {
     let all = []
     /**@type {Dexie.Table} */
     let table = dexie[this.TABLE_NAME]
-    if(data.state){
+    if(data.state && data.day){
       if (Array.isArray( data.state)) {
+        /**@type {Array} */
+        let states_arr = data.state
         // multible 
-        all = await table.where('state').anyOf(data.state).toArray()
+        all = await table.where({ day: data.day}).and(row => {
+          return states_arr.includes(row.state)
+        }).toArray()
       } 
       else {
-        all = await table.where({state:data.state}).toArray()
+        all = await table.where({state:data.state, day: data.day}).toArray()
       }
     }
     else {
-      // all = await dexie.cashflow.toArray()
+      // NONE
     }
 
     return all

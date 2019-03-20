@@ -38,7 +38,7 @@
     </div>
   </b-collapse>
   <br/>
-    <h2>اجماليات وارد اليوم {{store_day.formated}}</h2>
+    <h2>اجماليات وارد اليوم {{store_day.iso}}</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
@@ -58,7 +58,7 @@
         </table>
       </div>
   <hr>
-      <h2>اجماليات بيع اليوم {{store_day.formated}}</h2>
+      <h2>اجماليات بيع اليوم {{store_day.iso}}</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
@@ -109,12 +109,12 @@ export default {
       let supp_obj = await SuppliersDB.getDAOById(this.$route.params.id)
       this.supplier = new SupplierDAO(supp_obj)
       this.incomings_headers_today = await IncomingsHeaderDB.getAll({
-        day: this.store_day.formated,
+        day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
 
       this.outgoings_headers_today = await OutgoingsHeaderDB.getAll({
-        day: this.store_day.formated,
+        day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
     },
