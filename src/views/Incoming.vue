@@ -180,7 +180,7 @@ export default {
     this.incoming_form.day = this.store_day.iso
     this.refresh_inc_arr()
     this.active_suppliers = await SuppliersDB.getAll({active:1})
-    this.active_products = await ProductsDB.getAll()
+    this.active_products = await ProductsDB.getAll({active:1})
     /*
     this.$store.subscribe( (mutation, state) => {
       console.log(mutation)

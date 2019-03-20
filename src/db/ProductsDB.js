@@ -1,15 +1,14 @@
 // import { conn_pool } from '../main'
-import { dexie } from '../main'
+import { dexie , appConfig , conn_pool } from '../main'
 
 export class ProductDAO {
-
     id = 0
     name = ''
-    season 
     date_created
     active = 1
     notes = ''
-    collection = ''
+    // season 
+    // collection = ''
 
   static get INIT_DAO() {
     return {
@@ -18,41 +17,67 @@ export class ProductDAO {
   }
 
   constructor( data ){
-    Object.assign(this, data)
+    if (data) Object.assign(this, data)
+    if(data && data.active == '0') this.active = 0
   }
 }
 
+ProductDAO.prototype.id = Number
+ProductDAO.prototype.name = String
+/*
+Object.(ProductDAO.prototype, 'id',{
+
+})
+*/
 //////////////////////// DB ///////////////////////////////
  
 export class ProductsDB {
   static TABLE_NAME = 'products'
 
+  /**@param {ProductDAO} data */
   static async addNew(data) {
-    delete data.id
-    return await dexie[this.TABLE_NAME].add(data)
-    /*
-          let instert_q = ` INSERT INTO ${Product.table_name} 
-      (name, supplier, unit, price, notes, active) 
-      VALUES ('${values.name}',${values.supplier},'${values.unit}',${values.price},'${values.notes}','${values.active}')
+    // return await dexie[this.TABLE_NAME].add(data)
+    let instert_q = ` INSERT INTO ${this.TABLE_NAME} 
+      (name, notes, active) 
+      VALUES ('${data.name}','${data.notes}','${data.active}')
 `
-      try {
-        console.log(instert_q)
-        await conn_pool.query(instert_q)
-        this.refresh_products_arr()
-      } catch (error) {
-        console.error("SQL error", error)
-        this.products_arr.push(new Product(values))
-      }
-    */
+    console.log(instert_q)
+    let ok = await conn_pool.query(instert_q)
+    return ok.insertId
   }
+
 
   static async saveById(id, payload) {
-    return await dexie[this.TABLE_NAME].update(id, payload)
+
+    // return await dexie[this.TABLE_NAME].update(id, payload)
+    // Helper if is set payload. name = '${payload.name}'
+    console.log(Object.getOwnPropertyNames(new ProductDAO()))
+
+    let update_q = ` UPDATE ${this.TABLE_NAME} SET 
+    active = '${payload.active}' WHERE id = ${id}`
+    let ok = await conn_pool.query(update_q)
+    console.log(ok)
   }
 
-  static async getAll() {
+  static async getAll(data) {
     let all = []
-    all = await dexie[this.TABLE_NAME].toArray()
+    if(appConfig.db_engine == 'dexie')
+      all = await dexie[this.TABLE_NAME].toArray()
+    if(appConfig.db_engine == 'mysql') {
+      var results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
+      results.forEach( item => {
+        // console.log(item)
+        if (data && data.active ){
+          // check if item.active
+          if(parseInt(item.active) == 1)
+            all.push(new ProductDAO(item))
+        }
+        else { // all
+          all.push(new ProductDAO(item))
+        }
+      })
+    }
     return all
   }
+
 }

@@ -3,8 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import BootstrapVue from 'bootstrap-vue'
-import { Outgoing, Product} from './sql_classes'
-import { IncomingsDB } from './db/IncomingsDB'
+//import { Outgoing, Product} from './sql_classes'
+//import { IncomingsDB } from './db/IncomingsDB'
 import Dexie from 'dexie'
 
 Vue.use(BootstrapVue)
@@ -21,6 +21,21 @@ Settings.defaultLocale = 'ar'
 console.log( DateTime.local().locale)
 
 Vue.config.productionTip = false
+
+export const appConfig = {
+  db_engine: 'mysql' // dexie / mysql 
+}
+
+export const APP_LABELS = {
+  given: 'وهبة',
+  nolon: 'نولون',
+  outgoing_cash: 'بيع كاش',
+  trans: {
+    outgoing: 'بيع اجل',
+    collecting: 'تحصيل',
+    init: 'رصيد مديونية'
+  }
+}
 
 export const dexie = new Dexie('daily_mngr')
 export { store, DateTime }
@@ -43,6 +58,20 @@ dexie.version(1).stores({
   cashflow: '++id, amount, state, day'
   // benefit of a compound index [day+product_id+supplier_id]
 })
+
+
+export const payloader = function(payload, object) {
+  let sets = []
+  Object.keys(payload).forEach( key => {
+    if (object.hasOwnProperty(key)) {
+      // console.log(key, typeof payload[key], payload[key])
+      let value = typeof payload[key] == 'string' ? `'${payload[key]}'`: payload[key]
+      sets.push(key + '=' + value)
+    }
+  })
+  return sets
+}
+
 /*
 export const SupplierDX = dexie.suppliers.defineClass({
   id: Number,
@@ -56,14 +85,7 @@ SupplierDX.prototype.save = function () {
 
 var mysql      = require('mysql')
 var util = require('util')
-/*
-var conn = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'bitnami_opencart'
-})
-*/
+
 var db_config = {
   connectionLimit: 10,
   host: 'localhost',
@@ -71,20 +93,7 @@ var db_config = {
   database: 'daily_mngr',
 }
 
-export const appConfig = {
-  db_engine: ''
-}
-
-export const APP_LABELS = {
-  given: 'وهبة',
-  nolon: 'نولون',
-  outgoing_cash: 'بيع كاش',
-  trans: {
-    outgoing: 'بيع اجل',
-    collecting: 'تحصيل',
-    init: 'رصيد مديونية'
-  }
-}
+/*
 function create_db () {
   db_config.database=''
   var conn = mysql.createConnection(db_config)
@@ -98,7 +107,7 @@ function create_db () {
   conn.query(Outgoing.createTableQ() ,(error)=>console.error(error))
   conn.query(Product.createTableQ() ,(error)=>console.error(error))
 }
-
+*/
 var pool = mysql.createPool(db_config)
 
 pool.getConnection((err, connection) => {
@@ -114,8 +123,8 @@ pool.getConnection((err, connection) => {
       }
       if(err.code === 'ER_BAD_DB_ERROR') {
         // Init DB First
-        console.error('Creating DB')
-        create_db()
+        console.error('ER_BAD_DB_ERROR', 'NO DB , Create DB')
+        // create_db()
       }
   }
   if (connection) connection.release()
@@ -125,7 +134,6 @@ pool.getConnection((err, connection) => {
 pool.query = util.promisify(pool.query)
 
 export const conn_pool = pool
-
 
 new Vue({
   router,

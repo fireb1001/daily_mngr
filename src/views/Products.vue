@@ -119,6 +119,8 @@ export default {
     },
     async refresh_products() {
       this.products_arr = await ProductsDB.getAll()
+      let new_prs = await ProductsDB.getAll()
+      console.log(new_prs)
     },
     async archive( id ,undo = '') {
       if( this.confirm_step[id] ) {

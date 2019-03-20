@@ -129,7 +129,12 @@ export default {
       console.log(this.supplier_form)
       if( this.edit_id !==0 && this.edit_id === this.supplier_form.id) {
         // Edit 
-        SuppliersDB.saveById(this.supplier_form.id, this.supplier_form)
+        SuppliersDB.saveById(this.supplier_form.id, {
+          name: this.supplier_form.name,
+          phone: this.supplier_form.phone,
+          address: this.supplier_form.address,
+          notes: this.supplier_form.notes
+        })
       }
       else {
         // New 
