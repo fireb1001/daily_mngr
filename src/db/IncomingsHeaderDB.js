@@ -1,5 +1,5 @@
 // import { conn_pool } from '../main'
-import { dexie } from '../main'
+import { dexie, conn_pool } from '../main'
 
 export class IncomingsHeaderDAO {
 
@@ -9,9 +9,10 @@ export class IncomingsHeaderDAO {
   supplier_id = 0
   supplier_name
   day = ''
-  notes = ''
+  date_created
   total_count = 0
   current_count = 0
+  notes = ''
 
   static get INIT_DAO() {
     return {
@@ -66,10 +67,10 @@ export class IncomingsHeaderDB {
     return await dexie[this.TABLE_NAME].update(id, payload)
   }
 
-  static async getById(id) {
-    /**@type {Dexie.Table} */
-    let table = dexie[this.TABLE_NAME]
-    return await table.get(id)
+  static async getDAOById(id) {
+    // return await dexie[this.TABLE_NAME].get(id)
+    let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id=${id}`)
+    return new IncomingsHeaderDAO(row[0])
   }
 
   static async getDayHeader(data) {

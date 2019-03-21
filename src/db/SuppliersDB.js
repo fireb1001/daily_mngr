@@ -1,5 +1,5 @@
 // import { conn_pool } from '../main'
-import { dexie, conn_pool, payloader } from '../main'
+import { conn_pool, payloader } from '../main'
 
 export class SupplierDAO {
 
@@ -68,8 +68,8 @@ export class SuppliersDB {
   }
 
   static async getDAOById(id) {
-    let supplierRow = await conn_pool.query('SELECT * FROM suppliers where id='+ id)
-    return new SupplierDAO(supplierRow[0])
+    let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id=${id}`)
+    return new SupplierDAO(row[0])
   }
 
   static async getAll(data) {
@@ -78,14 +78,15 @@ export class SuppliersDB {
     if(data) {
       if (Array.isArray(data)){
         // TODO change
-        all = await dexie[this.TABLE_NAME].where('id').anyOf(data).toArray()
+        // all = await dexie[this.TABLE_NAME].where('id').anyOf(data).toArray()
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id IN ( ${data.join(',')} )`)
       }
       if(data.active === 1) {
-        results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME +' Where active = 1')
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where active = 1`)
       }
     }
     else {
-      results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
+      results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME}`)
     }
     results.forEach( item => {
       console.log(item)

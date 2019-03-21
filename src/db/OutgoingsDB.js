@@ -104,7 +104,7 @@ export class OutgoingsDB {
       data.sell_com_value = data.count * data.sell_com
       let outgoing_id = await dexie[this.TABLE_NAME].add(data)
       // decrease Incoming 
-      let inc_header = await IncomingsHeaderDB.getById(data.incoming_header_id)
+      let inc_header = await IncomingsHeaderDB.getDAOById(data.incoming_header_id)
       inc_header.current_count -= parseInt(data.count)
       await IncomingsHeaderDB.saveById(inc_header.id, inc_header)
       // Add outgoing header according to price
