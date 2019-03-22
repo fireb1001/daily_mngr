@@ -44,22 +44,22 @@ export default {
   },
   methods: {
     async refresh_cashflow_arr() {
-      let state = null
+      let states = null
       if(this.$route.name == 'expensess') {
-        state = ['given','expense']
+        states = ['given','expense']
       }
       else if(this.$route.name == 'collecting') {
-        state = ['collecting','outgoing_cash'] // ['given','expense']
+        states = ['collecting','outgoing_cash'] // ['given','expense']
       }
       else if (this.$route.name == 'payments') {
-        state = ['nolon','payment']
+        states = ['nolon','payment']
       }
       
       // console.log( this.$route.name ,state)
       this.cashflow_arr = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        state: state
+        states: states
       })
     }
   },

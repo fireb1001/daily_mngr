@@ -1,10 +1,7 @@
-// import { conn_pool } from '../main'
-import { dexie, store } from '../main'
+import { payloader, inserter, conn_pool, store } from '../main'
 import { IncomingsHeaderDB, IncomingsHeaderDAO } from './IncomingsHeaderDB'
 import { CashflowDB, CashflowDAO} from './CashflowDB'
 import { SuppliersDB } from './SuppliersDB';
-
-// console.log(IncomingsHeaderDAO.EMPTY_FORM())
 
 export class IncomingDAO {
 
@@ -80,11 +77,12 @@ export class IncomingsDB {
   /**@param {IncomingDAO} data */
   static async addNew(data) {
     // console.log(data)
-    delete data.id
     data.selectFromObjects()
     data.parseTypes()
-
-    let incoming_id = await dexie[this.TABLE_NAME].add(data)
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new IncomingDAO())}`
+    // let incoming_id = await dexie[this.TABLE_NAME].add(data)
+    let ok = await conn_pool.query(instert_q)
+    let incoming_id = ok.insertId
     let incHeadDAO = new IncomingsHeaderDAO(data)
 
     // update Incoming Header  let header_id = 
@@ -146,17 +144,25 @@ export class IncomingsDB {
   }
 
   static async saveById(id, payload) {
-    let updated = await dexie[this.TABLE_NAME].update(id, payload)
-
-    return updated
+    let sets = payloader(payload, new IncomingDAO())
+    let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return 
   }
 
   static async getDailySuppliers(data) {
     let all_obj = {}
+    /*
     await dexie[this.TABLE_NAME].where({day:data.day}).each( item => {
       if(item.supplier_id){
         all_obj[item.supplier_id] = item.supplier_id
       }
+    })
+    */
+    let all = await this.getAll(data)
+    all.forEach( item => {
+      if(item.supplier_id)
+        all_obj[item.supplier_id] = item.supplier_id
     })
     return Object.values(all_obj)
   }
@@ -164,24 +170,19 @@ export class IncomingsDB {
 
   static async getAll(data) {
     let all = []
+    let results = []
+
     if(data) {
-      if(data.day) 
-        all = await dexie[this.TABLE_NAME].where({day: data.day}).toArray()
+      if(data.day) {
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
+        //all = await dexie[this.TABLE_NAME].where({day: data.day}).toArray()
+      }
     }
     else {
-      all = await dexie[this.TABLE_NAME].toArray()
+      results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
     }
-    /*
-    try {
-      var results = await conn_pool.query('SELECT * FROM '+IncomingsDB.TABLE_NAME)
-      this.incomings_arr = []
-      results.forEach( item => {
-        all.push(new IncomingDAO(item))
-      })
-    } catch(err) {
-        throw new Error(err)
-    }
-    */
+
+    results.forEach( item => { all.push(new IncomingDAO(item)) })
     return all
   }
 }

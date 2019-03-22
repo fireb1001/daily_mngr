@@ -1,5 +1,4 @@
-// import { conn_pool } from '../main'
-import { dexie } from '../main'
+import { conn_pool, payloader ,inserter } from '../main'
 
 export class CustomerTransDAO {
 
@@ -23,7 +22,7 @@ export class CustomerTransDAO {
   }
 
   parseTypes () {
-    // this.total_count = parseInt(this.total_count)
+    this.amount = parseFloat(this.amount)
   }
 }
 
@@ -31,24 +30,35 @@ export class CustomerTransDB {
 
   static TABLE_NAME = 'customer_trans'
 
-  static async saveById(id, payload) {
-    return await dexie[this.TABLE_NAME].update(id, payload)
+  static async addNew(data) {
+    data.parseTypes()
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new CustomerTransDAO())}`
+    let ok = await conn_pool.query(instert_q)
+    return ok.insertId
   }
 
-  static async addNew(data) {
-    delete data.id
-    return await dexie[this.TABLE_NAME].add(data)
+  static async saveById(id, payload) {
+    //let updated = await dexie[this.TABLE_NAME].update(id, payload)
+    let sets = payloader(payload, new CustomerTransDAO())
+    let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return
   }
 
   static async getAll(data) {
     let all = []
-    if(data.customer_id) {
-      all = await dexie[this.TABLE_NAME].where({customer_id: data.customer_id}).toArray()
-      console.log(all)
+    let results = []
+
+    if(data) {
+      if(data.customer_id) {
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where customer_id=${data.customer_id}`)
+      }
     }
     else {
-      all = await dexie[this.TABLE_NAME].toArray()
+      results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
     }
+
+    results.forEach( item => { all.push(new CustomerTransDAO(item)) })
     return all
   }
 }

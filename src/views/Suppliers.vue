@@ -67,7 +67,7 @@
         <table class="table table-striped table-sm">
           <thead>
             <tr>
-              <th> كود العميل </th>
+              <th> </th>
               <th>اسم العميل</th>
               <th>رقم التليفون </th>
               <th></th>
@@ -75,7 +75,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in comp_suppliers_arr" :key='idx' >
-              <td>{{item.id}}</td>
+              <td>{{idx +1 }}</td>
               <td>
                 <router-link class="nav-link " :to="{name:'supplier_details', params: {id: item.id}}">
                   {{item.name}}
@@ -138,7 +138,7 @@ export default {
       }
       else {
         // New 
-        SuppliersDB.addNew(this.supplier_form)
+        await SuppliersDB.addNew(this.supplier_form)
       }
       this.$root.$emit('bv::toggle::collapse', 'collapse_it')
       this.refresh_all()
@@ -168,6 +168,7 @@ export default {
     },
     async refresh_all() {
       this.suppliers_arr = await SuppliersDB.getAll()
+      console.log(this.suppliers_arr)
     }
   },
   async mounted() {

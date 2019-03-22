@@ -1,6 +1,4 @@
-import { dexie } from '../main'
-// eslint-disable-next-line no-unused-vars
-import Dexie from 'dexie';
+import { inserter, conn_pool, payloader } from '../main'
 
 export class CashflowDAO {
 
@@ -46,38 +44,39 @@ export class CashflowDB {
 
   /**@param {CashflowDAO} data */
   static async addNew(data) {
-    delete data.id
     data.parseTypes()
-    return await dexie[this.TABLE_NAME].add(data)
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new CashflowDAO())}`
+    let ok = await conn_pool.query(instert_q)
+    return ok.insertId
   }
 
   static async saveById(id, payload) {
-    let updated = await dexie[this.TABLE_NAME].update(id, payload)
-    return updated
+    let sets = payloader(payload, new CashflowDAO())
+    let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return 
   }
 
   static async getAll(data) {
     // console.log(data.state, Array.isArray( data.state))
     let all = []
-    /**@type {Dexie.Table} */
-    let table = dexie[this.TABLE_NAME]
-    if(data.state && data.day){
-      if (Array.isArray( data.state)) {
-        /**@type {Array} */
-        let states_arr = data.state
-        // multible 
-        all = await table.where({ day: data.day}).and(row => {
-          return states_arr.includes(row.state)
-        }).toArray()
-      } 
-      else {
-        all = await table.where({state:data.state, day: data.day}).toArray()
-      }
+    let results = []
+
+    if(data.day && data.states && Array.isArray( data.states)){
+      data.states = data.states.map(d => `'${d}'`).join(',')
+      let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' `
+        + `and state IN (${data.states})`
+      // console.log(query)
+      results = await conn_pool.query(query)
+      // all = await table.where({ day: data.day}).and( row => states_arr.includes(row.state) ).toArray()      
+      // else NONE
+      // all = await table.where({state:data.state, day: data.day}).toArray()
     }
     else {
       // NONE
     }
 
+    results.forEach( item => { all.push(new CashflowDAO(item)) })
     return all
   }
 }

@@ -1,5 +1,4 @@
-// import { conn_pool } from '../main'
-import { dexie, store } from '../main'
+import { store, inserter, conn_pool, payloader } from '../main'
 import { CustomerTransDB, CustomerTransDAO} from './CustomerTransDB'
 
 export class CustomerDAO {
@@ -7,7 +6,6 @@ export class CustomerDAO {
   id = 0
   name = ''
   date_created = ''
-  curr_incoming_day
   debt 
   phone = ''
   address = ''
@@ -36,27 +34,34 @@ export class CustomersDB {
   
   /**@param {CustomerDAO} data */
   static async addNew(data) {
-    delete data.id
+    
     // init with amount or zero
     data.debt = data.debt ? data.debt : 0
     data.parseTypes()
-    let id = await dexie[this.TABLE_NAME].add(data)
+    //let id = await dexie[this.TABLE_NAME].add(data)
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new CustomerDAO())}`
+    let ok = await conn_pool.query(instert_q)
+    
     if(data.debt >=0 ) {
       let customerTransDao = new CustomerTransDAO()
-      customerTransDao.customer_id = id
+      customerTransDao.customer_id = ok.insertId
       customerTransDao.trans_type = 'init'
       customerTransDao.day = store.state.day.iso
       customerTransDao.amount = data.debt
       customerTransDao.debt_after = data.debt
-      CustomerTransDB.addNew(customerTransDao)
+      await CustomerTransDB.addNew(customerTransDao)
     }
+    return ok.insertId
   }
 
   static async addCustomerTrans() { }
 
   static async saveById(id, payload) {
-    let updated = await dexie[this.TABLE_NAME].update(id, payload)
-    return updated
+    //let updated = await dexie[this.TABLE_NAME].update(id, payload)
+    let sets = payloader(payload, new CustomerDAO())
+    let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return
   }
 
   static async updateDebt(id, payload) {
@@ -97,31 +102,35 @@ export class CustomersDB {
         CustomerTransDB.addNew(customerTransDao)
       }
     }
-    if (payload.curr_incoming_day) {
-      customerDAO.curr_incoming_day = payload.curr_incoming_day
-    }
 
-    this.saveById(id, customerDAO)
+    this.saveById(id, {debt: customerDAO.debt})
   }
 
   static async getDAOById(id) {
-    let obj = await dexie[this.TABLE_NAME].get(id)
-    return new CustomerDAO(obj)
+    let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id=${id}`)
+    console.log(row)
+    if (row[0])
+      return new CustomerDAO(row[0])
+    else
+      return
   }
 
   static async getAll(data) {
     let all = []
+    let results = []
     if(data) {
-      if (Array.isArray(data))
-        all = await dexie[this.TABLE_NAME].where('id').anyOf(data).toArray()
-      if(data.active === 1)
-        all = await dexie[this.TABLE_NAME].where({active: 1}).toArray()
-      if(data.last_outgoing_day)
-        all = await dexie[this.TABLE_NAME].where({last_outgoing_day: data.last_outgoing_day}).toArray()
+      if (Array.isArray(data) && data.length ){
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id IN ( ${data.join(',')} )`)
+      }
+      if(data.active ) {
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where active = 1`)
+      }
     }
     else {
-      all = await dexie[this.TABLE_NAME].toArray()
+      results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME}`)
     }
+
+    results.forEach( item => { all.push(new CustomerDAO(item)) })
     return all
   }
 }

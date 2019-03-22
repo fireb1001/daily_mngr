@@ -1,5 +1,4 @@
-// import { conn_pool } from '../main'
-import { dexie , appConfig , conn_pool } from '../main'
+import { appConfig , conn_pool } from '../main'
 
 export class ProductDAO {
     id = 0
@@ -37,7 +36,7 @@ export class ProductsDB {
   /**@param {ProductDAO} data */
   static async addNew(data) {
     // return await dexie[this.TABLE_NAME].add(data)
-    let instert_q = ` INSERT INTO ${this.TABLE_NAME} 
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} 
       (name, notes, active) 
       VALUES ('${data.name}','${data.notes}','${data.active}')
 `
@@ -61,8 +60,7 @@ export class ProductsDB {
 
   static async getAll(data) {
     let all = []
-    if(appConfig.db_engine == 'dexie')
-      all = await dexie[this.TABLE_NAME].toArray()
+    //  all = await dexie[this.TABLE_NAME].toArray()
     if(appConfig.db_engine == 'mysql') {
       var results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
       results.forEach( item => {

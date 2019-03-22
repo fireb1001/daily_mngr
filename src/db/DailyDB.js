@@ -1,4 +1,3 @@
-import { dexie } from '../main'
 
 export class DailyDAO {
 
@@ -26,8 +25,9 @@ export class DailyDAO {
  
 export class DailyDB {
   static TABLE_NAME = 'daily'
-
+  
   /**@param {DailyDAO} data */
+  /*
   static async addNew(data) {
     delete data.id
     data.parseTypes()
@@ -44,4 +44,5 @@ export class DailyDB {
     all = await dexie[this.TABLE_NAME].toArray()
     return all
   }
+  */
 }

@@ -1,9 +1,7 @@
-import { dexie, store } from '../main'
+import { conn_pool, payloader, inserter, store } from '../main'
 import { IncomingsHeaderDB } from './IncomingsHeaderDB'
 import { CashflowDB, CashflowDAO } from './CashflowDB'
 import { CustomersDB } from './CustomersDB'
-// eslint-disable-next-line no-unused-vars
-import Dexie from 'dexie';
 import { OutgoingsHeaderDB, OutgoingHeaderDAO } from './OutgoingsHeaderDB';
 
 export class OutgoingDAO {
@@ -69,20 +67,6 @@ export class OutgoingDAO {
 
   constructor (data) {
     Object.assign(this, data)
-    /*
-    this.id = data.id !== null ? data.id : this.id
-    this.date = data.date !== null ? data.date : this.date
-    this.supplier_id = data.supplier_id !== null ? data.supplier_id : this.supplier_id
-    this.incoming_header_id = data.incoming_header_id !== null ? data.incoming_header_id : this.incoming_header_id
-    this.customer_id = data.customer_id !== null ? data.customer_id : this.customer_id
-    this.sell_type = data.sell_type !== null ? data.sell_type : this.sell_type
-    this.weight = data.weight !== null ? data.weight : this.weight
-    this.kg_price = data.kg_price !== null ? data.kg_price : this.kg_price
-    this.sell_com = data.sell_com !== null ? data.sell_com : this.sell_com
-    this.product_id = data.product_id !== null ? data.product_id : this.product_id
-    this.count = data.count !== null ? data.count : this.count
-    this.notes = data.notes !== null ? data.notes : this.notes
-    */
   }
 }
 
@@ -90,8 +74,6 @@ export class OutgoingDAO {
  
 export class OutgoingsDB {
     static TABLE_NAME = 'outgoings'
-    /**@type {Dexie.Table} */
-    //static TABLE = dexie['outgoings']
 
     /**@param {OutgoingDAO} data*/
     static async addNew(data) {
@@ -102,15 +84,21 @@ export class OutgoingsDB {
       data.selectFromObjects()
 
       data.sell_com_value = data.count * data.sell_com
-      let outgoing_id = await dexie[this.TABLE_NAME].add(data)
+      
+      let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new OutgoingDAO())}`
+      let ok = await conn_pool.query(instert_q)
+      let outgoing_id = ok.insertId
+
       // decrease Incoming 
       let inc_header = await IncomingsHeaderDB.getDAOById(data.incoming_header_id)
       inc_header.current_count -= parseInt(data.count)
       await IncomingsHeaderDB.saveById(inc_header.id, inc_header)
+
       // Add outgoing header according to price
       let outHeadDAO = new OutgoingHeaderDAO(data)
-      console.log("outHeadDAO", outHeadDAO)
+      // console.log("outHeadDAO", outHeadDAO)
       await OutgoingsHeaderDB.addPlus(outHeadDAO)
+
       // Update debit
       if(data.customer_id) {
         await CustomersDB.updateDebt(data.customer_id, {
@@ -152,31 +140,37 @@ export class OutgoingsDB {
     }
   
     static async saveById(id, payload) {
-      let updated = await dexie[this.TABLE_NAME].update(id, payload)
-      return updated
+      //let updated = await dexie[this.TABLE_NAME].update(id, payload)
+      let sets = payloader(payload, new OutgoingDAO())
+      let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+      await conn_pool.query(update_q)
+      return
     }
 
     static async getDailyCustomers(data) {
       let all_obj = {}
-      /**@type {Dexie.Table} */
-      let table = dexie['outgoings']
-      await table.where({day:data.day}).each( item => {
-        if(item.customer_id){
+      let all = await this.getAll(data)
+      all.forEach( item => {
+        if(item.customer_id)
           all_obj[item.customer_id] = item.customer_id
-        }
       })
       return Object.values(all_obj)
     }
   
     static async getAll(data) {
       let all = []
+      let results = []
+  
       if(data) {
-        if(data.day) 
-          all = await dexie[this.TABLE_NAME].where({day: data.day}).toArray()
+        if(data.day) {
+          results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
+        }
       }
       else {
-        all = await dexie[this.TABLE_NAME].toArray()
+        results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
       }
+  
+      results.forEach( item => { all.push(new OutgoingDAO(item)) })
       return all
     }
   }

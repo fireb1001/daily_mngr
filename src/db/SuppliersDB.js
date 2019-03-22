@@ -1,4 +1,3 @@
-// import { conn_pool } from '../main'
 import { conn_pool, payloader } from '../main'
 
 export class SupplierDAO {
@@ -38,7 +37,7 @@ export class SuppliersDB {
 
   /**@param {SupplierDAO} data */
   static async addNew(data) {
-    let instert_q = ` INSERT INTO ${this.TABLE_NAME} 
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} 
     (name, phone, address, notes, active) 
     VALUES ('${data.name}','${data.phone}','${data.address}','${data.notes}', ${data.active} )`
     // console.log(instert_q)
@@ -49,7 +48,7 @@ export class SuppliersDB {
   static async saveById(id, payload) {
     //return await dexie[this.TABLE_NAME].update(id, payload)
     let sets = payloader(payload, new SupplierDAO())
-    let update_q = ` UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
     await conn_pool.query(update_q)
   }
 
@@ -69,29 +68,31 @@ export class SuppliersDB {
 
   static async getDAOById(id) {
     let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id=${id}`)
-    return new SupplierDAO(row[0])
+    if (row[0])
+      return new SupplierDAO(row[0])
+    else
+      return
   }
 
   static async getAll(data) {
     let all = []
     let results = []
     if(data) {
-      if (Array.isArray(data)){
+      // console.log(data)
+      if (Array.isArray(data) && data.length ){
         // TODO change
         // all = await dexie[this.TABLE_NAME].where('id').anyOf(data).toArray()
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id IN ( ${data.join(',')} )`)
       }
-      if(data.active === 1) {
+      if(data.active) {
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where active = 1`)
       }
     }
     else {
       results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME}`)
     }
-    results.forEach( item => {
-      console.log(item)
-      all.push(new SupplierDAO(item))
-    })
+
+    results.forEach( item => { all.push(new SupplierDAO(item)) })
     return all
   }
 }

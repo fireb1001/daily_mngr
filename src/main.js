@@ -72,6 +72,26 @@ export const payloader = function(payload, object) {
   return sets
 }
 
+export const inserter = function(object, empty_obj) {
+  let cols_vals = ''
+  let pairs = {}
+  delete object.id
+
+  Object.keys(empty_obj).forEach( key => {
+    if(object[key] || object[key] === 0 || object[key] === '0')
+      pairs[key] = object[key]
+  })
+
+  cols_vals = `(${Object.keys(pairs)}) VALUES ` + 
+   `(${Object.values(pairs).map( val => {
+    if(typeof val === 'string')
+      return  "'" + val + "'"
+    else
+      return val
+  })})`
+
+  return cols_vals
+}
 /*
 export const SupplierDX = dexie.suppliers.defineClass({
   id: Number,

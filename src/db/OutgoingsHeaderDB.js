@@ -1,4 +1,4 @@
-import { dexie, conn_pool } from '../main'
+import { conn_pool, inserter, payloader } from '../main'
 
 export class OutgoingHeaderDAO {
 
@@ -32,17 +32,23 @@ export class OutgoingHeaderDAO {
   constructor(data) {
     // this.id = data.id !== null ? data.id : this.id
     Object.assign(this, data)
-    if(data.count) {
+    if(data && data.count) {
         this.total_count = parseInt(data.count)
     }
-    if(data.weight) {
+    if(data && data.weight) {
       this.total_weight = parseFloat(data.weight)
     }
-    if(data.value_calc) {
+    if(data && data.value_calc) {
       this.total_value = parseFloat(data.value_calc)
     }
   }
 
+  
+  parseTypes() {
+    this.total_count = parseInt(this.total_count)
+    this.total_weight = parseFloat(this.total_weight)
+    this.total_value = parseFloat(this.total_value)
+  }
 }
 
 //////////////////////// DB ///////////////////////////////
@@ -51,8 +57,7 @@ export class OutgoingsHeaderDB {
 
   static TABLE_NAME = 'outgoings_header'
 
-/** @param {OutgoingHeaderDAO} data */
-
+  /** @param {OutgoingHeaderDAO} data */
   static async addPlus(data) {
     let headDAO = await this.getDayHeader(data)
     if ( ! headDAO ) {
@@ -69,14 +74,20 @@ export class OutgoingsHeaderDB {
     }
   }
 
-/** @param {OutgoingHeaderDAO} data */
+  
   static async addNew(data) {
-    delete data.id
-    return await dexie[this.TABLE_NAME].add(data)
+    data.parseTypes()
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new OutgoingHeaderDAO())}`
+    let ok = await conn_pool.query(instert_q)
+    return  ok.insertId
   }
 
   static async saveById(id, payload) {
-    return await dexie[this.TABLE_NAME].update(id, payload)
+    //return await dexie[this.TABLE_NAME].update(id, payload)
+    let sets = payloader(payload, new OutgoingHeaderDAO())
+    let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return 
   }
 
   static async getDAOById(id) {
@@ -84,28 +95,29 @@ export class OutgoingsHeaderDB {
     return new OutgoingHeaderDAO(row[0])
   }
 
+
   static async getDayHeader(data) {
-    console.log(data)
-    let head = await dexie[this.TABLE_NAME].get({
-      day:data.day,
-      incoming_header_id: data.incoming_header_id,
-      kg_price: data.kg_price,
-    })
-    if (head)
-      return new OutgoingHeaderDAO(head)
+    // console.log(data)
+    let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and incoming_header_id=${data.incoming_header_id} and kg_price=${data.kg_price}`)
+    if(row.length)
+      return new OutgoingHeaderDAO(row[0])
     else 
-      return null
+      return
   }
 
   static async getAll(data) {
     let all = []
+    let results = []
     if(data) {
-      if(data.day && data.supplier_id)
-        all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
+      if(data.day && data.supplier_id) {
+        // all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id}`)
+      }
     }
     else {
-      all = await dexie[this.TABLE_NAME].toArray()
+      results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
     }
+    results.forEach( item => { all.push(new OutgoingHeaderDAO(item)) })
     return all
   }
 }
