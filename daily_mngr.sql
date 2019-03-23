@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.1
+-- version 4.8.5
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 22, 2019 at 04:07 PM
--- Server version: 10.1.33-MariaDB
--- PHP Version: 7.2.6
+-- Generation Time: Mar 23, 2019 at 11:37 AM
+-- Server version: 10.1.38-MariaDB
+-- PHP Version: 7.3.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -38,17 +38,33 @@ CREATE TABLE `cashflow` (
   `sum` varchar(45) DEFAULT NULL,
   `amount` double DEFAULT NULL,
   `date_created` int(10) UNSIGNED DEFAULT NULL,
-  `notes` varchar(245) DEFAULT NULL
+  `notes` varchar(245) DEFAULT NULL,
+  `outgoing_id` int(10) UNSIGNED DEFAULT NULL,
+  `incoming_id` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `cashflow`
 --
 
-INSERT INTO `cashflow` (`id`, `day`, `state`, `state_data`, `actor_id`, `actor_name`, `sum`, `amount`, `date_created`, `notes`) VALUES
-(4, '2019-03-22', 'nolon', '{\"incoming_id\":59,\"supplier_id\":9,\"supplier_name\":\"عبدالرازق فواز\"}', 9, 'عبدالرازق فواز', '-', 350, NULL, NULL),
-(5, '2019-03-22', 'collecting', '{\"outgoing_id\":8,\"customer_id\":2,\"customer_name\":\"حسني محمود\"}', 2, 'حسني محمود', '+', 300, NULL, NULL),
-(6, '2019-03-22', 'outgoing_cash', '{\"outgoing_id\":9}', NULL, NULL, '+', 580, NULL, NULL);
+INSERT INTO `cashflow` (`id`, `day`, `state`, `state_data`, `actor_id`, `actor_name`, `sum`, `amount`, `date_created`, `notes`, `outgoing_id`, `incoming_id`) VALUES
+(7, '2019-03-21', 'nolon', '{\"incoming_id\":63,\"supplier_id\":9,\"supplier_name\":\"عبدالرازق فواز\"}', 9, 'عبدالرازق فواز', '-', 300, NULL, NULL, NULL, NULL),
+(8, '2019-03-21', 'given', '{\"incoming_id\":63,\"supplier_id\":9,\"supplier_name\":\"عبدالرازق فواز\"}', 9, 'عبدالرازق فواز', '-', 50, NULL, NULL, NULL, NULL),
+(9, '2019-03-21', 'outgoing_cash', NULL, NULL, NULL, '+', 6580, NULL, NULL, 10, NULL),
+(10, '2019-03-21', 'collecting', '{\"outgoing_id\":11,\"customer_id\":5,\"customer_name\":\"احمد فكري\"}', 5, 'احمد فكري', '+', 500, NULL, NULL, NULL, NULL),
+(11, '2019-03-21', 'collecting', NULL, 5, 'احمد فكري', '+', 400, NULL, NULL, NULL, NULL),
+(12, '2019-03-21', 'collecting', NULL, 6, 'كرم عبدالعال وزير', '+', 50, NULL, NULL, NULL, NULL),
+(13, '2019-03-21', 'collecting', NULL, 5, 'احمد فكري', '+', 40, NULL, NULL, NULL, NULL),
+(14, '2019-03-21', 'collecting', NULL, 5, 'احمد فكري', '+', 50, NULL, NULL, NULL, NULL),
+(15, '2019-03-21', 'collecting', NULL, 6, 'كرم عبدالعال وزير', '+', 60, NULL, NULL, NULL, NULL),
+(16, '2019-03-22', 'nolon', '{\"incoming_id\":66,\"supplier_id\":10,\"supplier_name\":\"محسب عبدالغفور\"}', 10, 'محسب عبدالغفور', '-', 300, NULL, NULL, NULL, NULL),
+(17, '2019-03-21', 'outgoing_cash', NULL, NULL, NULL, '+', 1366, NULL, NULL, 13, NULL),
+(18, '2019-03-21', 'nolon', '{\"incoming_id\":67,\"supplier_id\":9,\"supplier_name\":\"عبدالرازق فواز\"}', 9, 'عبدالرازق فواز', '-', 300, NULL, NULL, NULL, NULL),
+(19, '2019-03-22', 'collecting', '{\"outgoing_id\":14,\"customer_id\":5,\"customer_name\":\"احمد فكري\"}', 5, 'احمد فكري', '+', 500, NULL, NULL, NULL, NULL),
+(20, '2019-03-22', 'collecting', NULL, 7, 'حسن مصطفي', '+', 600, NULL, NULL, NULL, NULL),
+(21, '2019-03-22', 'collecting', '{\"outgoing_id\":15,\"customer_id\":7,\"customer_name\":\"حسن مصطفي\"}', 7, 'حسن مصطفي', '+', 1000, NULL, NULL, NULL, NULL),
+(22, '2019-03-22', 'collecting', NULL, 7, 'حسن مصطفي', '+', 400, NULL, NULL, NULL, NULL),
+(23, '2019-03-21', 'collecting', '{\"outgoing_id\":17,\"customer_id\":6,\"customer_name\":\"كرم عبدالعال وزير\"}', 6, 'كرم عبدالعال وزير', '+', 1000, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -72,10 +88,9 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `name`, `date_created`, `debt`, `phone`, `address`, `notes`, `active`) VALUES
-(1, 'عبدالصمد فواز', NULL, NULL, NULL, NULL, NULL, 1),
-(2, 'حسني محمود', NULL, 1556, '011755465', NULL, NULL, 1),
-(3, 'شامل ', NULL, NULL, NULL, NULL, NULL, 0),
-(4, 'كريم', NULL, 0, NULL, NULL, NULL, 1);
+(5, 'احمد فكري', NULL, -600, NULL, NULL, NULL, 1),
+(6, 'كرم عبدالعال وزير', NULL, 1000, NULL, 'العنبة', NULL, 1),
+(7, 'حسن مصطفي', NULL, 1155, NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -99,12 +114,26 @@ CREATE TABLE `customer_trans` (
 --
 
 INSERT INTO `customer_trans` (`id`, `day`, `customer_id`, `outgoing_id`, `cashflow_id`, `amount`, `trans_type`, `debt_after`) VALUES
-(1, '2019-03-22', 0, NULL, NULL, NULL, 'init', NULL),
-(2, '2019-03-22', 2, NULL, NULL, 400, 'init', 400),
-(3, '2019-03-22', 3, NULL, NULL, NULL, 'init', NULL),
-(4, '2019-03-22', 4, NULL, NULL, 0, 'init', 0),
-(5, '2019-03-22', 2, 8, NULL, 1456, 'outgoing', 1856),
-(6, '2019-03-22', 2, NULL, NULL, -300, 'collecting', 1556);
+(7, '2019-03-21', 5, NULL, NULL, 300, 'init', 300),
+(8, '2019-03-21', 6, NULL, NULL, 0, 'init', 0),
+(9, '2019-03-21', 5, 11, NULL, 590, 'outgoing', 890),
+(10, '2019-03-21', 5, NULL, NULL, -500, 'collecting', 390),
+(11, '2019-03-21', 5, NULL, NULL, -400, 'collecting', -10),
+(12, '2019-03-21', 6, NULL, NULL, -50, 'collecting', -50),
+(13, '2019-03-21', 5, NULL, NULL, -40, 'collecting', -50),
+(14, '2019-03-21', 5, NULL, NULL, -50, 'collecting', -100),
+(15, '2019-03-21', 6, 12, NULL, 610, 'outgoing', 560),
+(16, '2019-03-21', 6, NULL, NULL, -60, 'collecting', 500),
+(17, '2019-03-22', 5, 14, NULL, 1000, 'outgoing', 900),
+(18, '2019-03-22', 5, NULL, NULL, -500, 'collecting', -600),
+(19, '2019-03-22', 7, NULL, NULL, 500, 'init', 500),
+(20, '2019-03-22', 7, NULL, NULL, -600, 'collecting', -100),
+(21, '2019-03-22', 7, 15, NULL, 1290, 'outgoing', 1190),
+(22, '2019-03-22', 7, NULL, NULL, -1000, 'collecting', 190),
+(23, '2019-03-22', 7, NULL, NULL, -400, 'collecting', -210),
+(24, '2019-03-22', 7, 16, NULL, 1365, 'outgoing', 1155),
+(25, '2019-03-21', 6, 17, NULL, 1500, 'outgoing', 2000),
+(26, '2019-03-21', 6, NULL, NULL, -1000, 'collecting', 1000);
 
 -- --------------------------------------------------------
 
@@ -131,10 +160,11 @@ CREATE TABLE `incomings` (
 --
 
 INSERT INTO `incomings` (`id`, `day`, `supplier_id`, `count`, `product_id`, `notes`, `date_created`, `supplier_name`, `product_name`, `nolon`, `given`) VALUES
-(59, '2019-03-22', 9, 50, 2, NULL, NULL, 'عبدالرازق فواز', 'خوخ فرز اول', 350, NULL),
-(60, '2019-03-22', 10, 30, 3, NULL, NULL, 'محسب عبدالغفور', 'جوافة ممتاز', NULL, NULL),
-(61, '2019-03-22', 9, 20, 2, NULL, NULL, 'عبدالرازق فواز', 'خوخ فرز اول', NULL, NULL),
-(62, '2019-03-22', 10, 15, 3, NULL, NULL, 'محسب عبدالغفور', 'جوافة ممتاز', 0, 0);
+(63, '2019-03-21', 9, 40, 2, NULL, NULL, 'عبدالرازق فواز', 'خوخ فرز اول', 300, 50),
+(64, '2019-03-21', 10, 50, 3, NULL, NULL, 'محسب عبدالغفور', 'جوافة ممتاز', 0, 0),
+(65, '2019-03-21', 9, 35, 2, NULL, NULL, 'عبدالرازق فواز', 'خوخ فرز اول', 0, 0),
+(66, '2019-03-22', 10, 40, 4, NULL, NULL, 'محسب عبدالغفور', 'رمان', 300, 0),
+(67, '2019-03-21', 9, 40, 4, NULL, NULL, 'عبدالرازق فواز', 'رمان', 300, 0);
 
 -- --------------------------------------------------------
 
@@ -160,8 +190,10 @@ CREATE TABLE `incomings_header` (
 --
 
 INSERT INTO `incomings_header` (`id`, `supplier_id`, `supplier_name`, `product_id`, `product_name`, `day`, `date_created`, `total_count`, `current_count`, `notes`) VALUES
-(2, 9, 'عبدالرازق فواز', 2, 'خوخ فرز اول', '2019-03-22', NULL, 70, 0, NULL),
-(3, 10, 'محسب عبدالغفور', 3, 'جوافة ممتاز', '2019-03-22', NULL, 45, 0, NULL);
+(4, 9, 'عبدالرازق فواز', 2, 'خوخ فرز اول', '2019-03-21', NULL, 75, 20, NULL),
+(5, 10, 'محسب عبدالغفور', 3, 'جوافة ممتاز', '2019-03-21', NULL, 50, 30, NULL),
+(6, 10, 'محسب عبدالغفور', 4, 'رمان', '2019-03-22', NULL, 40, 0, NULL),
+(7, 9, 'عبدالرازق فواز', 4, 'رمان', '2019-03-21', NULL, 40, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -196,10 +228,14 @@ CREATE TABLE `outgoings` (
 --
 
 INSERT INTO `outgoings` (`id`, `day`, `supplier_id`, `count`, `product_id`, `notes`, `customer_name`, `kg_price`, `weight`, `date_created`, `customer_id`, `supplier_name`, `product_name`, `incoming_id`, `sell_type`, `sell_com`, `sell_com_value`, `collecting`, `value_calc`) VALUES
-(6, '2019-03-22', 9, 70, 2, NULL, NULL, 8, 180, NULL, NULL, 'عبدالرازق فواز', 'خوخ فرز اول', NULL, NULL, 6, 420, NULL, 1860),
-(7, '2019-03-22', 10, 10, 3, NULL, 'عبدالرازق معوض', 7, 100, NULL, 1, 'محسب عبدالغفور', 'جوافة ممتاز', NULL, NULL, 7, 70, 300, 770),
-(8, '2019-03-22', 10, 30, 3, NULL, 'حسني محمود', 7, 178, 0, 2, 'محسب عبدالغفور', 'جوافة ممتاز', 0, NULL, 7, 210, 300, 1456),
-(9, '2019-03-22', 10, 5, 3, NULL, NULL, 10, 55, 0, 0, 'محسب عبدالغفور', 'جوافة ممتاز', 0, NULL, 6, 30, NULL, 580);
+(10, '2019-03-21', 9, 30, 2, NULL, NULL, 8, 800, 0, 0, 'عبدالرازق فواز', 'خوخ فرز اول', 0, NULL, 6, 180, NULL, 6580),
+(11, '2019-03-21', 9, 5, 2, NULL, 'احمد فكري', 8, 70, 0, 5, 'عبدالرازق فواز', 'خوخ فرز اول', 0, NULL, 6, 30, 500, 590),
+(12, '2019-03-21', 10, 20, 3, NULL, 'كرم عبدالعال وزير', 7, 70, 0, 6, 'محسب عبدالغفور', 'جوافة ممتاز', 0, NULL, 6, 120, NULL, 610),
+(13, '2019-03-21', 9, 20, 2, NULL, NULL, 7, 178, 0, 0, 'عبدالرازق فواز', 'خوخ فرز اول', 0, NULL, 6, 120, NULL, 1366),
+(14, '2019-03-22', 10, 15, 4, NULL, 'احمد فكري', 7, 130, 0, 5, 'محسب عبدالغفور', 'رمان', 0, NULL, 6, 90, 500, 1000),
+(15, '2019-03-22', 10, 20, 4, NULL, 'حسن مصطفي', 6.5, 180, 0, 7, 'محسب عبدالغفور', 'رمان', 0, NULL, 6, 120, 1000, 1290),
+(16, '2019-03-22', 10, 5, 4, NULL, 'حسن مصطفي', 7.5, 178, 0, 7, 'محسب عبدالغفور', 'رمان', 0, NULL, 6, 30, NULL, 1365),
+(17, '2019-03-21', 9, 40, 4, NULL, 'كرم عبدالعال وزير', 7, 180, 0, 6, 'عبدالرازق فواز', 'رمان', 0, NULL, 6, 240, 1000, 1500);
 
 -- --------------------------------------------------------
 
@@ -224,6 +260,19 @@ CREATE TABLE `outgoings_header` (
   `incoming_header_id` int(10) UNSIGNED DEFAULT NULL,
   `notes` varchar(445) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `outgoings_header`
+--
+
+INSERT INTO `outgoings_header` (`id`, `product_id`, `supplier_id`, `product_name`, `supplier_name`, `day`, `date_created`, `total_count`, `total_sell_com`, `sell_com_details`, `kg_price`, `total_weight`, `total_value`, `incoming_header_id`, `notes`) VALUES
+(1, 2, 9, 'خوخ فرز اول', 'عبدالرازق فواز', '2019-03-21', 0, 35, NULL, NULL, 8, 870, 7170, 4, NULL),
+(2, 3, 10, 'جوافة ممتاز', 'محسب عبدالغفور', '2019-03-21', 0, 20, NULL, NULL, 7, 70, 610, 5, NULL),
+(3, 2, 9, 'خوخ فرز اول', 'عبدالرازق فواز', '2019-03-21', 0, 20, NULL, NULL, 7, 178, 1366, 4, NULL),
+(4, 4, 10, 'رمان', 'محسب عبدالغفور', '2019-03-22', 0, 15, NULL, NULL, 7, 130, 1000, 6, NULL),
+(5, 4, 10, 'رمان', 'محسب عبدالغفور', '2019-03-22', 0, 20, NULL, NULL, 6.5, 180, 1290, 6, NULL),
+(6, 4, 10, 'رمان', 'محسب عبدالغفور', '2019-03-22', 0, 5, NULL, NULL, 7.5, 178, 1365, 6, NULL),
+(7, 4, 9, 'رمان', 'عبدالرازق فواز', '2019-03-21', 0, 40, NULL, NULL, 7, 180, 1500, 7, NULL);
 
 -- --------------------------------------------------------
 
@@ -273,8 +322,8 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `name`, `date_created`, `total_count`, `balance`, `address`, `phone`, `active`, `notes`) VALUES
-(9, 'عبدالرازق فواز', NULL, 70, NULL, '', '', 1, ''),
-(10, 'محسب عبدالغفور', NULL, 45, NULL, '', '', 1, '');
+(9, 'عبدالرازق فواز', NULL, 115, NULL, '', '01154465633', 1, ''),
+(10, 'محسب عبدالغفور', NULL, 90, NULL, '', '', 1, '');
 
 --
 -- Indexes for dumped tables
@@ -342,43 +391,43 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `cashflow`
 --
 ALTER TABLE `cashflow`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `customer_trans`
 --
 ALTER TABLE `customer_trans`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `incomings`
 --
 ALTER TABLE `incomings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `incomings_header`
 --
 ALTER TABLE `incomings_header`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `outgoings`
 --
 ALTER TABLE `outgoings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `outgoings_header`
 --
 ALTER TABLE `outgoings_header`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `products`
