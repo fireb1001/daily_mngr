@@ -69,7 +69,7 @@ export default {
       customer: {},
       collect_form: {},
       store_day: this.$store.state.day,
-      customer_trans: null,
+      customer_trans: [],
       customer_id: this.$route.params.id,
       labels: APP_LABELS
     }
@@ -77,9 +77,11 @@ export default {
   methods: {
     async getCustomerDetails() {
       let customer_obj = await CustomersDB.getDAOById(this.customer_id)
+      this.customer = {} // empty
+      console.log(customer_obj)
       this.customer = new CustomerDAO(customer_obj)
+      this.customer_trans = []
       this.customer_trans = await CustomerTransDB.getAll({customer_id: this.customer_id})
-      console.log(this.customer_trans)
     },
     async addCollecting(evt ) {
       evt.preventDefault()
@@ -91,7 +93,9 @@ export default {
       await CashflowDB.addNew(cashDAO)
       cashDAO.amount = - (cashDAO.amount)
       await CustomersDB.updateDebt(this.customer_id, cashDAO)
+
       this.getCustomerDetails()
+      this.collect_form = {}
       /*
       let transDAO = new CustomerTransDAO(CustomerTransDAO.COLLECTING_DAO)
       transDAO.cashflow_id = cash_id

@@ -79,7 +79,7 @@ export class CustomersDB {
         customerTransDao.amount = payload.amount
         customerTransDao.day = payload.day
         customerTransDao.debt_after = customerDAO.debt
-        CustomerTransDB.addNew(customerTransDao)
+        await CustomerTransDB.addNew(customerTransDao)
       }
       else if( payload.trans_type === 'collecting') { 
         // payload.amount < 0 && payload.cashflow_id &&
@@ -89,7 +89,7 @@ export class CustomersDB {
         customerTransDao.amount = payload.amount
         customerTransDao.day = payload.day
         customerTransDao.debt_after = customerDAO.debt
-        CustomerTransDB.addNew(customerTransDao)
+        await CustomerTransDB.addNew(customerTransDao)
       }
       else if( payload.trans_type === 'outgoing') { 
         let customerTransDao = new CustomerTransDAO()
@@ -99,11 +99,12 @@ export class CustomersDB {
         customerTransDao.amount = payload.amount
         customerTransDao.day = payload.day
         customerTransDao.debt_after = customerDAO.debt
-        CustomerTransDB.addNew(customerTransDao)
+        await CustomerTransDB.addNew(customerTransDao)
       }
     }
 
-    this.saveById(id, {debt: customerDAO.debt})
+    await this.saveById(id, {debt: customerDAO.debt})
+    return 
   }
 
   static async getDAOById(id) {

@@ -15,14 +15,12 @@
       </table>
       <div class="m-2">
         <button class="btn btn-primary" @click="$router.go(-1)">العودة</button>
+        &nbsp;
+        <button v-b-toggle.collapse_pay class="btn btn-primary m-1">
+          <span class="fa fa-money-bill-wave"></span> &nbsp; 
+          اضافة دفعات سابقة 
+        </button>
       </div>
-
-  <button v-b-toggle.collapse_pay class="btn btn-primary m-1">
-    <span class="fa fa-money-bill-wave"></span> &nbsp; 
-    اضافة دفعات سابقة 
-  </button>
-
-
   <!-- Element to collapse -->
   <b-collapse id="collapse_pay" style="padding:25px;">
     <div class="entry-form">
@@ -37,7 +35,7 @@
     </form>
     </div>
   </b-collapse>
-  <br/>
+
     <h2>اجماليات وارد اليوم {{store_day.iso}}</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
@@ -46,6 +44,7 @@
               <th>#</th>
               <th>الصنف</th>
               <th>عدد الطرود</th>
+              <th>متبقي</th>
             </tr>
           </thead>
           <tbody>
@@ -53,6 +52,7 @@
               <td></td>
               <td>{{incom.product_name}}</td>
               <td>{{incom.total_count}}</td>
+              <td>{{incom.current_count}}</td>
             </tr>
           </tbody>
         </table>
@@ -85,6 +85,14 @@
           </tbody>
         </table>
       </div>
+
+      <!-- -->
+      <span class="text-danger">عدد الطرود المتبقية التي لم يتم بيعها {{ total_current_rest }}</span>
+      <br>
+        <button v-b-toggle.collapse_pay class="btn btn-danger m-1">
+          <span class="fa fa-money-bill-wave"></span> &nbsp; 
+          انشاء فاتورة
+        </button>
   </section>
 </template>
 
@@ -124,6 +132,13 @@ export default {
     }
   },
   computed: {
+    total_current_rest: function() {
+      let sum =0 
+      this.incomings_headers_today.forEach(item =>{
+        sum += parseInt(item.current_count)
+      })
+      return sum
+    }
   },
   components: {
   },

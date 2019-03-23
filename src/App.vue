@@ -101,12 +101,14 @@
                    <span class="sr-only">(current)</span>
                 </router-link>
               </li>
+              <!--
               <li class="nav-item">
                 <router-link class="nav-link active" to="/developer">
                   <span class="fa fa-code"></span>
                    Developer<span class="sr-only">(current)</span>
                 </router-link>
               </li>
+              -->
             </ul>
             <!--
             <ul class="nav flex-column mb-2">

@@ -70,6 +70,7 @@
               <th> </th>
               <th>اسم العميل</th>
               <th>رقم التليفون </th>
+              <th>اجمالي الطرود</th>
               <th></th>
             </tr>
           </thead>
@@ -82,6 +83,7 @@
                 </router-link>
                </td>
               <td>{{item.phone}}</td>
+              <td>{{item.total_count}}</td>
 
               <td>
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">

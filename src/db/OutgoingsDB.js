@@ -48,7 +48,9 @@ export class OutgoingDAO {
 
   // Constant member
   static get INIT_DAO() {
-    return {}
+    return {
+      sell_com: 6
+    }
     /*
     return {
       product_id: 0,
@@ -114,9 +116,7 @@ export class OutgoingsDB {
         cashDAO.amount = data.value_calc
         cashDAO.sum = '+'
         cashDAO.state = 'outgoing_cash'
-        cashDAO.state_data = {
-          outgoing_id: outgoing_id
-        }
+        cashDAO.outgoing_id = outgoing_id
         cashDAO.day = store.state.day.iso
         await CashflowDB.addNew(cashDAO)
       }
@@ -135,6 +135,8 @@ export class OutgoingsDB {
         cashDAO.actor_name = data.customer_name
         await CashflowDB.addNew(cashDAO)
         cashDAO.amount = - (cashDAO.amount)
+        // TODO check later y3n
+        // TODO show only todos
         await CustomersDB.updateDebt(data.customer_id, cashDAO)
       }
     }

@@ -3,9 +3,6 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import BootstrapVue from 'bootstrap-vue'
-//import { Outgoing, Product} from './sql_classes'
-//import { IncomingsDB } from './db/IncomingsDB'
-import Dexie from 'dexie'
 
 Vue.use(BootstrapVue)
 console.log(process.versions.electron)
@@ -37,13 +34,14 @@ export const APP_LABELS = {
   }
 }
 
-export const dexie = new Dexie('daily_mngr')
+
 export { store, DateTime }
 // TODO collect all todos !
 // TODO clear daily_mngr data from bedos // rename !
 // TODO go mysql go
 // TODO cashflow text detailed && cashflow after
-
+/*
+export const dexie = new Dexie('daily_mngr')
 dexie.version(1).stores({
   
   incomings: '++id, product_id, supplier_id, day',
@@ -58,7 +56,7 @@ dexie.version(1).stores({
   cashflow: '++id, amount, state, day'
   // benefit of a compound index [day+product_id+supplier_id]
 })
-
+*/
 
 export const payloader = function(payload, object) {
   let sets = []
