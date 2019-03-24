@@ -76,7 +76,7 @@
         <table class="table table-striped table-sm">
           <thead>
             <tr>
-              <th> كود البائع </th>
+              <th> # </th>
               <th>اسم البائع</th>
               <th>التليفون</th>
               <th>المديونية</th>
@@ -86,7 +86,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in comp_customers_arr" :key='idx' >
-              <td>{{item.id}}</td>
+              <td>{{idx + 1}}</td>
               <td>
                 <router-link class="nav-link " :to="{name:'customer_details', params: {id: item.id}}">
                 {{item.name}}

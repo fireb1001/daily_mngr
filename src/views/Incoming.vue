@@ -128,7 +128,7 @@
             </tr>
           </tbody>
         </table>
-        <button class="btn btn-success pr-hideme" 
+        <button class="btn btn-printo pr-hideme" 
         @click="clipboard.writeText('وارد اليوم '+ store_day.iso);vue_window.print()">
           <span class="fa fa-print"></span> طباعة
         </button>

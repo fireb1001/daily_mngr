@@ -52,7 +52,7 @@ dexie.version(1).stores({
   customer_trans: '++id, debt_after, customer_id',
   supplier_trans: '++id, balance_after',
   incomings_header: '++id, supplier_id, product_id, day, total_count, current_count',
-  outgoings_header: '++id, supplier_id, product_id, total_count, sell_com, total_weight, kg_price, incoming_header_id, day, total_value',
+  outgoings_header: '++id, supplier_id, product_id, total_count, sell_comm, total_weight, kg_price, incoming_header_id, day, total_value',
   cashflow: '++id, amount, state, day'
   // benefit of a compound index [day+product_id+supplier_id]
 })
@@ -87,6 +87,7 @@ export const inserter = function(object, empty_obj) {
     else
       return val
   })})`
+  // console.log(cols_vals)
 
   return cols_vals
 }

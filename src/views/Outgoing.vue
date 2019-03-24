@@ -56,11 +56,11 @@ class="btn btn-lg btn-primary m-1 btn-block">
   </div>
 
   <div class="form-group row">
-    <label :class="{ 'text-danger':  outgoing_form.sell_com > 10 }" class="col-sm-2">
+    <label :class="{ 'text-danger':  outgoing_form.sell_comm > 10 }" class="col-sm-2">
       قيمة البياعة
     </label>
     <div class="col-sm-10">
-      <input v-model="outgoing_form.sell_com" class="form-control" placeholder="ادخل القيمة">
+      <input v-model="outgoing_form.sell_comm" class="form-control" placeholder="ادخل القيمة">
     </div>
   </div>
 
@@ -155,7 +155,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
               <td>{{item.product_name}}</td>
               <td>{{item.customer_name}}</td>
               <td>{{item.count}}</td>
-              <td v-if="detailed ">{{item.sell_com}}</td>
+              <td v-if="detailed ">{{item.sell_comm}}</td>
               <td v-if="detailed ">{{item.weight}}</td>
               <td>{{item.kg_price}}</td>
               <td>{{item.value_calc}}</td>
@@ -164,7 +164,8 @@ class="btn btn-lg btn-primary m-1 btn-block">
           </tbody>
         </table>
         <button class="btn btn-primary pr-hideme" v-if="detailed === false" @click="show_details()"> عرض التفاصيل </button>
-        <button class="btn btn-success pr-hideme" v-if="detailed !== false" 
+        
+        <button class="btn btn-printo pr-hideme" v-if="detailed !== false" 
         @click="clipboard.writeText('بيع اليوم '+store_day.iso);vue_window.print()">
           <span class="fa fa-print"></span> طباعة
         </button>
@@ -202,30 +203,30 @@ export default {
   computed: {
     value_calc_text: function () {
       if(this.outgoing_form.count && 
-      this.outgoing_form.sell_com &&
+      this.outgoing_form.sell_comm &&
       this.outgoing_form.weight &&
       this.outgoing_form.kg_price)
-      return `(${this.outgoing_form.count} * ${this.outgoing_form.sell_com}) + (${this.outgoing_form.weight} * ${this.outgoing_form.kg_price})`
+      return `(${this.outgoing_form.count} * ${this.outgoing_form.sell_comm}) + (${this.outgoing_form.weight} * ${this.outgoing_form.kg_price})`
     },
     value_calc: function () {
       if(this.outgoing_form.count && 
-      this.outgoing_form.sell_com &&
+      this.outgoing_form.sell_comm &&
       this.outgoing_form.weight &&
       this.outgoing_form.kg_price) {
         // this.outgoing_form.parseTypes()
         // only parse count
         // this.outgoing_form.count = parseInt(this.outgoing_form.count)
         let count = this.outgoing_form.count 
-        let sell_com = this.outgoing_form.sell_com 
+        let sell_comm = this.outgoing_form.sell_comm
         let weight = this.outgoing_form.weight 
         let kg_price = this.outgoing_form.kg_price
-        return (count * sell_com ) + ( weight * kg_price)
+        return (count * sell_comm ) + ( weight * kg_price)
       }
       else return false
     },
     valid_form: function () {
       return this.outgoing_form.count > 0 && this.outgoing_form.count <= this.selected_inc_hdr.current_count &&
-      this.outgoing_form.sell_com > 0 && this.outgoing_form.sell_com <= 10 &&
+      this.outgoing_form.sell_comm > 0 && this.outgoing_form.sell_comm <= 10 &&
       this.outgoing_form.weight > 0 &&
       this.outgoing_form.kg_price > 0
     }

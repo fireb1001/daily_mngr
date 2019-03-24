@@ -43,6 +43,12 @@
                   المبيعات <span class="sr-only">(current)</span>
                 </router-link>
               </li>
+              <li class="nav-item bg-dailymoves">
+                <router-link class="nav-link active" to="/daily_moves">
+                  <span class="fa fa-dolly"></span>
+                  كشف الحركة <span class="sr-only">(current)</span>
+                </router-link>
+              </li>
               <li class="nav-item bg-receipts">
                 <router-link class="nav-link active" to="/suppliers_receipts">
                   <span class="fa fa-receipt"></span>
@@ -242,6 +248,11 @@ h1,h2,h3,h4,h5 {
   color: #007bff;
 }
 
+.btn-printo {
+  color: white;
+  background-color: #55595d;
+}
+
 .sidebar .nav-link:hover .feather,
 .sidebar .nav-link.active .feather {
   color: inherit;
@@ -311,7 +322,11 @@ h1,h2,h3,h4,h5 {
   border-radius: 0 10px 10px 0 ;
 }
 .bg-accounts {
-  background-color: #c2c9da;
+  background-color: #d1dbf3;
+  border-radius: 0 10px 10px 0 ;
+}
+.bg-dailymoves {
+  background-color: #e1e6b3;
   border-radius: 0 10px 10px 0 ;
 }
 

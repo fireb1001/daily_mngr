@@ -1,4 +1,5 @@
 import { conn_pool, payloader } from '../main'
+import { SupplierTransDAO, SupplierTransDB } from './SupplierTransDB';
 
 export class SupplierDAO {
 
@@ -27,6 +28,7 @@ export class SupplierDAO {
 
   parseTypes () {
     this.total_count = parseInt(this.total_count)
+    this.balance = parseFloat(this.balance)
   }
 }
 
@@ -64,6 +66,26 @@ export class SuppliersDB {
     // supplierDAO.curr_incoming_day = payload.curr_incoming_day
     //return await dexie[this.TABLE_NAME].update(id, supplierDAO)
     await this.saveById(id, {total_count: supplierDAO.total_count})
+  }
+
+  static async updateBalance(id, payload) {
+    let supplierDAO = await this.getDAOById(id)
+    if(payload.amount ){
+      let payment = parseFloat(payload.amount)
+      supplierDAO.parseTypes()
+      supplierDAO.balance = supplierDAO.balance ? supplierDAO.balance - payment : - payment
+
+      // if trans_form or from details page
+      let suppTransDAO = new SupplierTransDAO(SupplierTransDAO.PAYMENT_DAO)
+      suppTransDAO.amount = payment
+      suppTransDAO.day = payload.day
+      suppTransDAO.notes = payload.notes
+      suppTransDAO.supplier_id = id
+      suppTransDAO.balance_after = supplierDAO.balance
+      await SupplierTransDB.addNew(suppTransDAO)
+    }
+
+    await this.saveById(id, {balance: supplierDAO.balance})
   }
 
   static async getDAOById(id) {

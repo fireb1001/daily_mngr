@@ -12,6 +12,7 @@ import Cashflow from './views/Cashflow.vue'
 import DeveloperTools from './views/DeveloperTools.vue'
 import SupplierDetails from './views/SupplierDetails.vue'
 import CustomerDetails from './views/CustomerDetails.vue'
+import DailyMoves from './views/DailyMoves.vue'
 
 Vue.use(Router)
 
@@ -33,6 +34,11 @@ export default new Router({
       path: '/outgoing',
       name: 'outgoing',
       component: Outgoing
+    },
+    {
+      path: '/daily_moves',
+      name: 'daily_moves',
+      component: DailyMoves
     },
     {
       path: '/customers_accounts',

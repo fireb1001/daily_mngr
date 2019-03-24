@@ -1,7 +1,9 @@
 <template>
-  <section class="customer-details p-3 bg-accounts">
-    <h3>حساب البياع : {{customer.name}}</h3>
-      <table class="table table-bordered">
+  <section class="customer-details p-3 bg-accounts pr-me">
+    <button class="btn btn-primary d-print-none" @click="$router.go(-1)">العودة</button>
+    <h3 class="d-inline-block mr-3">حساب البائع : {{customer.name}}</h3>
+
+      <table class="table table-bordered mt-1">
         <tr>
           <th>تليفون البياع</th>
           <td>{{customer.phone}}</td>
@@ -10,18 +12,17 @@
           <th>عنوان البياع</th>
           <td>{{customer.address}}</td>
         </tr>
-
       </table>
-      <div class="m-2">
-        <button class="btn btn-primary" @click="$router.go(-1)">العودة</button>
-      </div>
 
     <hr/>
         <table class="table table-striped ">
           <tbody>
             <tr v-for="(trans, idx) in customer_trans" :key='idx'>
               <td>{{trans.day}}</td>
-              <td>{{labels.trans[trans.trans_type]}}</td>
+              <td>
+                {{labels.trans[trans.trans_type]}}
+                <span v-if="trans.trans_type === 'outgoing'"> - {{trans.d_product}}</span>
+              </td>
               <td>{{trans.amount}}</td>
             </tr>
             <tr>
@@ -33,14 +34,17 @@
             </tr>
           </tbody>
         </table>
-  <button v-b-toggle.collapse2 class="btn btn-primary m-1">
+  <button v-b-toggle.collapse2 class="btn btn-success m-1 d-print-none">
     <span class="fa fa-credit-card"></span> &nbsp; 
     تحصيل مبلغ
   </button>
-
+        <button class="btn btn-printo pr-hideme m-1" 
+        @click="clipboard.writeText('حساب البائع '+ customer.name);vue_window.print()">
+          <span class="fa fa-print"></span> طباعة
+        </button>
 
   <!-- Element to collapse -->
-  <b-collapse id="collapse2" style="padding:25px;">
+  <b-collapse id="collapse2 d-print-none" style="padding:25px;">
     <div class="entry-form">
     <form  @submit="addCollecting">
       <div class="form-group row">
@@ -61,6 +65,7 @@ import { CustomersDB, CustomerDAO } from '../db/CustomersDB.js'
 import { CustomerTransDB } from '../db/CustomerTransDB.js';
 import { APP_LABELS } from '../main.js';
 import { CashflowDAO, CashflowDB } from '../db/CashflowDB.js';
+import { clipboard } from 'electron';
 
 export default {
   name: 'customer-details',
@@ -71,7 +76,8 @@ export default {
       store_day: this.$store.state.day,
       customer_trans: [],
       customer_id: this.$route.params.id,
-      labels: APP_LABELS
+      labels: APP_LABELS,
+      clipboard: clipboard
     }
   },
   methods: {

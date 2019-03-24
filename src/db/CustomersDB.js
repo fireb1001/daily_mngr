@@ -73,6 +73,7 @@ export class CustomersDB {
       customerDAO.debt += parseFloat(payload.amount)
 
       if ( payload.constructor && payload.constructor.name == 'CashflowDAO'){
+        // Collecting from Account
         let customerTransDao = new CustomerTransDAO(CustomerTransDAO.COLLECTING_DAO)
         customerTransDao.customer_id = id
         customerTransDao.cashflow_id = payload.id
@@ -92,13 +93,10 @@ export class CustomersDB {
         await CustomerTransDB.addNew(customerTransDao)
       }
       else if( payload.trans_type === 'outgoing') { 
-        let customerTransDao = new CustomerTransDAO()
+        let customerTransDao = new CustomerTransDAO(payload)
         customerTransDao.customer_id = id
-        customerTransDao.trans_type = payload.trans_type
-        customerTransDao.outgoing_id = payload.outgoing_id
-        customerTransDao.amount = payload.amount
-        customerTransDao.day = payload.day
         customerTransDao.debt_after = customerDAO.debt
+        console.log('outgoing customerTransDao ->' ,customerTransDao)
         await CustomerTransDB.addNew(customerTransDao)
       }
     }

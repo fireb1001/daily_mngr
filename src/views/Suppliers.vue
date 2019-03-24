@@ -76,7 +76,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in comp_suppliers_arr" :key='idx' >
-              <td>{{idx +1 }}</td>
+              <td>{{idx + 1 }}</td>
               <td>
                 <router-link class="nav-link " :to="{name:'supplier_details', params: {id: item.id}}">
                   {{item.name}}
@@ -131,7 +131,7 @@ export default {
       console.log(this.supplier_form)
       if( this.edit_id !==0 && this.edit_id === this.supplier_form.id) {
         // Edit 
-        SuppliersDB.saveById(this.supplier_form.id, {
+        await SuppliersDB.saveById(this.supplier_form.id, {
           name: this.supplier_form.name,
           phone: this.supplier_form.phone,
           address: this.supplier_form.address,

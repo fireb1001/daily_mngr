@@ -6,8 +6,10 @@ export class CustomerTransDAO {
   day
   customer_id
   outgoing_id
+  d_product
   cashflow_id
   amount
+  sum = '+'
   trans_type = ''
   debt_after = 0
 

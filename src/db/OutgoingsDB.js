@@ -21,8 +21,8 @@ export class OutgoingDAO {
   customer_name
 
   sell_type = ''
-  sell_com // null
-  sell_com_value
+  sell_comm // null
+  sell_comm_value
   kg_price // null
   weight // null
   count // null
@@ -32,7 +32,7 @@ export class OutgoingDAO {
   
   parseTypes () {
     this.count = parseInt(this.count)
-    this.sell_com = parseFloat(this.sell_com)
+    this.sell_comm = parseFloat(this.sell_comm)
     this.kg_price = parseFloat(this.kg_price)
     this.weight = parseFloat(this.weight)
     this.value_calc = parseFloat(this.value_calc)
@@ -49,22 +49,8 @@ export class OutgoingDAO {
   // Constant member
   static get INIT_DAO() {
     return {
-      sell_com: 6
+      sell_comm: 6
     }
-    /*
-    return {
-      product_id: 0,
-      count: 0,
-      supplier_id: 0,
-      incoming_header_id: 0,
-      customer_id: 0,
-      sell_type: '',
-      weight: 0,
-      kg_price: 0,
-      sell_com: 0,
-      notes: ''
-    }
-    */
   }
 
   constructor (data) {
@@ -85,7 +71,7 @@ export class OutgoingsDB {
       data.parseTypes()
       data.selectFromObjects()
 
-      data.sell_com_value = data.count * data.sell_com
+      data.sell_comm_value = data.count * data.sell_comm
       
       let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new OutgoingDAO())}`
       let ok = await conn_pool.query(instert_q)
@@ -107,6 +93,7 @@ export class OutgoingsDB {
           amount: data.value_calc,
           outgoing_id: outgoing_id,
           trans_type: 'outgoing',
+          d_product: data.product_name,
           day: store.state.day.iso,
           curr_incoming_day : store.state.day.iso
         })
