@@ -53,7 +53,7 @@
           <input v-model="customer_form.notes" class="form-control "  placeholder="ادخال الملاحظات">
         </div>
       </div>
-      <p class="text-danger"> سيتم اضافة البياع بمبلغ مديونية يساوي 
+      <p class="text-danger" v-if="! edit_id"> سيتم اضافة البياع بمبلغ مديونية يساوي 
         <template v-if="! customer_form.debt"> 0 </template>
         <template v-if="customer_form.debt"> {{customer_form.debt}} </template>
          جنيه</p>

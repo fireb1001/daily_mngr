@@ -10,10 +10,10 @@
               <th>التاريخ</th>
               <th>اسم العميل</th>
               <th>عدد الطرود</th>
+              <th>بسعر</th>
               <th>البياعة</th>
               <th>العمولة</th>
               <th>اجمالي</th>
-              <th>ملاحظات</th>
             </tr>
           </thead>
           <tbody>
@@ -21,6 +21,7 @@
               <td>{{item.day}}</td>
               <td>{{item.supplier_name}}</td>
               <td>{{item.total_count}}</td>
+              <td>{{item.kg_price}}</td>
               <td>{{item.total_sell_comm_value}}</td>
               <td>{{item.recp_comm_rate}}</td>
               <td>{{item.total_sell_comm_value + item.recp_comm_rate}}</td>

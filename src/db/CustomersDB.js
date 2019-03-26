@@ -18,6 +18,8 @@ export class CustomerDAO {
     }
   }
 
+
+
   parseTypes() {
     this.debt = parseFloat(this.debt)
   }
@@ -79,6 +81,7 @@ export class CustomersDB {
         customerTransDao.cashflow_id = payload.id
         customerTransDao.amount = payload.amount
         customerTransDao.day = payload.day
+        customerTransDao.notes = payload.notes
         customerTransDao.debt_after = customerDAO.debt
         await CustomerTransDB.addNew(customerTransDao)
       }

@@ -16,11 +16,17 @@
         <tr>
           <th>الرصيد الحالي</th>
           <td>
-            {{supplier.balance}}
-            <button v-b-toggle.collapse_pay class="btn btn-success ">
-              <span class="fa fa-money-bill-wave"></span> &nbsp; 
-              اضافة دفعات سابقة 
-            </button>
+            <div class="row">
+              <span class="col">
+                {{supplier.balance}}
+                <span class="text-primary mr-3"  v-if="! show_payments" @click="show_payments = true">عرض الدفعات</span>
+              </span>
+            
+              <button v-b-toggle.collapse_pay class="col btn btn-success ml-3 mr-3">
+                <span class="fa fa-money-bill-wave"></span> &nbsp; 
+                اضافة دفعات سابقة 
+              </button>
+            </div>
           </td>
         </tr>
       </table>
@@ -44,70 +50,103 @@
       <div class="form-group row">
         <label  class="col-sm-2">ملاحظات</label>
         <div class="col-sm-10">
-          <input v-model="trans_form.notes" class="form-control "  placeholder="ادخال الملاحظات">
+          <input v-model="trans_form.notes" class="form-control " placeholder="ادخال الملاحظات">
         </div>
-      </div>
-      <button type="submit" class="btn btn-success">اضافة</button>
+      </div>     
+
+      <button type="submit" class="btn btn-success" :disabled="! trans_form.day || ! trans_form.amount">اضافة</button>
+      <button type="button" class="btn btn-danger mr-1"  v-b-toggle.collapse_pay >  اغلاق</button>
     </form>
     </div>
   </b-collapse>
 
-    <h2>اجماليات وارد اليوم {{store_day.iso}}</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>الصنف</th>
-              <th>عدد الطرود</th>
-              <th>متبقي</th>
-            </tr>
-          </thead>
+    <div class="table-responsive" v-if="show_payments">
+      <h2>دفعات العميل {{supplier.name}}</h2>
+        <table class="table table-striped ">
           <tbody>
-            <tr v-for="(incom, idx) in incomings_headers_today" :key='idx'>
+            <tr v-for="(payment, idx) in supplier_payments" :key='idx'>
+              <td>{{payment.day}}</td>
+              <td>
+                {{payment.trans_type}} - {{payment.notes}}
+              </td>
+              <td>{{payment.amount}}</td>
+            </tr>
+            <tr>
               <td></td>
-              <td>{{incom.product_name}}</td>
-              <td>{{incom.total_count}}</td>
-              <td>{{incom.current_count}}</td>
+              <td>رصيد العميل الحالي</td>
+              <td>
+                <b>{{supplier.balance}}</b>
+              </td>
             </tr>
           </tbody>
         </table>
-      </div>
-  <hr>
-      <h2>اجماليات بيع اليوم {{store_day.iso}}</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>الصنف</th>
-              <th>عدد الطرود</th>
-              <th>اجمالي الوزن</th>
-              <th>سعر الكيلو</th>
-              <th>المبلغ</th>
+        <div class="text-center">
+          <b class="text-danger" @click="show_payments = false">اغلاق الدفعات</b>
+        </div>
+    </div>
 
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, idx) in outgoings_headers_today" :key='idx'>
-              <td></td>
-              <td>{{item.product_name}}</td>
-              <td>{{item.total_count}}</td>
-              <td>{{item.total_weight}}</td>
-              <td>{{item.kg_price}}</td>
-              <td>{{item.total_weight * item.kg_price }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <!-- -->
-      <h4 class="text-danger" v-if="total_current_rest > 0"> عدد الطرود المتبقية التي لم يتم بيعها حتي الان {{ total_current_rest }} طرد</h4>
-      <button @click="show_details = false"
-      class="btn m-1" :class="{'btn-danger':  total_current_rest > 0 , 'btn-success':  total_current_rest == 0}">
-        <span class="fa fa-receipt"></span> &nbsp; 
-        انشاء فاتورة
-      </button>
+    <div class="table-responsive" v-if="! show_payments">
+      <h2>اجماليات وارد اليوم {{store_day.iso}}</h2>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الصنف</th>
+            <th>عدد الطرود</th>
+            <th>متبقي</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(incom, idx) in incomings_headers_today" :key='idx'>
+            <td></td>
+            <td>{{incom.product_name}}</td>
+            <td>{{incom.total_count}}</td>
+            <td>{{incom.current_count}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+      
+    <div class="table-responsive" v-if="! show_payments">
+      <h2>اجماليات بيع اليوم {{store_day.iso}}</h2>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الصنف</th>
+            <th>عدد الطرود</th>
+            <th>اجمالي الوزن</th>
+            <th>سعر الكيلو</th>
+            <th>المبلغ</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, idx) in outgoings_headers_today" :key='idx'>
+            <td></td>
+            <td>{{item.product_name}}</td>
+            <td>{{item.total_count}}</td>
+            <td>{{item.total_weight}}</td>
+            <td>{{item.kg_price}}</td>
+            <td>{{item.total_weight * item.kg_price }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+        <div v-if="! show_payments">
+          <!-- -->
+          <h4 class="text-danger" v-if="total_current_rest > 0"> عدد الطرود المتبقية التي لم يتم بيعها حتي الان {{ total_current_rest }} طرد</h4>
+          <button @click="show_details = false"
+          class="btn m-1" :class="{'btn-danger':  total_current_rest > 0 , 'btn-success':  total_current_rest == 0}">
+            <span class="fa fa-receipt"></span> &nbsp; 
+            انشاء فاتورة
+          </button>
+        </div>
       </section>
+
       <section v-if="! show_details">
         <h4 class="text-danger text-center"> فاتورة </h4>
         <p>
@@ -160,6 +199,7 @@ import { SuppliersDB, SupplierDAO } from '../db/SuppliersDB.js'
 import { OutgoingsHeaderDB } from '../db/OutgoingsHeaderDB.js';
 import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js';
 import { DateTime } from '../main.js'
+import { SupplierTransDB } from '../db/SupplierTransDB.js';
 
 export default {
   name: 'supplier-details',
@@ -168,11 +208,13 @@ export default {
       supplier: {},
       supplier_id: this.$route.params.id,
       show_details: true,
+      show_payments : false,
       store_day: this.$store.state.day,
       trans_form: {},
       receipt: {cols: [], comm: 0, nolon: 0 ,receipt_given:0, total: 0 },
       outgoings_headers_today: [],
-      incomings_headers_today: []
+      incomings_headers_today: [],
+      supplier_payments: []
     }
   },
   methods: {
@@ -188,12 +230,15 @@ export default {
         day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
+
+      this.supplier_payments = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
     },
     async addPayments(evt){
       evt.preventDefault()
       this.trans_form.day = DateTime.fromISO(this.trans_form.day).toISODate()
       await SuppliersDB.updateBalance(this.supplier_id,this.trans_form)
       this.trans_form = {}
+      this.$root.$emit('bv::toggle::collapse', 'collapse_pay')
       this.getSupplierDetails()
     }
   },

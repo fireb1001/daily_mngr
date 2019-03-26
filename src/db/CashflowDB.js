@@ -28,6 +28,14 @@ export class CashflowDAO {
     }
   }
 
+  static INST_STATE(payload){
+    let instance = new this()
+    instance.state = payload.state
+    instance.day = payload.day
+    //if(payload.state == 'collecting')
+    return instance
+  }
+
   parseTypes () {
     this.amount = parseFloat(this.amount)
     if(typeof this.state_data === 'object')

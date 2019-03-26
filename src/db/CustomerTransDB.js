@@ -12,6 +12,7 @@ export class CustomerTransDAO {
   sum = '+'
   trans_type = ''
   debt_after = 0
+  notes
 
   constructor(data) {
     Object.assign(this, data)

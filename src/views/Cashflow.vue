@@ -23,19 +23,49 @@
           </tbody>
         </table>
       </div>
-    
+    <button class="btn btn-success" v-b-toggle.collapse_cash >اضافة جديد </button>
+
+      <!-- Element to collapse  <div class="m-2"></div>-->
+  <b-collapse id="collapse_cash" style="padding:25px;">
+    <div class="entry-form">
+    <form  @submit="addCashflow">
+      <div class="form-group row">
+        <label  class="col-sm-2">المبلغ</label>
+        <div class="col-sm-10">
+          <input v-model="cashflow_form.amount" class="form-control "  placeholder="ادخل مبلغ الدفعة">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label  class="col-sm-2">تاريخ الدفعة</label>
+        <div class="col-sm-10">
+          <datetime v-model="cashflow_form.day" :auto="true" class="datetime" min-datetime="2018-01-01"></datetime>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label  class="col-sm-2">ملاحظات</label>
+        <div class="col-sm-10">
+          <input v-model="cashflow_form.notes" class="form-control " placeholder="ادخال الملاحظات">
+        </div>
+      </div>     
+
+      <button type="submit" class="btn btn-success" :disabled="! cashflow_form.day || ! cashflow_form.amount">اضافة</button>
+      <button type="button" class="btn btn-danger mr-1"  v-b-toggle.collapse_pay >  اغلاق</button>
+    </form>
+    </div>
+  </b-collapse>
   </section>
 </template>
 
 <script>
 // import { db } from '../main'
-import { CashflowDB} from '../db/CashflowDB.js'
+import { CashflowDB, CashflowDAO} from '../db/CashflowDB.js'
 import { APP_LABELS } from '../main.js'
 export default {
   name: 'cashflow',
   data () {
     return {
       cashflow_arr: [],
+      cashflow_form: new CashflowDAO(CashflowDAO.INIT_DAO),
       app_labels : APP_LABELS
     }
   },
@@ -61,6 +91,10 @@ export default {
         day: this.$store.state.day.iso,
         states: states
       })
+    },
+    addCashflow(evt) {
+      evt.preventDefault()
+      
     }
   },
   components: {

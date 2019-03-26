@@ -22,6 +22,7 @@
               <td>
                 {{labels.trans[trans.trans_type]}}
                 <span v-if="trans.trans_type === 'outgoing'"> - {{trans.d_product}}</span>
+                <span v-if="trans.notes">- {{trans.notes}} </span> 
               </td>
               <td>{{trans.amount}}</td>
             </tr>
@@ -34,7 +35,7 @@
             </tr>
           </tbody>
         </table>
-  <button v-b-toggle.collapse2 class="btn btn-success m-1 d-print-none">
+  <button v-b-toggle.collapse_collect class="btn btn-success m-1 d-print-none">
     <span class="fa fa-credit-card"></span> &nbsp; 
     تحصيل مبلغ
   </button>
@@ -44,16 +45,22 @@
         </button>
 
   <!-- Element to collapse -->
-  <b-collapse id="collapse2 d-print-none" style="padding:25px;">
+  <b-collapse id="collapse_collect" class="d-print-none p-1">
     <div class="entry-form">
-    <form  @submit="addCollecting">
+    <form  @submit="addCollecting" class="m-2">
       <div class="form-group row">
         <label  class="col-sm-2">المبلغ</label>
         <div class="col-sm-10">
           <input v-model="collect_form.amount" class="form-control "  placeholder="ادخل المبلغ المحصل">
         </div>
       </div>
-      <button type="submit" class="btn btn-success">تحصيل</button>
+      <div class="form-group row">
+        <label  class="col-sm-2">ملاحظات</label>
+        <div class="col-sm-10">
+          <input v-model="collect_form.notes" class="form-control " placeholder="ادخال الملاحظات">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success" :disabled="! collect_form.amount">تحصيل</button>
     </form>
     </div>
   </b-collapse>
@@ -96,6 +103,7 @@ export default {
       cashDAO.amount = parseFloat(this.collect_form.amount)
       cashDAO.actor_id = this.customer_id
       cashDAO.actor_name = this.customer.name
+      cashDAO.notes = this.collect_form.notes
       await CashflowDB.addNew(cashDAO)
       cashDAO.amount = - (cashDAO.amount)
       await CustomersDB.updateDebt(this.customer_id, cashDAO)

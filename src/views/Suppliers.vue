@@ -71,6 +71,7 @@
               <th>اسم العميل</th>
               <th>رقم التليفون </th>
               <th>اجمالي الطرود</th>
+              <th>الرصيد الحالي</th>
               <th></th>
             </tr>
           </thead>
@@ -84,7 +85,7 @@
                </td>
               <td>{{item.phone}}</td>
               <td>{{item.total_count}}</td>
-
+              <td>{{item.balance}}</td>
               <td>
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">
                   <span class="fa fa-archive "></span> 
