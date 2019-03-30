@@ -102,7 +102,10 @@ export class IncomingsDB {
       cashDAO.day = store.state.day.iso
       cashDAO.actor_id = data.supplier_id
       cashDAO.actor_name = data.supplier_name
-      await CashflowDB.addNew(cashDAO)
+      cashDAO.d_product = data.product_name
+      cashDAO.id = await CashflowDB.addNew(cashDAO)
+
+      await SuppliersDB.updateBalance(data.supplier_id, cashDAO)
     }
 
     if(data.given) {
@@ -148,23 +151,6 @@ export class IncomingsDB {
     let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
     await conn_pool.query(update_q)
     return 
-  }
-
-  static async getDailySuppliers(data) {
-    let all_obj = {}
-    /*
-    await dexie[this.TABLE_NAME].where({day:data.day}).each( item => {
-      if(item.supplier_id){
-        all_obj[item.supplier_id] = item.supplier_id
-      }
-    })
-    */
-    let all = await this.getAll(data)
-    all.forEach( item => {
-      if(item.supplier_id)
-        all_obj[item.supplier_id] = item.supplier_id
-    })
-    return Object.values(all_obj)
   }
 
 

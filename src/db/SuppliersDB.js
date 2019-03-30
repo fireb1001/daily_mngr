@@ -69,19 +69,30 @@ export class SuppliersDB {
   }
 
   static async updateBalance(id, payload) {
-    let supplierDAO = await this.getDAOById(id)
-    if(payload.amount ){
-      let payment = parseFloat(payload.amount)
-      supplierDAO.parseTypes()
-      supplierDAO.balance = supplierDAO.balance ? supplierDAO.balance - payment : - payment
+    // CREATE Supplier Trans Row
+    console.log(payload)    
 
-      // if trans_form or from details page
-      let suppTransDAO = new SupplierTransDAO(SupplierTransDAO.PAYMENT_DAO)
-      suppTransDAO.amount = payment
+    let supplierDAO = await this.getDAOById(id)
+    if(payload.amount){
+      let amount = - parseFloat(payload.amount) // minus
+      supplierDAO.parseTypes()
+      supplierDAO.balance = supplierDAO.balance ? supplierDAO.balance + amount : amount
+      
+      let suppTransDAO = null
+      if(payload.state && payload.state=== 'nolon'){
+        suppTransDAO = new SupplierTransDAO(SupplierTransDAO.NOLON_DAO)
+        suppTransDAO.cashflow_id = payload.id
+        suppTransDAO.d_product = payload.d_product
+      }
+      else { // if trans_form or from details page
+        suppTransDAO = new SupplierTransDAO(SupplierTransDAO.PAYMENT_DAO)
+      }
+      suppTransDAO.amount = amount
       suppTransDAO.day = payload.day
       suppTransDAO.notes = payload.notes
       suppTransDAO.supplier_id = id
       suppTransDAO.balance_after = supplierDAO.balance
+
       await SupplierTransDB.addNew(suppTransDAO)
     }
 

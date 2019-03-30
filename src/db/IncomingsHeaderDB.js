@@ -95,6 +95,30 @@ export class IncomingsHeaderDB {
       return
   }
 
+  static async getDailySuppliers(data) {
+    let all_obj = {}
+    /*
+    await dexie[this.TABLE_NAME].where({day:data.day}).each( item => {
+      if(item.supplier_id){
+        all_obj[item.supplier_id] = item.supplier_id
+      }
+    })
+    */
+    let all = await this.getAll(data)
+    console.log(all)
+    all.forEach( item => {
+      if(item.supplier_id) {
+        if(! all_obj[item.supplier_id]) {
+          all_obj[item.supplier_id] = 0
+        }
+        all_obj[item.supplier_id] += parseInt(item.current_count)
+      }
+        
+    })
+
+    return all_obj
+  }
+
   static async getAll(data) {
     let all = []
     let results = []
@@ -103,9 +127,12 @@ export class IncomingsHeaderDB {
         //all = await dexie[this.TABLE_NAME].where({day:data.day}).and( row => row.current_count > 0 ).toArray()
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and current_count > 0`)
       }
-      if(data.day && data.supplier_id) {
+      else if(data.day && data.supplier_id) {
         //all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id}`)
+      }
+      else if(data.day) {
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
       }
     }
     else {

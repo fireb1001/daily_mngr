@@ -4,9 +4,12 @@
 
 <router-link  v-for="(supplier, idx) in suppliers_arr" 
 :to="{name:'supplier_details', params: {id: supplier.id}}"  :key="idx" 
-class="btn btn-lg btn-primary m-1 btn-block">
+class="btn btn-lg btn-primary m-1 btn-block" :class="{'btn-danger':suppliers_headers_arr[supplier.id] > 0}">
   <span class="fa fa-receipt"></span> &nbsp; 
-  عرض فواتير العميل - {{supplier.name}}
+  عرض فواتير العميل - {{supplier.name}} 
+  <span v-if="suppliers_headers_arr[supplier.id] > 0">
+  - متبقي {{suppliers_headers_arr[supplier.id]}} طرد
+  </span>
 </router-link>
 
   </section>
@@ -14,14 +17,15 @@ class="btn btn-lg btn-primary m-1 btn-block">
 
 <script >
 import { SuppliersDB } from '../db/SuppliersDB.js'
-import { IncomingsDB } from '../db/IncomingsDB.js';
+import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js';
 
 export default {
   name: 'receipts',
   data () {
     return {
       suppliers_arr: [],
-      store_day: this.$store.state.day
+      store_day: this.$store.state.day,
+      suppliers_headers_arr : []
     }
   },
   methods: {
@@ -29,8 +33,9 @@ export default {
       // this.suppliers_arr = await SuppliersDB.getAll()
       // last_incoming_day: this.$store.state.day.formate
       // console.log(this.suppliers_arr)
-      let unique_daily_suppliers_ids = await IncomingsDB.getDailySuppliers({day: this.store_day.iso})
-      this.suppliers_arr = await SuppliersDB.getAll(unique_daily_suppliers_ids)
+      this.suppliers_headers_arr = await IncomingsHeaderDB.getDailySuppliers({day: this.store_day.iso})
+      let ids = Object.keys(this.suppliers_headers_arr)
+      this.suppliers_arr = await SuppliersDB.getAll(ids)
     }
   },
   components: {

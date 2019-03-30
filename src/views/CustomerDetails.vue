@@ -104,7 +104,7 @@ export default {
       cashDAO.actor_id = this.customer_id
       cashDAO.actor_name = this.customer.name
       cashDAO.notes = this.collect_form.notes
-      await CashflowDB.addNew(cashDAO)
+      cashDAO.id = await CashflowDB.addNew(cashDAO)
       cashDAO.amount = - (cashDAO.amount)
       await CustomersDB.updateDebt(this.customer_id, cashDAO)
 

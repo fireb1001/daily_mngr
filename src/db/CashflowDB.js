@@ -9,6 +9,7 @@ export class CashflowDAO {
     state_data = ''
     actor_id
     actor_name = ''
+    d_product = ''
     outgoing_id
     incoming_id
     sum = '+'

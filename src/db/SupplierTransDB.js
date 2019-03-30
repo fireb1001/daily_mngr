@@ -21,7 +21,15 @@ export class SupplierTransDAO {
 
   static get PAYMENT_DAO() {
     return {
-      trans_type: 'payment'
+      trans_type: 'payment',
+      sum: '-'
+    }
+  }
+
+  static get NOLON_DAO() {
+    return {
+      trans_type: 'nolon',
+      sum: '-'
     }
   }
 

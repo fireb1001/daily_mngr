@@ -67,7 +67,8 @@
             <tr v-for="(payment, idx) in supplier_payments" :key='idx'>
               <td>{{payment.day}}</td>
               <td>
-                {{payment.trans_type}} - {{payment.notes}}
+                {{labels.payments[payment.trans_type]}}
+                <span v-if="payment.notes">- {{payment.notes}} </span>
               </td>
               <td>{{payment.amount}}</td>
             </tr>
@@ -200,6 +201,7 @@ import { OutgoingsHeaderDB } from '../db/OutgoingsHeaderDB.js';
 import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js';
 import { DateTime } from '../main.js'
 import { SupplierTransDB } from '../db/SupplierTransDB.js';
+import { APP_LABELS } from '../main.js';
 
 export default {
   name: 'supplier-details',
@@ -214,7 +216,8 @@ export default {
       receipt: {cols: [], comm: 0, nolon: 0 ,receipt_given:0, total: 0 },
       outgoings_headers_today: [],
       incomings_headers_today: [],
-      supplier_payments: []
+      supplier_payments: [],
+      labels: APP_LABELS
     }
   },
   methods: {

@@ -31,6 +31,10 @@ export const APP_LABELS = {
     outgoing: 'بيع اجل',
     collecting: 'تحصيل',
     init: 'رصيد مديونية'
+  },
+  payments: {
+    payment: 'دفعة',
+    nolon: 'نولون'
   }
 }
 
