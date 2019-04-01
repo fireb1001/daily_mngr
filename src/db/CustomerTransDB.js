@@ -18,12 +18,6 @@ export class CustomerTransDAO {
     Object.assign(this, data)
   }
 
-  static get COLLECTING_DAO() {
-    return {
-      trans_type: 'collecting'
-    }
-  }
-
   parseTypes () {
     this.amount = parseFloat(this.amount)
   }

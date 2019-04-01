@@ -76,14 +76,12 @@ export default {
     async refresh_cashflow_arr() {
       let states = null
       if(this.$route.name == 'expensess') {
-        states = ['given','expense']
+        states = ['given','expense','nolon','payment']
       }
       else if(this.$route.name == 'collecting') {
         states = ['collecting','outgoing_cash'] // ['given','expense']
       }
-      else if (this.$route.name == 'payments') {
-        states = ['nolon','payment']
-      }
+      // else if (this.$route.name == 'payments') { states = []   }
       
       // console.log( this.$route.name ,state)
       this.cashflow_arr = await CashflowDB.getAll({

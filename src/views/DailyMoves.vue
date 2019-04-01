@@ -9,7 +9,8 @@
             <tr>
               <th>التاريخ</th>
               <th>اسم العميل</th>
-              <th>عدد الطرود</th>
+              <th>الصنف</th>
+              <th>عدد المباع</th>
               <th>بسعر</th>
               <th>البياعة</th>
               <th>العمولة</th>
@@ -20,7 +21,8 @@
             <tr v-for="(item, idx) in outgoings_header_arr" :key='idx'>
               <td>{{item.day}}</td>
               <td>{{item.supplier_name}}</td>
-              <td>{{item.total_count}}</td>
+              <td>{{item.product_name}}</td>
+              <td>{{item.sold_count}}</td>
               <td>{{item.kg_price}}</td>
               <td>{{item.total_sell_comm_value}}</td>
               <td>{{item.recp_comm_rate}}</td>
@@ -36,7 +38,7 @@
 <script >
 
 import { OutgoingsHeaderDB } from '../db/OutgoingsHeaderDB'
-
+// TODO to be incomings headers
 export default {
   name: 'daily-moves',
   data () {

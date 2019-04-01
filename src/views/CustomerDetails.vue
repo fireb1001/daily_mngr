@@ -16,6 +16,14 @@
 
     <hr/>
         <table class="table table-striped ">
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>الحركة</th>
+              <th>المبلغ</th>
+              <th>باقي</th>
+            </tr>
+          </thead>
           <tbody>
             <tr v-for="(trans, idx) in customer_trans" :key='idx'>
               <td>{{trans.day}}</td>
@@ -25,10 +33,12 @@
                 <span v-if="trans.notes">- {{trans.notes}} </span> 
               </td>
               <td>{{trans.amount}}</td>
+              <td>{{trans.debt_after}}</td>
             </tr>
             <tr>
               <td></td>
               <td>رصيد المديونية الحالي</td>
+              <td></td>
               <td>
                 <b>{{customer.debt}}</b>
               </td>

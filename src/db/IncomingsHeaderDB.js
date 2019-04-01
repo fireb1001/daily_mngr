@@ -11,6 +11,8 @@ export class IncomingsHeaderDAO {
   date_created
   total_count = 0
   current_count = 0
+  inc_total_sell_comm = 0
+  inc_total_nolon = 0
   notes = ''
 
   static get INIT_DAO() {
@@ -29,11 +31,15 @@ export class IncomingsHeaderDAO {
     if(data && data.count) {
         this.total_count = this.current_count = parseInt(data.count)
     }
+    if(data && data.nolon)
+      this.inc_total_nolon = parseFloat(data.nolon)
   }
 
   parseTypes() {
     this.total_count = parseInt(this.total_count)
     this.current_count = parseInt(this.current_count)
+    this.inc_total_sell_comm = parseFloat(this.inc_total_sell_comm)
+    this.inc_total_nolon = parseFloat(this.inc_total_nolon)
   }
 
 }
@@ -56,10 +62,20 @@ export class IncomingsHeaderDB {
     else {
       head.total_count += parseInt(data.total_count)
       head.current_count += parseInt(data.total_count)
-      await this.saveById(head.id, {total_count: head.total_count, current_count: head.current_count})
+      head.inc_total_nolon += parseFloat(data.inc_total_nolon)
+      await this.saveById(head.id, {
+        total_count: head.total_count,
+        current_count: head.current_count,
+        inc_total_nolon: head.inc_total_nolon
+      })
       return head.id
     }
   }
+  /*
+  static async addTotals(id, payload) {
+    console.log("addTotals", id, payload)
+  }
+  */
 
   /** @param {IncomingsHeaderDAO} data */
   static async addNew(data) {

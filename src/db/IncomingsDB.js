@@ -103,9 +103,9 @@ export class IncomingsDB {
       cashDAO.actor_id = data.supplier_id
       cashDAO.actor_name = data.supplier_name
       cashDAO.d_product = data.product_name
-      cashDAO.id = await CashflowDB.addNew(cashDAO)
+      await CashflowDB.addNew(cashDAO)
 
-      await SuppliersDB.updateBalance(data.supplier_id, cashDAO)
+      // await SuppliersDB.updateBalance(data.supplier_id, cashDAO)
     }
 
     if(data.given) {

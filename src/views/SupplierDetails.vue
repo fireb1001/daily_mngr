@@ -63,6 +63,14 @@
     <div class="table-responsive" v-if="show_payments">
       <h2>دفعات العميل {{supplier.name}}</h2>
         <table class="table table-striped ">
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>الحركة</th>
+              <th>المبلغ</th>
+              <th>باقي</th>
+            </tr>
+          </thead>
           <tbody>
             <tr v-for="(payment, idx) in supplier_payments" :key='idx'>
               <td>{{payment.day}}</td>
@@ -71,6 +79,7 @@
                 <span v-if="payment.notes">- {{payment.notes}} </span>
               </td>
               <td>{{payment.amount}}</td>
+              <td>{{payment.balance_after}}</td>
             </tr>
             <tr>
               <td></td>
@@ -94,7 +103,9 @@
             <th>#</th>
             <th>الصنف</th>
             <th>عدد الطرود</th>
+            
             <th>متبقي</th>
+            <th>اجمالي النولون</th>
           </tr>
         </thead>
         <tbody>
@@ -102,7 +113,9 @@
             <td></td>
             <td>{{incom.product_name}}</td>
             <td>{{incom.total_count}}</td>
+            
             <td>{{incom.current_count}}</td>
+            <td>{{incom.inc_total_nolon}}</td>
           </tr>
         </tbody>
       </table>
@@ -119,7 +132,9 @@
             <th>الصنف</th>
             <th>عدد الطرود</th>
             <th>اجمالي الوزن</th>
-            <th>سعر الكيلو</th>
+            <th> سعر الكيلو
+              (بيع)
+            </th>
             <th>المبلغ</th>
 
           </tr>
@@ -139,9 +154,9 @@
 
         <div v-if="! show_payments">
           <!-- -->
-          <h4 class="text-danger" v-if="total_current_rest > 0"> عدد الطرود المتبقية التي لم يتم بيعها حتي الان {{ total_current_rest }} طرد</h4>
+          <h4 class="text-danger" v-if="inc_sums.c_total_current_rest > 0"> عدد الطرود المتبقية التي لم يتم بيعها حتي الان {{ inc_sums.c_total_current_rest }} طرد</h4>
           <button @click="show_details = false"
-          class="btn m-1" :class="{'btn-danger':  total_current_rest > 0 , 'btn-success':  total_current_rest == 0}">
+          class="btn m-1" :class="{'btn-danger':  inc_sums.c_total_current_rest > 0 , 'btn-success':  inc_sums.c_total_current_rest == 0}">
             <span class="fa fa-receipt"></span> &nbsp; 
             انشاء فاتورة
           </button>
@@ -164,7 +179,9 @@
               <th>عدد الطرود</th>
               <th> الوزن</th>
               <th> </th>
-              <th>سعر الكيلو</th>
+              <th>سعر الكيلو
+                (فاتورة)
+              </th>
               <th>الصنف</th>
             </tr>
           </thead>
@@ -246,12 +263,13 @@ export default {
     }
   },
   computed: {
-    total_current_rest: function() {
-      let sum =0 
+    inc_sums: function() {
+      let inc_sums ={c_total_current_rest:0 , c_total_inc_nolon: 0}
       this.incomings_headers_today.forEach(item =>{
-        sum += parseInt(item.current_count)
+        inc_sums.c_total_current_rest += parseInt(item.current_count)
+        inc_sums.c_total_inc_nolon += parseFloat(item.inc_total_nolon)
       })
-      return sum
+      return inc_sums
     },
     calc_receipt: function(){
       let sum =0 

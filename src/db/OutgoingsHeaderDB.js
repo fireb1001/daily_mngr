@@ -9,7 +9,7 @@ export class OutgoingHeaderDAO {
   supplier_name
   day
   date_created
-  total_count
+  sold_count
   total_sell_comm_value
   sell_comm_details
   kg_price
@@ -36,7 +36,7 @@ export class OutgoingHeaderDAO {
     // this.id = data.id !== null ? data.id : this.id
     Object.assign(this, data)
     if(data && data.count) {
-        this.total_count = parseInt(data.count)
+        this.sold_count = parseInt(data.count)
     }
     if(data && data.weight) {
       this.total_weight = parseFloat(data.weight)
@@ -51,7 +51,7 @@ export class OutgoingHeaderDAO {
 
   
   parseTypes() {
-    this.total_count = parseInt(this.total_count)
+    this.sold_count = parseInt(this.sold_count)
     this.kg_price = parseFloat(this.kg_price)
     this.total_weight = parseFloat(this.total_weight)
     this.total_value = parseFloat(this.total_value)
@@ -74,7 +74,7 @@ export class OutgoingsHeaderDB {
     } // else update
     else {
         console.log(headDAO)
-        headDAO.total_count += data.total_count
+        headDAO.sold_count += data.sold_count
         headDAO.total_weight += data.total_weight
         headDAO.total_value += data.total_value
         headDAO.total_sell_comm_value += data.total_sell_comm_value
@@ -83,7 +83,7 @@ export class OutgoingsHeaderDB {
         headDAO.recp_total = headDAO.recp_kg_price * headDAO.recp_weight
 
         await this.saveById(headDAO.id, {
-          total_count: headDAO.total_count,
+          sold_count: headDAO.sold_count,
           total_weight: headDAO.total_weight,
           total_value: headDAO.total_value,
           total_sell_comm_value: headDAO.total_sell_comm_value,

@@ -79,7 +79,9 @@ export class OutgoingsDB {
 
       // decrease Incoming 
       let inc_header = await IncomingsHeaderDB.getDAOById(data.incoming_header_id)
+      inc_header.parseTypes()
       inc_header.current_count -= parseInt(data.count)
+      inc_header.inc_total_sell_comm += parseFloat(data.sell_comm_value)
       await IncomingsHeaderDB.saveById(inc_header.id, inc_header)
 
       // Add outgoing header according to price
@@ -105,6 +107,7 @@ export class OutgoingsDB {
         cashDAO.state = 'outgoing_cash'
         cashDAO.outgoing_id = outgoing_id
         cashDAO.day = store.state.day.iso
+        cashDAO.d_product = data.product_name
         await CashflowDB.addNew(cashDAO)
       }
 
@@ -120,8 +123,11 @@ export class OutgoingsDB {
         }
         cashDAO.actor_id = data.customer_id
         cashDAO.actor_name = data.customer_name
-        await CashflowDB.addNew(cashDAO)
+        cashDAO.id = await CashflowDB.addNew(cashDAO)
+        // TODO SO NO OBJECT PAYLOAD !!!!
+
         cashDAO.amount = - (cashDAO.amount)
+        cashDAO.d_product = data.product_name
         // TODO check later y3n
         // TODO show only todos
         await CustomersDB.updateDebt(data.customer_id, cashDAO)

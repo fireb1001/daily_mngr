@@ -43,6 +43,7 @@ function createMainWindow () {
         slashes: true
       })
     )
+    window.webContents.openDevTools()
     window.maximize()
     image.loadURL(`file://${__dirname}/index.html#image`)
     settings.loadURL(`file://${__dirname}/index.html#settings`)

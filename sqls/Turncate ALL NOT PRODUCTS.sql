@@ -1,3 +1,4 @@
+USE daily_mngr;
 START TRANSACTION;
 TRUNCATE TABLE cashflow;
 TRUNCATE TABLE customer_trans;

@@ -18,10 +18,10 @@
               {{ day_comp.d_week }}
             </b>
             <h3 class="d-flex justify-content-between align-items-center px-3  mb-1 text-muted">
-              <span> {{day_comp.arab}}</span> 
+              <router-link to="/daily" > {{day_comp.arab}} </router-link>
             </h3>
             <b class="m-3 ">
-              <router-link class="text-muted" to="/daily" style="float:left;padding: 0 10px;">
+              <router-link class="text-danger" to="/daily" style="float:left;padding: 0 10px;">
               تغيير اليوم
               </router-link>
             </b>
@@ -61,10 +61,18 @@
                   حساب البائعين
                 </router-link>
               </li>
+              <!--
               <li class="nav-item">
                 <router-link class="nav-link active" to="/payments">
                   <span class="fa fa-money-bill-wave"></span>
                   مدفوعات 
+                </router-link>
+              </li>
+              -->
+              <li class="nav-item">
+                <router-link class="nav-link active" to="/expensess">
+                  <span class="fa fa-money-bill-wave"></span>
+                  مصروفات 
                 </router-link>
               </li>
               <li class="nav-item">
@@ -73,12 +81,7 @@
                   تحصيلات 
                 </router-link>
               </li>
-              <li class="nav-item">
-                <router-link class="nav-link active" to="/expensess">
-                  <span class="fa fa-money-bill-wave"></span>
-                  مصروفات 
-                </router-link>
-              </li>
+
             </ul>
 
             <h3 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -107,13 +110,14 @@
                    <span class="sr-only">(current)</span>
                 </router-link>
               </li>
-              <!--
+              
               <li class="nav-item">
                 <router-link class="nav-link active" to="/developer">
                   <span class="fa fa-code"></span>
                    Developer<span class="sr-only">(current)</span>
                 </router-link>
               </li>
+              <!--
               -->
             </ul>
             <!--

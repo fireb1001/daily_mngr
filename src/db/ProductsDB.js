@@ -21,9 +21,10 @@ export class ProductDAO {
   }
 }
 
+/*
 ProductDAO.prototype.id = Number
 ProductDAO.prototype.name = String
-/*
+
 Object.(ProductDAO.prototype, 'id',{
 
 })
