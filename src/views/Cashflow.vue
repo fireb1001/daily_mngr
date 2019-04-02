@@ -7,7 +7,10 @@
             <tr>
               <th>التاريخ</th>
               <th>المبلغ</th>
-              <th>من</th>
+              <th>
+                <span v-if="$route.name == 'expensess'">الي </span>
+                <span v-if="$route.name != 'expensess'">من </span>
+              </th>
               <th>نوع</th>
               <th>ملاحظات</th>
             </tr>
@@ -17,7 +20,9 @@
               <td>{{item.day}}</td>
               <td>{{item.amount}}</td>
               <td>{{item.actor_name}}</td>
-              <td>{{app_labels[item.state]}}</td>
+              <td>{{app_labels[item.state]}}
+                <span v-if="item.d_product"> - {{item.d_product}}</span>
+              </td>
               <td>{{item.notes}}</td>
             </tr>
           </tbody>

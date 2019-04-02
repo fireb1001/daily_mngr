@@ -100,6 +100,13 @@
         </div>
     </div>
 
+    <h4 class="text-danger" v-if="inc_sums.c_total_current_rest > 0"> عدد الطرود المتبقية التي لم يتم بيعها حتي الان {{ inc_sums.c_total_current_rest }} طرد</h4>
+    <button @click="show_details = false;initReceipt()" class="btn m-1 pr-hideme"
+      :class="{'btn-danger':  inc_sums.c_total_current_rest > 0 , 'btn-success':  inc_sums.c_total_current_rest == 0}">
+      <span class="fa fa-receipt"></span> &nbsp; 
+      الفواتير
+    </button>
+
     <div class="table-responsive" v-if="! show_payments">
       <h3>اجماليات وارد اليوم {{store_day.iso}}</h3>
       <table class="table table-striped table-sm pr-me">
@@ -114,7 +121,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(incom, idx) in incomings_headers_today" :key='idx'>
+          <tr v-for="(incom, idx) in incomings_headers_today" :key='idx' :class="{'text-danger':incom.current_count > 0}">
             <td></td>
             <td>{{incom.product_name}}</td>
             <td>{{incom.total_count}}</td>
@@ -161,26 +168,28 @@
           <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
             <span class="fa fa-print"></span> طباعة الاجماليات
           </button>
-          <!-- -->
-          <h4 class="text-danger" v-if="inc_sums.c_total_current_rest > 0"> عدد الطرود المتبقية التي لم يتم بيعها حتي الان {{ inc_sums.c_total_current_rest }} طرد</h4>
-          <button @click="show_details = false" class="btn m-1 pr-hideme"
-           :class="{'btn-danger':  inc_sums.c_total_current_rest > 0 , 'btn-success':  inc_sums.c_total_current_rest == 0}">
-            <span class="fa fa-receipt"></span> &nbsp; 
-            انشاء فاتورة
-          </button>
+
         </div>
       </section>
 
-      <section v-if="! show_details">
-        <h4 class="text-danger text-center"> فاتورة </h4>
-        <p>
+      <section v-if="! show_details && show_receipt">
+        <h1 class="text-danger text-center"> أولاد الحاج/ مصطفي ندا مصطفي</h1>
+        <h1 class="text-primary text-center">الأستاذ / جمــال نــدا</h1>
+        <h4 class="text-danger text-center"> لتجارة وتسويق الفاكهة </h4>
+        <h5 class="text-primary text-center">
+          سوق العبور - القاهرة - محل رقم 150 عنبر 4 فاكهة س.ت :284040
+        </h5>
+        <h5 class="text-primary text-center">
+          ت : 4470350 المعلم سلامة : 01118357750 الأستاذ محمد : 01023929223
+        </h5>
+        <h3 class="text-danger text-center"> فاتـورة </h3>
+        <p class="pr-me">
           تحريراً في {{store_day.arab}}
-        </p>
-        <p>
+          <br/>
           المطلوب من السيد/ {{supplier.name}}
         </p>
-      <div class="table-responsive">
-        <table class="table table-striped table-sm">
+      <div class="table-responsive p-2" style="border: 2px solid #79ace0; border-radius: 12px;">
+        <table class="table table-bordered table-sm pr-me" >
           <thead>
             <tr>
               <th>الاجمالي</th>
@@ -188,7 +197,7 @@
               <th> الوزن</th>
               <th> </th>
               <th>سعر الكيلو
-                (فاتورة)
+                <span v-if="! print_mode">(فاتورة)</span>
               </th>
               <th>الصنف</th>
             </tr>
@@ -196,72 +205,107 @@
           <tbody>
             <tr v-for="(item, idx) in outgoings_headers_today" :key='idx'>
               <td>
-                {{item.recp_kg_price *  item.recp_weight }}
+                {{item.recp_kg_price *  item.recp_weight | round2}}
               </td>
               <td>{{item.sold_count}}</td>
               <td>{{item.recp_weight}}</td>
               <td>X</td>
               <td style="width:20%">
-                <input v-model="item.recp_kg_price" class="form-control"  >
-
+                <input v-model="item.recp_kg_price" class="form-control"  v-if="! print_mode">
+                <span v-if=" print_mode">{{item.recp_kg_price}}</span>
               </td>
               <td style="width:25%">{{item.product_name}}</td>
             </tr>
             <tr>
-              <td ><b class="border-top border-primary">{{calc_receipt.total}} </b></td>
+              <td ><b class="border-top border-primary">{{calc_sale_value | round2}} </b></td>
+            <th ></th>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
             </tr>
           <tr>
             
             <td>( {{inc_sums.c_total_inc_nolon}} )</td>
             <th >مشال</th>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
           </tr>
           <tr>
             
-            <td>( {{calc_receipt.total * (receipt.comm_rate / 100)}} )</td>
+            <td>( {{receipt.sale_value * (receipt.comm_rate / 100) | round2}} )</td>
             <th >عمولة</th>
             <td></td>
             <td></td>
-            <td><input v-model="receipt.comm_rate" class="form-control"  ></td>
-            <th>نسبة العمولة %</th>
+            <td ><input v-if="! print_mode" v-model="receipt.comm_rate" class="form-control"  ></td>
+            <th>
+              <span  v-if="! print_mode">
+               نسبة العمولة {{receipt.comm_rate }}%  
+               </span>
+            </th>
           </tr>
           <tr>
             <td>( {{receipt.receipt_given}} )</td>
             <th >وهبة الفاتورة</th>
             <td></td>
             <td></td>
-            <td><input v-model="receipt.receipt_given" class="form-control"  ></td>
-            <th>ادخل مبلغ الوهبة</th>
+            <td ><input v-if="! print_mode" v-model="receipt.receipt_given" class="form-control"  ></td>
+            <th >
+              <span v-if="! print_mode">
+              ادخل مبلغ الوهبة
+              </span>
+              </th>
           </tr>
           <tr>
-            <td><hr></td>
-          </tr>
-          <tr>
-            <td>{{receipt.total = calc_receipt.total - inc_sums.c_total_inc_nolon -(calc_receipt.total * (receipt.comm_rate / 100)) - receipt.receipt_given }}</td>
+            <td> <b class="border-top border-primary">{{receipt.net_value | round2}} </b></td>
             <th >صافي الفاتورة</th>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
           </tr>
           </tbody>
         </table>
-        <hr>
-
       </div>
-      <button @click="show_details = true" class="btn btn-primary m-1" >
+        <p class="text-danger pr-me">
+          خالص بيد حامله ولا تلغي أي شيكات أو ايصالات امانة
+        </p>
+      <button @click="show_details = true; print_mode= false; getSupplierDetails()" class="btn btn-primary m-1 pr-hideme" >
         العودة
       </button>
-      <button @click="saveRecp()" class="btn btn-success m-1" >
+      <button @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
         حفظ الفاتورة
       </button>
-      
+      <button @click="saveRecp(1)" class="btn btn-success m-1 pr-hideme" >
+        رصد الفاتورة
+      </button>
+      <button @click="saveRecp(2)" class="btn btn-success m-1 pr-hideme" >
+        صرف الفاتورة
+      </button>
+      <button v-if="! receipt.receipt_paid" @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
+        استرجاع قبل الفاتورة
+      </button>
+      <button v-if=" print_mode" class="btn btn-printo pr-hideme m-1" @click="vue_window.print()">
+        <span class="fa fa-print"></span> طباعة 
+      </button>
+
+      <button v-if="! print_mode" @click="print_mode= true" class="btn btn-primary m-1 pr-hideme" >
+        معاينة طباعة
+      </button>
       </section>
   </section>
 </template>
 
 <script >
 import { SuppliersDB, SupplierDAO } from '../db/SuppliersDB.js'
-import { OutgoingsHeaderDB, OutgoingHeaderDAO } from '../db/OutgoingsHeaderDB.js';
-import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js';
+import { OutgoingsHeaderDB, OutgoingHeaderDAO } from '../db/OutgoingsHeaderDB.js'
+import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js'
+import { ReceiptDAO, ReceiptsDB} from '../db/ReceiptsDB.js'
 import { DateTime } from '../main.js'
-import { SupplierTransDB } from '../db/SupplierTransDB.js';
-import { APP_LABELS } from '../main.js';
+import { SupplierTransDB } from '../db/SupplierTransDB.js'
+import { APP_LABELS } from '../main.js'
 
 export default {
   name: 'supplier-details',
@@ -271,9 +315,12 @@ export default {
       supplier_id: this.$route.params.id,
       show_details: true,
       show_payments : false,
+      show_receipt: false,
+      print_mode: false,
       store_day: this.$store.state.day,
       trans_form: {},
-      receipt: {cols: [], comm_rate: 0, nolon: 0 ,receipt_given:0, total: 0 },
+      //receipt: {cols: [], comm_rate: 0, nolon: 0 ,receipt_given:0, total: 0 },
+      receipt: new ReceiptDAO(),
       outgoings_headers_today: [],
       incomings_headers_today: [],
       supplier_payments: [],
@@ -295,6 +342,7 @@ export default {
       })
 
       this.supplier_payments = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
+      
     },
     async addPayments(evt){
       evt.preventDefault()
@@ -304,7 +352,19 @@ export default {
       this.$root.$emit('bv::toggle::collapse', 'collapse_pay')
       this.getSupplierDetails()
     },
-    async saveRecp() {
+    async initReceipt() {
+      console.log(this.inc_sums)
+      this.receipt = await ReceiptsDB.initReceipt({day: this.store_day.iso, supplier_id: this.supplier.id},{
+        total_nolon: this.inc_sums.c_total_inc_nolon,
+        sale_value: this.calc_sale_value,
+        day: this.store_day.iso,
+        supplier_id: this.supplier.id
+      })
+      this.receipt.total_nolon = this.inc_sums.c_total_inc_nolon
+      this.receipt.sale_value = this.calc_sale_value
+      this.show_receipt = true
+    },
+    async saveRecp(paid) {
       this.outgoings_headers_today.forEach(async item =>{
         let out_head_DAO = new OutgoingHeaderDAO(item)
         out_head_DAO.parseTypes()
@@ -315,6 +375,22 @@ export default {
           recp_total: out_head_DAO.recp_kg_price * out_head_DAO.recp_weight
         })
       })
+      this.receipt.receipt_paid = paid
+      await ReceiptsDB.saveById(this.receipt.id, this.receipt)
+    },
+    async discardRecp() {
+      this.outgoings_headers_today.forEach( async item =>{
+        let out_head_DAO = new OutgoingHeaderDAO(item)
+        out_head_DAO.parseTypes()
+        await OutgoingsHeaderDB.saveById(item.id, {
+          recp_kg_price: out_head_DAO.kg_price,
+          recp_total: out_head_DAO.kg_price * out_head_DAO.total_weight
+        })
+      })
+      this.show_receipt = false
+      this.show_details = true
+      this.print_mode= false
+      this.getSupplierDetails()
     }
   },
   computed: {
@@ -326,13 +402,35 @@ export default {
       })
       return inc_sums
     },
-    calc_receipt: function(){
+    calc_sale_value: function(){
       let sum =0 
       this.outgoings_headers_today.forEach(item =>{
         sum += parseFloat(item.recp_weight) * parseFloat(item.recp_kg_price)
       })
-      let calc = {total: sum}
-      return calc
+      // this.receipt.sale_value = sum
+      return sum
+    },
+    calc_receipt_net: function() {
+      return this.receipt.sale_value 
+      - ( this.receipt.sale_value * ( this.receipt.comm_rate / 100 )) 
+      - this.receipt.receipt_given 
+      - this.receipt.total_nolon
+    }
+  },
+  watch : {
+    /*
+    receipt: {
+      handler() {
+        this.receipt.calcVals()
+      },
+      deep: true
+    },
+    */
+    calc_sale_value: function(newval) {
+      this.receipt.sale_value = newval
+    },
+    calc_receipt_net: function(newval) {
+      this.receipt.net_value = newval
     }
   },
   components: {

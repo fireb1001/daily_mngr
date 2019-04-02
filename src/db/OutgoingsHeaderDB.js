@@ -22,6 +22,7 @@ export class OutgoingHeaderDAO {
   recp_comm_value
   recp_total
   notes = ''
+  receipt_id
 
   static get INIT_DAO() {
     return {
@@ -104,10 +105,12 @@ export class OutgoingsHeaderDB {
   /**@param {OutgoingHeaderDAO} data */
   static async addNew(data) {
     data.parseTypes()
+    console.log(data)
     data.recp_kg_price = data.kg_price
     data.recp_weight = data.total_weight
     data.recp_total = data.recp_kg_price * data.recp_weight
     let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new OutgoingHeaderDAO())}`
+    console.log('instert_q' , instert_q)
     let ok = await conn_pool.query(instert_q)
     return  ok.insertId
   }

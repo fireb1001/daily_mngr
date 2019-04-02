@@ -1,0 +1,92 @@
+import { inserter, conn_pool, payloader } from '../main'
+
+export class ReceiptDAO {
+
+    id = 0
+    day
+    supplier_id
+    total_nolon 
+    receipt_given
+    comm_rate
+    sale_value
+    net_value
+    receipt_paid
+    d_product = ''
+
+
+  static get INIT_DAO() {
+    return {
+    }
+  }
+
+  parseTypes () {
+    this.total_nolon = this.total_nolon? parseFloat(this.total_nolon) : 0
+    this.receipt_given = this.receipt_given? parseFloat(this.receipt_given) : 0
+    this.comm_rate = this.comm_rate? parseFloat(this.comm_rate) : 0
+    this.sale_value = this.sale_value? parseFloat(this.sale_value) : 0
+    this.net_value = this.net_value? parseFloat(this.net_value) : 0
+    this.receipt_paid = this.receipt_paid? parseInt(this.receipt_paid) : 0
+  }
+  /*
+  calcVals() {
+    this.parseTypes()
+    this.net_value = this.sale_value - ( this.sale_value * ( this.comm_rate / 100 )) - this.receipt_given - this.total_nolon
+  }
+  */
+  constructor( data ){
+    Object.assign(this, data)
+  }
+}
+
+//////////////////////// DB ///////////////////////////////
+ 
+export class ReceiptsDB {
+  static TABLE_NAME = 'receipts'
+
+  /**@param {ReceiptDAO} data */
+  static async addNew(data) {
+    data.parseTypes()
+    let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new ReceiptDAO())}`
+    let ok = await conn_pool.query(instert_q)
+    return ok.insertId
+  }
+
+  static async saveById(id, payload) {
+    let sets = payloader(payload, new ReceiptDAO())
+    let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return 
+  }
+
+  static async initReceipt(data, payload) {
+    let receipts = await this.getAll({day: data.day, supplier_id: data.supplier_id})
+    let recpDAO = new ReceiptDAO()
+    if(receipts.length === 0){
+      recpDAO = new ReceiptDAO(payload)
+      recpDAO.id = await this.addNew(recpDAO)
+      //calc_receipt.total - inc_sums.c_total_inc_nolon -(calc_receipt.total * (receipt.comm_rate / 100)) - receipt.receipt_given
+    }
+    else {
+      recpDAO = receipts[0]
+    }
+
+    return recpDAO
+  }
+
+  static async getAll(data) {
+    // console.log(data.state, Array.isArray( data.state))
+    let all = []
+    let results = []
+
+    if(data.day && data.supplier_id){
+      let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id = ${data.supplier_id}`
+      results = await conn_pool.query(query)
+    }
+    else {
+      // NONE
+    }
+
+    results.forEach( item => { all.push(new ReceiptDAO(item)) })
+    return all
+  }
+}

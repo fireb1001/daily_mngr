@@ -174,7 +174,6 @@ export default {
     },
     async refresh_all() {
       this.suppliers_arr = await SuppliersDB.getAll()
-      console.log(this.suppliers_arr)
     }
   },
   async mounted() {

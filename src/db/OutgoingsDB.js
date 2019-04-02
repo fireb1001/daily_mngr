@@ -74,6 +74,7 @@ export class OutgoingsDB {
       data.sell_comm_value = data.count * data.sell_comm
       
       let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new OutgoingDAO())}`
+      // console.log('instert_q', instert_q)
       let ok = await conn_pool.query(instert_q)
       let outgoing_id = ok.insertId
 

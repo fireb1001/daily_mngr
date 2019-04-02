@@ -14,7 +14,7 @@ export class IncomingsHeaderDAO {
   inc_total_sell_comm = 0
   inc_total_nolon = 0
   inc_total_recp_comm
-  notes = ''
+  notes
 
   static get INIT_DAO() {
     return {
@@ -39,9 +39,9 @@ export class IncomingsHeaderDAO {
   parseTypes() {
     this.total_count = parseInt(this.total_count)
     this.current_count = parseInt(this.current_count)
-    this.inc_total_sell_comm = parseFloat(this.inc_total_sell_comm)
-    this.inc_total_nolon = parseFloat(this.inc_total_nolon)
-    this.inc_total_recp_comm = parseFloat(this.inc_total_recp_comm)
+    this.inc_total_sell_comm = this.inc_total_sell_comm? parseFloat(this.inc_total_sell_comm) : null
+    this.inc_total_nolon = this.inc_total_nolon? parseFloat(this.inc_total_nolon) : null
+    this.inc_total_recp_comm = this.inc_total_recp_comm? parseFloat(this.inc_total_recp_comm) : null
   }
 
 }
@@ -81,7 +81,7 @@ export class IncomingsHeaderDB {
 
   /** @param {IncomingsHeaderDAO} data */
   static async addNew(data) {
-    // console.log("addNew", data)
+    console.log("addNew", data)
     data.parseTypes()
     let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new IncomingsHeaderDAO())}`
     let ok = await conn_pool.query(instert_q)
@@ -92,6 +92,7 @@ export class IncomingsHeaderDB {
     //return await dexie[this.TABLE_NAME].update(id, payload)
     let sets = payloader(payload, new IncomingsHeaderDAO())
     let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    console.log('update_q', update_q)
     await conn_pool.query(update_q)
     return 
   }

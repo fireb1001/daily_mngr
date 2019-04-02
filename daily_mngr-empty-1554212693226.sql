@@ -162,6 +162,7 @@ CREATE TABLE `incomings_header` (
   `notes` varchar(245) DEFAULT NULL,
   `inc_total_sell_comm` double DEFAULT NULL,
   `inc_total_nolon` double DEFAULT NULL,
+  `inc_total_recp_comm` double DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -242,6 +243,8 @@ CREATE TABLE `outgoings_header` (
   `recp_comm_rate` double DEFAULT NULL,
   `recp_total` double DEFAULT NULL,
   `recp_weight` double DEFAULT NULL,
+  `recp_comm_value` double DEFAULT NULL,
+  `receipt_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -280,6 +283,38 @@ LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 INSERT INTO `products` VALUES (1,'مانجة فص اقفاص','',1,NULL),(2,'خوخ فرز اول','',1,NULL),(3,'جوافة ممتاز','',1,NULL),(4,'رمان','',1,NULL),(5,'مانجة فونس','',0,NULL);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `receipts`
+--
+
+DROP TABLE IF EXISTS `receipts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `receipts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `supplier_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `day` varchar(45) NOT NULL DEFAULT '',
+  `total_nolon` double DEFAULT NULL,
+  `receipt_given` double DEFAULT NULL,
+  `comm_rate` double DEFAULT NULL,
+  `sale_value` double DEFAULT NULL,
+  `net_value` double DEFAULT NULL,
+  `receipt_paid` tinyint(1) unsigned DEFAULT NULL,
+  `d_product` varchar(145) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `receipts`
+--
+
+LOCK TABLES `receipts` WRITE;
+/*!40000 ALTER TABLE `receipts` DISABLE KEYS */;
+INSERT INTO `receipts` VALUES (1,1,'2019-04-01',750,0,15,7055,5246.75,0,NULL),(2,1,'2019-04-02',0,0,0,0,0,0,NULL);
+/*!40000 ALTER TABLE `receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -354,4 +389,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-01 20:17:09
+-- Dump completed on 2019-04-02 15:44:53

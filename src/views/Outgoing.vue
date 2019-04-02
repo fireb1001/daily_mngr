@@ -256,6 +256,7 @@ export default {
       this.outgoing_form.supplier_name = this.selected_inc_hdr.supplier_name
       this.outgoing_form.product_id = this.selected_inc_hdr.product_id
       this.outgoing_form.product_name = this.selected_inc_hdr.product_name
+
       await OutgoingsDB.addNew(this.outgoing_form)
 
       this.reinit_form()

@@ -114,7 +114,7 @@
               <li class="nav-item">
                 <router-link class="nav-link active" to="/developer">
                   <span class="fa fa-code"></span>
-                   Developer<span class="sr-only">(current)</span>
+                   معلومات النظام<span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <!--
@@ -330,9 +330,13 @@ h1,h2,h3,h4,h5 {
   border-radius: 0 10px 10px 0 ;
 }
 .bg-dailymoves {
+  /*
   background-color: #e1e6b3;
+  */
   border-radius: 0 10px 10px 0 ;
+
 }
+
 
 .vdatetime-input{
   padding: 8px 10px;

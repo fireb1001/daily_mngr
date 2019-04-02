@@ -1,20 +1,29 @@
 <template>
-  <section class="src-views-developer-tools m-1">
+  <section class="src-views-developer-tools m-1 p-3">
+    <h1 class="m-3">نظام مدير اليومية</h1>
+    <h2 class="text-danger"> اصدار رقم {{app_version}}</h2>
     <br/>
+    <!--
     <button class="btn btn-danger" type="button" @click="remove('daily')"> Remove Daily </button>
     <button class="btn btn-danger" type="button" @click="remove('all')"> Remove All </button>
-    <button class="btn btn-primary" type="button" @click="bk()"> bk </button>
+    -->
+    <button class="btn btn-primary" type="button" @click="bk()"> 
+
+      عمل نسخة احتياطية  
+    </button>
   </section>
 </template>
 
 <script >
 import {AdminDB} from '../db/AdminDB.js'
-
+const {app} = require('electron').remote
 
 export default {
   name: 'src-views-developer-tools',
   data () {
-    return {}
+    return {
+      app_version: app.getVersion()
+    }
   },
   firestore () {
     return {}
@@ -28,7 +37,7 @@ export default {
     },
     bk() {
       var exec = require('child_process').exec
-      exec('D:\\xampp\\mysql\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr.sql', (err)=>{
+      exec(`D:\\xampp\\mysql\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr\\daily_mngr-${Date.now()}.sql`, (err)=>{
       //exec('D:\\laragon\\bin\\mysql\\mysql-5.7.24-winx64\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr.sql', (err)=>{
         if (err) 
           console.error(`exec error: ${err}`)

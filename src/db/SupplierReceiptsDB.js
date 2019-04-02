@@ -1,3 +1,4 @@
+/*
 import { conn_pool, inserter, payloader } from '../main'
 
 export class SupplierReceiptDAO {
@@ -52,7 +53,6 @@ export class SupplierReceiptsDB {
     return new SupplierReceiptDAO(row[0])
   }
 
-  /**@param {SupplierTransDAO} data */
   static async getAll(data) {
     let all = []
     let results = []
@@ -70,3 +70,4 @@ export class SupplierReceiptsDB {
     return all
   }
 }
+*/

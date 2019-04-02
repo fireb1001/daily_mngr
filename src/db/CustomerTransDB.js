@@ -20,6 +20,7 @@ export class CustomerTransDAO {
 
   parseTypes () {
     this.amount = parseFloat(this.amount)
+    this.debt_after = parseFloat(this.debt_after)
   }
 }
 
