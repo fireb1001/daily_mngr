@@ -28,7 +28,8 @@ export default {
     },
     bk() {
       var exec = require('child_process').exec
-      exec('D:\\xampp\\mysql\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_bk_2.sql', (err)=>{
+      exec('D:\\xampp\\mysql\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr.sql', (err)=>{
+      //exec('D:\\laragon\\bin\\mysql\\mysql-5.7.24-winx64\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr.sql', (err)=>{
         if (err) 
           console.error(`exec error: ${err}`)
         else 
