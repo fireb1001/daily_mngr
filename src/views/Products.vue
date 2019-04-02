@@ -1,6 +1,6 @@
 <template>
   <section class="products row">
-    <div class="col-5">
+    <div class="col-5 d-print-none">
     <br/>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> 
     <HelloWorld msg="Welcome to Your Vue.js App"/>
@@ -44,7 +44,7 @@
 </div>
 </div>
 
-  <div class="col-7">
+  <div class="col-7 p-3 col-print-10 pr-me">
     <br/>
     <h2 :class="{ 'text-danger': ! show_active }">
       <span v-if="show_active"> ادارة </span>
@@ -67,7 +67,7 @@
               <td>{{item.id}}</td>
               <td>{{item.name}}</td>
               <td>{{item.notes}}</td>
-              <td>
+              <td class="d-print-none">
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">
                   <span class="fa fa-archive "></span> 
                   <template v-if="! confirm_step[item.id]"> أرشفة</template>
@@ -83,6 +83,9 @@
           </tbody>
         </table>
       </div>
+          <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
+            <span class="fa fa-print"></span> طباعة 
+          </button>
   </div>
 </section>
 </template>

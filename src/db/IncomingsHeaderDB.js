@@ -13,6 +13,7 @@ export class IncomingsHeaderDAO {
   current_count = 0
   inc_total_sell_comm = 0
   inc_total_nolon = 0
+  inc_total_recp_comm
   notes = ''
 
   static get INIT_DAO() {
@@ -40,6 +41,7 @@ export class IncomingsHeaderDAO {
     this.current_count = parseInt(this.current_count)
     this.inc_total_sell_comm = parseFloat(this.inc_total_sell_comm)
     this.inc_total_nolon = parseFloat(this.inc_total_nolon)
+    this.inc_total_recp_comm = parseFloat(this.inc_total_recp_comm)
   }
 
 }

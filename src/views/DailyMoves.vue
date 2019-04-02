@@ -1,55 +1,57 @@
 <template>
   <section class="daily-moves bg-dailymoves p-3">
-    <h2>كشف الحركة ليوم {{store_day.arab}}</h2>
+    <h2 class="text-center">كشف الحركة ليوم {{store_day.arab}}</h2>
 
         <br/>
       <div class="table-responsive">
-        <table class="table table-striped table-sm">
+        <table class="table table-striped table-sm pr-me">
           <thead>
             <tr>
               <th>التاريخ</th>
               <th>اسم العميل</th>
               <th>الصنف</th>
               <th>عدد المباع</th>
-              <th>بسعر</th>
               <th>البياعة</th>
               <th>العمولة</th>
               <th>اجمالي</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, idx) in outgoings_header_arr" :key='idx'>
+            <tr v-for="(item, idx) in inc_header_arr" :key='idx'>
               <td>{{item.day}}</td>
               <td>{{item.supplier_name}}</td>
               <td>{{item.product_name}}</td>
-              <td>{{item.sold_count}}</td>
-              <td>{{item.kg_price}}</td>
-              <td>{{item.total_sell_comm_value}}</td>
-              <td>{{item.recp_comm_rate}}</td>
-              <td>{{item.total_sell_comm_value + item.recp_comm_rate}}</td>
-              <td>{{item.notes}}</td>
+              <td>{{item.total_count - item.current_count}}</td>
+              <td>{{item.inc_total_sell_comm}}</td>
+              <td></td>
+              <td>{{item.inc_total_sell_comm}}</td>
+              
             </tr>
           </tbody>
         </table>
       </div>
+
+        <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
+          <span class="fa fa-print"></span> طباعة 
+        </button>
   </section>
 </template>
 
 <script >
 
-import { OutgoingsHeaderDB } from '../db/OutgoingsHeaderDB'
-// TODO to be incomings headers
+import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB';
+
 export default {
   name: 'daily-moves',
   data () {
     return {
       store_day: this.$store.state.day,
-      outgoings_header_arr: []
+      inc_header_arr: []
     }
   },
   methods: {
     async refresh_arrs() {
-      this.outgoings_header_arr = await OutgoingsHeaderDB.getAll({day: this.store_day.iso})
+      this.inc_header_arr = await IncomingsHeaderDB.getAll({day: this.store_day.iso})
     },
   },
   async mounted() {

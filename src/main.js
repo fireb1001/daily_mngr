@@ -15,7 +15,7 @@ Vue.use(Datetime)
 import { Settings, DateTime } from 'luxon'
 
 Settings.defaultLocale = 'ar'
-console.log( DateTime.local().locale)
+// console.log( DateTime.local().locale)
 
 Vue.config.productionTip = false
 
@@ -37,7 +37,6 @@ export const APP_LABELS = {
     nolon: 'نولون'
   }
 }
-
 
 export { store, DateTime }
 // TODO collect all todos !

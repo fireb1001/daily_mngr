@@ -19,6 +19,7 @@ export class OutgoingHeaderDAO {
   recp_weight
   recp_kg_price
   recp_comm_rate
+  recp_comm_value
   recp_total
   notes = ''
 
@@ -48,7 +49,6 @@ export class OutgoingHeaderDAO {
       this.total_sell_comm_value = parseFloat(data.sell_comm_value)
     }
   }
-
   
   parseTypes() {
     this.sold_count = parseInt(this.sold_count)
@@ -56,6 +56,12 @@ export class OutgoingHeaderDAO {
     this.total_weight = parseFloat(this.total_weight)
     this.total_value = parseFloat(this.total_value)
     this.total_sell_comm_value = parseFloat(this.total_sell_comm_value)
+
+    this.recp_comm_rate = parseFloat(this.recp_comm_rate)
+    this.recp_comm_value = parseFloat(this.recp_comm_value)
+    this.recp_kg_price = parseFloat(this.recp_kg_price)
+    this.recp_total = parseFloat(this.recp_total)
+    this.recp_weight = parseFloat(this.recp_weight)
   }
 }
 

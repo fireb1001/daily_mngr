@@ -1,6 +1,6 @@
 <template>
   <section class="suppliers row">
-    <div class="col-5">
+    <div class="col-5 d-print-none">
     <br/>
 <button v-b-toggle.collapse_it class="btn btn-primary m-1">
   ادخال عميل جديد 
@@ -56,7 +56,7 @@
   </b-collapse>
   </div>
 
-  <div class="col-7">
+  <div class="col-7 col-print-10 pr-me">
     <br/>
   <h2 :class="{ 'text-danger': ! show_active }">
       <span v-if="show_active"> ادارة </span>
@@ -64,7 +64,7 @@
      العملاء 
   </h2>
       <div class="table-responsive">
-        <table class="table table-striped table-sm">
+        <table class="table table-striped table-sm ">
           <thead>
             <tr>
               <th> </th>
@@ -86,7 +86,7 @@
               <td>{{item.phone}}</td>
               <td>{{item.total_count}}</td>
               <td>{{item.balance}}</td>
-              <td>
+              <td class="d-print-none">
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">
                   <span class="fa fa-archive "></span> 
                   <template v-if="! confirm_step[item.id]"> أرشفة</template>
@@ -105,6 +105,9 @@
           </tbody>
         </table>
       </div>
+          <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
+            <span class="fa fa-print"></span> طباعة
+          </button>
   </div>
   </section>
 </template>

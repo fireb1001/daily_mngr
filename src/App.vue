@@ -433,5 +433,15 @@ h1,h2,h3,h4,h5 {
     font-size: x-large }
   .pr-hideme {
     display: none
-  }}
+  }
+  .pr-mt-2 {
+    margin-top: 2em;
+  }
+  .pr-mt-3 {
+    margin-top: 3em;
+  }
+  .nav-link {
+    text-decoration: none;
+  }
+}
 </style>
