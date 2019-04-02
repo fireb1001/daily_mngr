@@ -6,13 +6,16 @@ export class CustomerTransDAO {
   day
   customer_id
   outgoing_id
-  d_product
+  product_id
+  product_name
   cashflow_id
   amount
   sum = '+'
   trans_type = ''
   debt_after = 0
   notes
+  count = 0
+  actual_sale = 0
 
   constructor(data) {
     Object.assign(this, data)
@@ -21,6 +24,7 @@ export class CustomerTransDAO {
   parseTypes () {
     this.amount = parseFloat(this.amount)
     this.debt_after = parseFloat(this.debt_after)
+    this.actual_sale = this.actual_sale? parseFloat(this.actual_sale) : 0
   }
 }
 

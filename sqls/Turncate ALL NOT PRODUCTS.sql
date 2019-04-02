@@ -1,5 +1,6 @@
 USE daily_mngr;
 START TRANSACTION;
+
 TRUNCATE TABLE cashflow;
 TRUNCATE TABLE customer_trans;
 TRUNCATE TABLE customers;
@@ -9,4 +10,6 @@ TRUNCATE TABLE outgoings;
 TRUNCATE TABLE outgoings_header;
 TRUNCATE TABLE supplier_trans;
 TRUNCATE TABLE suppliers;
+TRUNCATE TABLE receipts;
+
 COMMIT;

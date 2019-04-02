@@ -25,6 +25,10 @@
               </td>
               <td>{{item.notes}}</td>
             </tr>
+            <tr>
+              <th>مجموع</th>
+              <td>{{total_cash}}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -40,12 +44,7 @@
           <input v-model="cashflow_form.amount" class="form-control "  placeholder="ادخل مبلغ الدفعة">
         </div>
       </div>
-      <div class="form-group row">
-        <label  class="col-sm-2">تاريخ الدفعة</label>
-        <div class="col-sm-10">
-          <datetime v-model="cashflow_form.day" :auto="true" class="datetime" min-datetime="2018-01-01"></datetime>
-        </div>
-      </div>
+
       <div class="form-group row">
         <label  class="col-sm-2">ملاحظات</label>
         <div class="col-sm-10">
@@ -53,7 +52,7 @@
         </div>
       </div>     
 
-      <button type="submit" class="btn btn-success" :disabled="! cashflow_form.day || ! cashflow_form.amount">اضافة</button>
+      <button type="submit" class="btn btn-success" :disabled="! cashflow_form.amount">اضافة</button>
       <button type="button" class="btn btn-danger mr-1"  v-b-toggle.collapse_pay >  اغلاق</button>
     </form>
     </div>
@@ -70,7 +69,8 @@ export default {
   data () {
     return {
       cashflow_arr: [],
-      cashflow_form: new CashflowDAO(CashflowDAO.INIT_DAO),
+      store_day: this.$store.state.day,
+      cashflow_form: {},
       app_labels : APP_LABELS
     }
   },
@@ -81,7 +81,7 @@ export default {
     async refresh_cashflow_arr() {
       let states = null
       if(this.$route.name == 'expensess') {
-        states = ['given','expense','nolon','payment']
+        states = ['given','expensess','nolon','payment']
       }
       else if(this.$route.name == 'collecting') {
         states = ['collecting','outgoing_cash'] // ['given','expense']
@@ -95,9 +95,17 @@ export default {
         states: states
       })
     },
-    addCashflow(evt) {
+    async addCashflow(evt) {
       evt.preventDefault()
-      
+      let cashDAO = new CashflowDAO(this.cashflow_form)
+      cashDAO.state = this.$route.name
+      cashDAO.day = this.store_day.iso
+      if(this.$route.name == 'expensess')
+      cashDAO.sum = '-'
+
+      await CashflowDB.addNew(cashDAO)
+      this.$root.$emit('bv::toggle::collapse', 'collapse_cash')
+      this.refresh_cashflow_arr()
     }
   },
   components: {
@@ -114,6 +122,13 @@ export default {
       return await CashflowDB.getAll({state:'collecting'})
     }
     */
+    total_cash : function() {
+      let sum = 0
+      this.cashflow_arr.forEach(item => {
+        sum += parseFloat(item.amount)
+      })
+      return sum
+    }
   },
   watch : {
     "$route": function() {

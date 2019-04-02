@@ -11,9 +11,12 @@ export class IncomingsHeaderDAO {
   date_created
   total_count = 0
   current_count = 0
-  inc_total_sell_comm = 0
-  inc_total_nolon = 0
+  inc_total_sell_comm
+  inc_total_nolon
   inc_total_recp_comm
+  inc_total_sale_value
+  inc_recp_comm_rate
+  recp_comm // join
   notes
 
   static get INIT_DAO() {
@@ -42,6 +45,8 @@ export class IncomingsHeaderDAO {
     this.inc_total_sell_comm = this.inc_total_sell_comm? parseFloat(this.inc_total_sell_comm) : null
     this.inc_total_nolon = this.inc_total_nolon? parseFloat(this.inc_total_nolon) : null
     this.inc_total_recp_comm = this.inc_total_recp_comm? parseFloat(this.inc_total_recp_comm) : null
+    this.inc_total_sale_value = this.inc_total_sale_value? parseFloat(this.inc_total_sale_value) : null
+    this.inc_recp_comm_rate = this.inc_recp_comm_rate? parseFloat(this.inc_recp_comm_rate) : null
   }
 
 }
@@ -81,6 +86,8 @@ export class IncomingsHeaderDB {
 
   /** @param {IncomingsHeaderDAO} data */
   static async addNew(data) {
+    delete data.id
+    delete data.recp_comm
     console.log("addNew", data)
     data.parseTypes()
     let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new IncomingsHeaderDAO())}`
@@ -89,6 +96,7 @@ export class IncomingsHeaderDB {
   }
 
   static async saveById(id, payload) {
+    delete payload.recp_comm
     //return await dexie[this.TABLE_NAME].update(id, payload)
     let sets = payloader(payload, new IncomingsHeaderDAO())
     let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
@@ -151,7 +159,8 @@ export class IncomingsHeaderDB {
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id}`)
       }
       else if(data.day) {
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
+        // results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
+        results = await conn_pool.query(`SELECT PT.*,(SELECT SUM(CT.recp_comm_value ) FROM outgoings_header AS CT WHERE CT.incoming_header_id = PT.id  ) as recp_comm FROM incomings_header AS PT where PT.day='${data.day}' order by PT.supplier_id`)
       }
     }
     else {

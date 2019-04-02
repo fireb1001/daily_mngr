@@ -182,7 +182,7 @@
         <h5 class="text-primary text-center">
           ت : 4470350 المعلم سلامة : 01118357750 الأستاذ محمد : 01023929223
         </h5>
-        <h3 class="text-danger text-center"> فاتـورة </h3>
+        <h3 class="text-danger text-center"> فاتـورة # {{receipt.id}}</h3>
         <p class="pr-me">
           تحريراً في {{store_day.arab}}
           <br/>
@@ -211,8 +211,8 @@
               <td>{{item.recp_weight}}</td>
               <td>X</td>
               <td style="width:20%">
-                <input v-model="item.recp_kg_price" class="form-control"  v-if="! print_mode">
-                <span v-if=" print_mode">{{item.recp_kg_price}}</span>
+                <input v-model="item.recp_kg_price" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
+                <span v-if=" print_mode || receipt.receipt_paid">{{item.recp_kg_price}}</span>
               </td>
               <td style="width:25%">{{item.product_name}}</td>
             </tr>
@@ -239,9 +239,9 @@
             <th >عمولة</th>
             <td></td>
             <td></td>
-            <td ><input v-if="! print_mode" v-model="receipt.comm_rate" class="form-control"  ></td>
+            <td ><input v-if="! print_mode && ! receipt.receipt_paid" v-model="receipt.comm_rate" class="form-control"  ></td>
             <th>
-              <span  v-if="! print_mode">
+              <span v-if="! print_mode && ! receipt.receipt_paid">
                نسبة العمولة {{receipt.comm_rate }}%  
                </span>
             </th>
@@ -251,9 +251,9 @@
             <th >وهبة الفاتورة</th>
             <td></td>
             <td></td>
-            <td ><input v-if="! print_mode" v-model="receipt.receipt_given" class="form-control"  ></td>
+            <td ><input v-if="! print_mode && ! receipt.receipt_paid" v-model="receipt.receipt_given" class="form-control"  ></td>
             <th >
-              <span v-if="! print_mode">
+              <span v-if="! print_mode && ! receipt.receipt_paid">
               ادخل مبلغ الوهبة
               </span>
               </th>
@@ -275,23 +275,25 @@
       <button @click="show_details = true; print_mode= false; getSupplierDetails()" class="btn btn-primary m-1 pr-hideme" >
         العودة
       </button>
-      <button @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
+      <button v-if="! receipt.receipt_paid" @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
         حفظ الفاتورة
       </button>
-      <button @click="saveRecp(1)" class="btn btn-success m-1 pr-hideme" >
+      <button v-if="! receipt.receipt_paid" @click="saveRecp(1)" class="btn btn-success m-1 pr-hideme" >
         رصد الفاتورة
       </button>
-      <button @click="saveRecp(2)" class="btn btn-success m-1 pr-hideme" >
+      <button v-if="! receipt.receipt_paid" @click="saveRecp(2)" class="btn btn-success m-1 pr-hideme" >
         صرف الفاتورة
       </button>
-      <button v-if="! receipt.receipt_paid" @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
+      <!--
+      <button v-if="! receipt.receipt_paid " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
         استرجاع قبل الفاتورة
       </button>
-      <button v-if=" print_mode" class="btn btn-printo pr-hideme m-1" @click="vue_window.print()">
+      -->
+      <button v-if=" print_mode || receipt.receipt_paid " class="btn btn-printo pr-hideme m-1" @click="vue_window.print()">
         <span class="fa fa-print"></span> طباعة 
       </button>
 
-      <button v-if="! print_mode" @click="print_mode= true" class="btn btn-primary m-1 pr-hideme" >
+      <button v-if="! print_mode && ! receipt.receipt_paid" @click="print_mode= true" class="btn btn-primary m-1 pr-hideme" >
         معاينة طباعة
       </button>
       </section>
@@ -340,6 +342,7 @@ export default {
         day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
+      console.log(this.outgoings_headers_today)
 
       this.supplier_payments = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
       
@@ -347,6 +350,7 @@ export default {
     async addPayments(evt){
       evt.preventDefault()
       this.trans_form.day = DateTime.fromISO(this.trans_form.day).toISODate()
+      this.trans_form.amount = - parseFloat(this.trans_form.amount)
       await SuppliersDB.updateBalance(this.supplier_id,this.trans_form)
       this.trans_form = {}
       this.$root.$emit('bv::toggle::collapse', 'collapse_pay')
@@ -365,18 +369,30 @@ export default {
       this.show_receipt = true
     },
     async saveRecp(paid) {
+
       this.outgoings_headers_today.forEach(async item =>{
         let out_head_DAO = new OutgoingHeaderDAO(item)
         out_head_DAO.parseTypes()
-        out_head_DAO.recp_comm_rate = (out_head_DAO.recp_comm_rate > 0) ? out_head_DAO.recp_comm_rate : 0
+        let recp_comm_value = (out_head_DAO.recp_kg_price * out_head_DAO.recp_weight ) * (this.receipt.comm_rate / 100)
+        //out_head_DAO.recp_comm_rate = (out_head_DAO.recp_comm_rate > 0) ? out_head_DAO.recp_comm_rate : 0
         await OutgoingsHeaderDB.saveById(item.id, {
           recp_kg_price: out_head_DAO.recp_kg_price,
-          recp_comm_rate: out_head_DAO.recp_comm_rate,
+          recp_comm_rate: this.receipt.comm_rate,
+          recp_comm_value: recp_comm_value,
           recp_total: out_head_DAO.recp_kg_price * out_head_DAO.recp_weight
         })
       })
       this.receipt.receipt_paid = paid
+
       await ReceiptsDB.saveById(this.receipt.id, this.receipt)
+      if(paid == 1) {
+        // Add supplier trans
+        await SuppliersDB.updateBalance(this.supplier_id, {
+          day: this.store_day.iso,
+          amount: this.receipt.net_value,
+          trans_type: 'receipt_1'
+        })
+      }
     },
     async discardRecp() {
       this.outgoings_headers_today.forEach( async item =>{

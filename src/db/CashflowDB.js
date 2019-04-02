@@ -55,6 +55,7 @@ export class CashflowDB {
 
   /**@param {CashflowDAO} data */
   static async addNew(data) {
+    delete data.id
     data.parseTypes()
     let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new CashflowDAO())}`
     let ok = await conn_pool.query(instert_q)

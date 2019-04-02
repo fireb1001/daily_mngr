@@ -11,6 +11,7 @@ export class CustomerDAO {
   address = ''
   notes = ''
   active = 1
+  is_self = 0
 
   static get INIT_DAO() {
     return {
@@ -80,15 +81,29 @@ export class CustomersDB {
       let customerTransDao = new CustomerTransDAO(payload)
       customerTransDao.customer_id = id
       // Collecting cashflow
-      if( payload.state && payload.state === 'collecting') { 
+      if( payload.state && payload.state == 'collecting') { 
         // payload.amount < 0 && payload.cashflow_id &&
         customerTransDao.cashflow_id = payload.id
+        customerTransDao.trans_type = 'collecting'
       }
 
       customerTransDao.debt_after = customerDAO.debt
       await CustomerTransDB.addNew(customerTransDao)
     }
 
+    await this.saveById(id, {debt: customerDAO.debt})
+    return 
+  }
+
+  static async updateDebtOnly(id, amount) {
+
+    let customerDAO = await this.getDAOById(id)
+    customerDAO.parseTypes()
+    // updating debt after
+    if (! customerDAO.debt) {
+      customerDAO.debt = 0
+    }
+    customerDAO.debt += parseFloat(amount)
     await this.saveById(id, {debt: customerDAO.debt})
     return 
   }

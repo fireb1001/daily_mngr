@@ -23,8 +23,8 @@
               <td>{{item.product_name}}</td>
               <td>{{item.total_count - item.current_count}}</td>
               <td>{{item.inc_total_sell_comm}}</td>
-              <td></td>
-              <td>{{item.inc_total_sell_comm}}</td>
+              <td>{{item.recp_comm}}</td>
+              <td>{{item.inc_total_sell_comm + item.recp_comm}}</td>
               
             </tr>
           </tbody>

@@ -65,9 +65,13 @@ CREATE TABLE `customer_trans` (
   `amount` double DEFAULT NULL,
   `trans_type` varchar(45) DEFAULT NULL,
   `debt_after` double DEFAULT NULL,
-  `d_product` varchar(245) DEFAULT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `product_name` varchar(245) DEFAULT NULL,
   `sum` varchar(1) DEFAULT NULL,
   `notes` varchar(245) DEFAULT NULL,
+  `count` int(10) unsigned DEFAULT NULL,
+  `actual_sale` double DEFAULT NULL,
+
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -97,6 +101,7 @@ CREATE TABLE `customers` (
   `address` varchar(445) DEFAULT NULL,
   `notes` varchar(245) DEFAULT NULL,
   `active` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `is_self` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -163,6 +168,8 @@ CREATE TABLE `incomings_header` (
   `inc_total_sell_comm` double DEFAULT NULL,
   `inc_total_nolon` double DEFAULT NULL,
   `inc_total_recp_comm` double DEFAULT NULL,
+  `inc_total_sale_value` double DEFAULT NULL,
+  `inc_recp_comm_rate` double DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -304,7 +311,7 @@ CREATE TABLE `receipts` (
   `receipt_paid` tinyint(1) unsigned DEFAULT NULL,
   `d_product` varchar(145) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -313,7 +320,6 @@ CREATE TABLE `receipts` (
 
 LOCK TABLES `receipts` WRITE;
 /*!40000 ALTER TABLE `receipts` DISABLE KEYS */;
-INSERT INTO `receipts` VALUES (1,1,'2019-04-01',750,0,15,7055,5246.75,0,NULL),(2,1,'2019-04-02',0,0,0,0,0,0,NULL);
 /*!40000 ALTER TABLE `receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -389,4 +395,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-02 15:44:53
+-- Dump completed on 2019-04-02 18:47:09

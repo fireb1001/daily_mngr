@@ -27,6 +27,8 @@ export const APP_LABELS = {
   given: 'وهبة',
   nolon: 'نولون',
   outgoing_cash: 'بيع كاش',
+  expensess: 'مصروفات',
+  collecting: 'تحصيل',
   trans: {
     outgoing: 'بيع اجل',
     collecting: 'تحصيل',
@@ -34,7 +36,8 @@ export const APP_LABELS = {
   },
   payments: {
     payment: 'دفعة',
-    nolon: 'نولون'
+    nolon: 'نولون',
+    receipt_1: 'فاتورة رصد'
   }
 }
 

@@ -74,15 +74,20 @@ export class SuppliersDB {
 
     let supplierDAO = await this.getDAOById(id)
     if(payload.amount){
-      let amount = - parseFloat(payload.amount) // minus
+      let amount = parseFloat(payload.amount) // minus
       supplierDAO.parseTypes()
       supplierDAO.balance = supplierDAO.balance ? supplierDAO.balance + amount : amount
       
       let suppTransDAO = null
+      
       if(payload.state && payload.state=== 'nolon'){
+        // Not Working now --debrecated--
         suppTransDAO = new SupplierTransDAO(SupplierTransDAO.NOLON_DAO)
         suppTransDAO.cashflow_id = payload.id
         suppTransDAO.d_product = payload.d_product
+      }
+      else if (payload.trans_type && payload.trans_type == 'receipt_1') {
+        suppTransDAO = new SupplierTransDAO(payload)
       }
       else { // if trans_form or from details page
         suppTransDAO = new SupplierTransDAO(SupplierTransDAO.PAYMENT_DAO)
@@ -92,7 +97,7 @@ export class SuppliersDB {
       suppTransDAO.notes = payload.notes
       suppTransDAO.supplier_id = id
       suppTransDAO.balance_after = supplierDAO.balance
-
+      
       await SupplierTransDB.addNew(suppTransDAO)
     }
 

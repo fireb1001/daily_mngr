@@ -3,7 +3,7 @@
     <button class="btn btn-primary d-print-none" @click="$router.go(-1)">العودة</button>
     <h3 class="d-inline-block mr-3">حساب البائع : {{customer.name}}</h3>
 
-      <table class="table table-bordered mt-1">
+      <table class="table table-bordered mt-1" v-if=" ! customer.is_self">
         <tr>
           <th>تليفون البياع</th>
           <td>{{customer.phone}}</td>
@@ -13,7 +13,35 @@
           <td>{{customer.address}}</td>
         </tr>
       </table>
-
+      <h3 class="text-center"> الزرع المتبقي في حساب المحل </h3>
+      <div class=" row d-print-none p-1 "  v-if="customer.is_self">
+        <button v-for="(item, idx) in self_rest_products" :key="idx" 
+        v-b-toggle.collapse_sell  @click="sell_rest = item"
+        class="btn btn-lg btn-primary m-1 btn-block">
+          <span class="fa fa-shopping-cart"></span> &nbsp; 
+          {{item.product_name}}  - 
+          عدد ({{item.count}}) - السعر التقديري {{item.amount}}
+        </button>
+      </div>
+        <b-collapse id="collapse_sell" class="d-print-none p-1">
+          <div class="entry-form">
+          <form  @submit="sellRest" class="m-2">
+            <div class="form-group row">
+              <label  class="col-sm-2">السعر الفعلي</label>
+              <div class="col-sm-10">
+                <input v-model="sell_rest.actual_sale" class="form-control "  placeholder="ادخل مبلغ البيع">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label  class="col-sm-2">ملاحظات</label>
+              <div class="col-sm-10">
+                <input v-model="sell_rest.notes" class="form-control " placeholder="ادخال الملاحظات">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success" :disabled="! sell_rest.amount">تحصيل</button>
+          </form>
+          </div>
+        </b-collapse>
     <hr/>
         <table class="table table-striped ">
           <thead>
@@ -29,7 +57,7 @@
               <td>{{trans.day}}</td>
               <td>
                 {{labels.trans[trans.trans_type]}}
-                <span v-if="trans.trans_type === 'outgoing'"> - {{trans.d_product}}</span>
+                <span v-if="trans.trans_type === 'outgoing'"> - {{trans.product_name}}</span>
                 <span v-if="trans.notes">- {{trans.notes}} </span> 
               </td>
               <td>{{trans.amount}}</td>
@@ -92,19 +120,52 @@ export default {
       collect_form: {},
       store_day: this.$store.state.day,
       customer_trans: [],
+      self_rest_products: [],
       customer_id: this.$route.params.id,
       labels: APP_LABELS,
-      clipboard: clipboard
+      clipboard: clipboard,
+      sell_rest: {actual_sale: 0 , notes: ''}
     }
   },
   methods: {
     async getCustomerDetails() {
       let customer_obj = await CustomersDB.getDAOById(this.customer_id)
       this.customer = {} // empty
-      console.log(customer_obj)
+      //console.log(customer_obj)
       this.customer = new CustomerDAO(customer_obj)
       this.customer_trans = []
       this.customer_trans = await CustomerTransDB.getAll({customer_id: this.customer_id})
+      //console.log("is_self", this.customer)
+      this.self_rest_products = []
+      if(this.customer.is_self ) {
+        
+        this.customer_trans.forEach( item => {
+          if(!item.actual_sale && item.product_id && item.count)
+            this.self_rest_products.push(item)
+        })
+      }
+    },
+    async sellRest(evt) {
+      evt.preventDefault()
+
+      let cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
+      cashDAO.day = this.store_day.iso
+      cashDAO.amount = parseFloat(this.sell_rest.actual_sale)
+      cashDAO.actor_id = this.customer_id
+      cashDAO.actor_name = this.customer.name
+      cashDAO.notes = this.sell_rest.notes
+      cashDAO.id = await CashflowDB.addNew(cashDAO)
+      cashDAO.amount = - (cashDAO.amount)
+      await CustomersDB.updateDebtOnly(this.customer_id, cashDAO.amount)
+
+      await CustomerTransDB.saveById(this.sell_rest.id, {
+        actual_sale: this.sell_rest.actual_sale,
+        notes: this.sell_rest.notes
+      })
+      this.getCustomerDetails()
+      this.collect_form = {}
+      this.sell_rest = {actual_sale: 0 , notes: ''}
+      this.$root.$emit('bv::toggle::collapse', 'collapse_sell')
     },
     async addCollecting(evt ) {
       evt.preventDefault()
@@ -120,6 +181,7 @@ export default {
 
       this.getCustomerDetails()
       this.collect_form = {}
+      this.$root.$emit('bv::toggle::collapse', 'collapse_collect')
       /*
       let transDAO = new CustomerTransDAO(CustomerTransDAO.COLLECTING_DAO)
       transDAO.cashflow_id = cash_id

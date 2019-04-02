@@ -141,6 +141,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
               <th>اسم البياع</th>
               <th>عدد</th>
               <th v-if="detailed ">بياعة </th>
+              <th v-if="detailed ">مبلغ البياعة </th>
               <th v-if="detailed ">الوزن</th>
               <th>السعر</th>
               <th>المبلغ</th>
@@ -156,6 +157,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
               <td>{{item.customer_name}}</td>
               <td>{{item.count}}</td>
               <td v-if="detailed ">{{item.sell_comm}}</td>
+              <td v-if="detailed ">{{item.sell_comm * item.count}}</td>
               <td v-if="detailed ">{{item.weight}}</td>
               <td>{{item.kg_price}}</td>
               <td>{{item.value_calc}}</td>

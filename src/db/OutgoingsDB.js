@@ -83,6 +83,7 @@ export class OutgoingsDB {
       inc_header.parseTypes()
       inc_header.current_count -= parseInt(data.count)
       inc_header.inc_total_sell_comm += parseFloat(data.sell_comm_value)
+      inc_header.inc_total_sale_value += parseFloat(data.value_calc) - parseFloat(data.sell_comm_value)
       await IncomingsHeaderDB.saveById(inc_header.id, inc_header)
 
       // Add outgoing header according to price
@@ -96,7 +97,9 @@ export class OutgoingsDB {
           amount: data.value_calc,
           outgoing_id: outgoing_id,
           trans_type: 'outgoing',
-          d_product: data.product_name,
+          product_id: data.product_id,
+          product_name: data.product_name,
+          count: data.count,
           day: store.state.day.iso,
           curr_incoming_day : store.state.day.iso
         })
