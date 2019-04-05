@@ -188,7 +188,7 @@
           <br/>
           المطلوب من السيد/ {{supplier.name}}
         </p>
-      <div class="table-responsive p-2" style="border: 2px solid #79ace0; border-radius: 12px;">
+      <div class="table-responsive p-2" style="border: 2px solid #79ace0; border-radius: 12px;" > 
         <table class="table table-bordered table-sm pr-me" >
           <thead>
             <tr>
@@ -205,9 +205,9 @@
           <tbody>
             <tr v-for="(item, idx) in outgoings_headers_today" :key='idx'>
               <td>
-                {{item.recp_kg_price *  item.recp_weight | round2}}
+                {{item.recp_kg_price *  item.recp_weight | round2 | toAR }}
               </td>
-              <td>{{item.sold_count}}</td>
+              <td>{{item.sold_count | toAR}}</td>
               <td>{{item.recp_weight}}</td>
               <td>X</td>
               <td style="width:20%">
@@ -217,7 +217,7 @@
               <td style="width:25%">{{item.product_name}}</td>
             </tr>
             <tr>
-              <td ><b class="border-top border-primary">{{calc_sale_value | round2}} </b></td>
+              <td ><b class="border-top border-primary">{{calc_sale_value | round2 | toAR }} </b></td>
             <th ></th>
             <td style="border: none !important;"></td>
             <td style="border: none !important;"></td>
@@ -226,7 +226,7 @@
             </tr>
           <tr>
             
-            <td>( {{inc_sums.c_total_inc_nolon}} )</td>
+            <td>( {{inc_sums.c_total_inc_nolon | round2 | toAR }} )</td>
             <th >مشال</th>
             <td style="border: none !important;"></td>
             <td style="border: none !important;"></td>
@@ -235,7 +235,7 @@
           </tr>
           <tr>
             
-            <td>( {{receipt.sale_value * (receipt.comm_rate / 100) | round2}} )</td>
+            <td>( {{receipt.sale_value * (receipt.comm_rate / 100) | round2 | toAR }} )</td>
             <th >عمولة</th>
             <td></td>
             <td></td>
@@ -247,7 +247,7 @@
             </th>
           </tr>
           <tr>
-            <td>( {{receipt.receipt_given}} )</td>
+            <td>( {{receipt.receipt_given | toAR }} )</td>
             <th >وهبة الفاتورة</th>
             <td></td>
             <td></td>
@@ -259,7 +259,7 @@
               </th>
           </tr>
           <tr>
-            <td> <b class="border-top border-primary">{{receipt.net_value | round2}} </b></td>
+            <td> <b class="border-top border-primary">{{receipt.net_value | round2 | toAR }} </b></td>
             <th >صافي الفاتورة</th>
             <td style="border: none !important;"></td>
             <td style="border: none !important;"></td>

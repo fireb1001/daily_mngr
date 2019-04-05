@@ -178,7 +178,16 @@ function roundOf(n, p) {
   return n2 / Math.pow(10, p);
 }
 
+String.prototype.toAR= function() {
+  return this.replace(/\d/g, d =>  '٠١٢٣٤٥٦٧٨٩'[d])
+}
+
 Vue.filter('round2' , function(number) {
   let rounded = parseFloat(number)
   return roundOf(rounded,2)
+})
+
+Vue.filter('toAR' , function(number) {
+  let num = parseFloat(number).toString()
+  return num.toAR()
 })

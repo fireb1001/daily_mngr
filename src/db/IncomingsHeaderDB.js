@@ -42,8 +42,8 @@ export class IncomingsHeaderDAO {
   parseTypes() {
     this.total_count = parseInt(this.total_count)
     this.current_count = parseInt(this.current_count)
+    this.inc_total_nolon = this.inc_total_nolon? parseFloat(this.inc_total_nolon) : 0
     this.inc_total_sell_comm = this.inc_total_sell_comm? parseFloat(this.inc_total_sell_comm) : null
-    this.inc_total_nolon = this.inc_total_nolon? parseFloat(this.inc_total_nolon) : null
     this.inc_total_recp_comm = this.inc_total_recp_comm? parseFloat(this.inc_total_recp_comm) : null
     this.inc_total_sale_value = this.inc_total_sale_value? parseFloat(this.inc_total_sale_value) : null
     this.inc_recp_comm_rate = this.inc_recp_comm_rate? parseFloat(this.inc_recp_comm_rate) : null
@@ -69,7 +69,7 @@ export class IncomingsHeaderDB {
     else {
       head.total_count += parseInt(data.total_count)
       head.current_count += parseInt(data.total_count)
-      head.inc_total_nolon += parseFloat(data.inc_total_nolon)
+      head.inc_total_nolon += data.inc_total_nolon? parseFloat(data.inc_total_nolon) : 0
       await this.saveById(head.id, {
         total_count: head.total_count,
         current_count: head.current_count,
