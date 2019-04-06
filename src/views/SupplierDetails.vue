@@ -177,14 +177,14 @@
         <h1 class="text-primary text-center">الأستاذ / جمــال نــدا</h1>
         <h4 class="text-danger text-center"> لتجارة وتسويق الفاكهة </h4>
         <h5 class="text-primary text-center">
-          سوق العبور - القاهرة - محل رقم 150 عنبر 4 فاكهة س.ت :284040
+          سوق العبور - القاهرة - محل رقم ١٥٠ عنبر ٤ فاكهة س.ت :٢٨٤٠٤٠
         </h5>
         <h5 class="text-primary text-center">
-          ت : 4470350 المعلم سلامة : 01118357750 الأستاذ محمد : 01023929223
+          ت : ٤٤٧٠٣٥٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
         </h5>
-        <h3 class="text-danger text-center"> فاتـورة # {{receipt.id}}</h3>
+        <h3 class="text-danger text-center"> فاتـورة # {{receipt.id | toAR}}</h3>
         <p class="pr-me">
-          تحريراً في {{store_day.arab}}
+          تحريراً في {{store_day.arab }}
           <br/>
           المطلوب من السيد/ {{supplier.name}}
         </p>
@@ -305,9 +305,12 @@ import { SuppliersDB, SupplierDAO } from '../db/SuppliersDB.js'
 import { OutgoingsHeaderDB, OutgoingHeaderDAO } from '../db/OutgoingsHeaderDB.js'
 import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js'
 import { ReceiptDAO, ReceiptsDB} from '../db/ReceiptsDB.js'
-import { DateTime } from '../main.js'
 import { SupplierTransDB } from '../db/SupplierTransDB.js'
 import { APP_LABELS } from '../main.js'
+import { Settings, DateTime } from 'luxon'
+
+Settings.defaultLocale = 'ar'
+Settings.defaultZoneName = 'UTC'
 
 export default {
   name: 'supplier-details',

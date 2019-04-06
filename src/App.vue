@@ -162,7 +162,10 @@
 //<router-view/>
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import { DateTime } from './main'
+import { Settings, DateTime } from 'luxon'
+
+Settings.defaultLocale = 'ar'
+Settings.defaultZoneName = 'UTC'
 
 export default {
   data() {

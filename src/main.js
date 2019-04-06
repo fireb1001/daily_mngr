@@ -12,10 +12,7 @@ import Datetime from 'vue-datetime'
 import 'vue-datetime/dist/vue-datetime.css'
 
 Vue.use(Datetime)
-import { Settings, DateTime } from 'luxon'
 
-Settings.defaultLocale = 'ar'
-// console.log( DateTime.local().locale)
 
 Vue.config.productionTip = false
 
@@ -41,7 +38,8 @@ export const APP_LABELS = {
   }
 }
 
-export { store, DateTime }
+
+export { store }
 // TODO collect all todos !
 // TODO clear daily_mngr data from bedos // rename !
 // TODO go mysql go

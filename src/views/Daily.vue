@@ -7,7 +7,11 @@
 </template>
 
 <script >
-import { DateTime } from '../main.js'
+import { Settings, DateTime } from 'luxon'
+
+Settings.defaultLocale = 'ar'
+Settings.defaultZoneName = 'UTC'
+// console.log( DateTime.local().locale)
 
 export default {
   name: 'daily',
@@ -21,7 +25,8 @@ export default {
   },
   methods: {
     change_luxon_date(date){
-      console.log('change date to ', date )
+      //console.log(DateTime.toUTC(date))
+      console.log('change date to ', date , this.luxon_date)
       let dateTime = DateTime.fromISO(date)
       if(dateTime.valueOf()) {
         console.log('valueOf ',dateTime.valueOf())
