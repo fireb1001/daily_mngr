@@ -174,7 +174,7 @@
       </section>
 
       <section v-if="! show_details && show_receipt">
-
+      <template v-if="print_mode">
         <h1 class="text-danger text-center"> أولاد الحاج/ مصطفي ندا مصطفي</h1>
         <h1 class="text-primary text-center">الأستاذ / جمــال نــدا</h1>
         <h4 class="text-danger text-center"> لتجارة وتسويق الفاكهة </h4>
@@ -184,7 +184,10 @@
         <h5 class="text-primary text-center">
           ت : ٤٤٧٠٣٥٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
         </h5>
-        <h3 class="text-danger text-center"> فاتـورة # {{receipt.id | toAR}}</h3>
+      </template>
+
+        <h3 class="text-danger text-center"> فاتـورة </h3>
+        <!-- # {{receipt.id | toAR}} -->
         <p class="pr-me">
           تحريراً في {{store_day.arab }}
           <br/>
@@ -222,8 +225,14 @@
                 <input v-model="item.kg_price" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
                 <span v-if=" print_mode || receipt.receipt_paid">{{item.kg_price | toAR }}</span>
               </td>
-              <td >{{item.product_name}}</td>
+              <td >{{item.product_name}} 
+                <button class="btn text-success" @click="removeRecpDetail(item.id)" >
+                  <span class="fa fa-remove "></span> 
+                  حذف
+                </button>
+              </td>
             </tr>
+            <!-- TODO add new row ! -->
             <tr>
               <td ><b class="border-top border-primary">{{recp_sums.calc_sale_value | round2 | toAR }} </b></td>
             <th ></th>
@@ -278,8 +287,21 @@
         </table>
       </div>
         <p class="text-danger pr-me">
-          خالص بيد حامله ولا تلغي أي شيكات أو ايصالات امانة
+          * خالص بيد حامله ولا تلغي أي شيكات أو ايصالات امانة
         </p>
+      <div v-for="(item, idx) in inc_sums.products_sold" :key='idx' >
+        <template v-if="! print_mode && recp_sums.products_sold[idx]">
+          <div class="alert alert-danger" role="alert" v-if="(item.sold - recp_sums.products_sold[idx].count) > 0">
+            <span class="fa fa-exclamation-circle"></span>
+            متبقي {{item.sold - recp_sums.products_sold[idx].count}} من {{item.product_name}}  
+          </div>
+          <div class="alert alert-danger" role="alert" v-if="(item.sold - recp_sums.products_sold[idx].count) < 0 ">
+            <span class="fa fa-exclamation-circle"></span>
+            عدد المبيع اكبر من الفعلي ({{item.sold - recp_sums.products_sold[idx].count}}) من {{item.product_name}}  
+          </div>
+        </template>
+      </div>
+
       <button @click="show_details = true; print_mode= false; getSupplierDetails()" class="btn btn-primary m-1 pr-hideme" >
         العودة
       </button> | 
@@ -361,6 +383,10 @@ export default {
 
       this.supplier_payments = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
       
+    },
+    async removeRecpDetail(id){
+      await ReceiptsDetailsDB.deleteAll({id: id})
+      this.receipts_details= this.receipts_details.filter( item =>  item.id != id )
     },
     async addPayments(evt){
       evt.preventDefault()

@@ -51,6 +51,7 @@ export class ReceiptDAO {
 export class ReceiptsDB {
   static TABLE_NAME = 'receipts'
 
+  // TODO how to check if receipts is ok and well done !!
   /**@param {ReceiptDAO} data */
   static async addNew(data) {
     data.parseTypes()

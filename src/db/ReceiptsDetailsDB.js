@@ -82,7 +82,11 @@ export class ReceiptsDetailsDB {
     // console.log(data.state, Array.isArray( data.state))
     if(data.day && data.supplier_id){
       let query = `DELETE FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id = ${data.supplier_id}`
-       await conn_pool.query(query)
+      await conn_pool.query(query)
+    }
+    else if(data && data.id) {
+      let query = `DELETE FROM ${this.TABLE_NAME} where id = ${data.id}`
+      await conn_pool.query(query)
     }
   }
 }

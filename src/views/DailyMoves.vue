@@ -9,6 +9,7 @@
             <tr>
               <th>التاريخ</th>
               <th>اسم العميل</th>
+              <th>عدد الطرود</th>
               <th>الاصناف</th>
               <th>عدد المباع</th>
               <th>عدد المتبقي</th>
@@ -21,6 +22,7 @@
             <tr v-for="(item, idx) in daily_receipts" :key='idx'>
               <td>{{item.day}}</td>
               <td>{{item.supplier_name}}</td>
+              <td>{{item.total_count}}</td>
               <td>{{getProducts(item.products_arr)}}</td>
               <td>{{item.total_count - item.total_current_rest}}</td>
               <td> 
