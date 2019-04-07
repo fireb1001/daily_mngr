@@ -13,7 +13,7 @@ import DeveloperTools from './views/DeveloperTools.vue'
 import SupplierDetails from './views/SupplierDetails.vue'
 import CustomerDetails from './views/CustomerDetails.vue'
 import DailyMoves from './views/DailyMoves.vue'
-
+import OutHeadTable from './views/OutHeadTable.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -39,6 +39,11 @@ export default new Router({
       path: '/daily_moves',
       name: 'daily_moves',
       component: DailyMoves
+    },
+        {
+      path: '/outhead_table',
+      name: 'outhead_table',
+      component: OutHeadTable
     },
     {
       path: '/customers_accounts',

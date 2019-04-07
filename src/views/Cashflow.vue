@@ -39,9 +39,9 @@
     <div class="entry-form">
     <form  @submit="addCashflow">
       <div class="form-group row">
-        <label  class="col-sm-2">المبلغ</label>
+        <label  class="col-sm-2">مبلغ ال{{app_labels[$route.name]}}</label>
         <div class="col-sm-10">
-          <input v-model="cashflow_form.amount" class="form-control "  placeholder="ادخل مبلغ الدفعة">
+          <input v-model="cashflow_form.amount" class="form-control "  placeholder="ادخل المبلغ ">
         </div>
       </div>
 
@@ -105,6 +105,7 @@ export default {
 
       await CashflowDB.addNew(cashDAO)
       this.$root.$emit('bv::toggle::collapse', 'collapse_cash')
+      this.cashflow_form = {}
       this.refresh_cashflow_arr()
     }
   },

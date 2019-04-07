@@ -65,13 +65,12 @@ CREATE TABLE `customer_trans` (
   `amount` double DEFAULT NULL,
   `trans_type` varchar(45) DEFAULT NULL,
   `debt_after` double DEFAULT NULL,
-  `product_id` int(10) unsigned DEFAULT NULL,
   `product_name` varchar(245) DEFAULT NULL,
   `sum` varchar(1) DEFAULT NULL,
   `notes` varchar(245) DEFAULT NULL,
   `count` int(10) unsigned DEFAULT NULL,
   `actual_sale` double DEFAULT NULL,
-
+  `product_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -166,7 +165,7 @@ CREATE TABLE `incomings_header` (
   `current_count` int(10) unsigned DEFAULT NULL,
   `notes` varchar(245) DEFAULT NULL,
   `inc_total_sell_comm` double DEFAULT NULL,
-  `inc_total_nolon` double DEFAULT NULL,
+  `inc_total_nolon` double DEFAULT '0',
   `inc_total_recp_comm` double DEFAULT NULL,
   `inc_total_sale_value` double DEFAULT NULL,
   `inc_recp_comm_rate` double DEFAULT NULL,
@@ -309,7 +308,13 @@ CREATE TABLE `receipts` (
   `sale_value` double DEFAULT NULL,
   `net_value` double DEFAULT NULL,
   `receipt_paid` tinyint(1) unsigned DEFAULT NULL,
-  `d_product` varchar(145) DEFAULT NULL,
+  `products_arr` text,
+  `total_current_rest` int(10) unsigned DEFAULT NULL,
+  `total_count` int(10) unsigned DEFAULT NULL,
+  `total_sell_comm` double DEFAULT NULL,
+  `recp_comm` double DEFAULT NULL,
+  `supplier_name` varchar(245) DEFAULT NULL,
+  `out_sale_value` double DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -321,6 +326,40 @@ CREATE TABLE `receipts` (
 LOCK TABLES `receipts` WRITE;
 /*!40000 ALTER TABLE `receipts` DISABLE KEYS */;
 /*!40000 ALTER TABLE `receipts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `receipts_details`
+--
+
+DROP TABLE IF EXISTS `receipts_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `receipts_details` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `receipt_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `supplier_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `supplier_name` varchar(245) DEFAULT NULL,
+  `product_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `product_name` varchar(145) DEFAULT NULL,
+  `day` varchar(45) NOT NULL DEFAULT '',
+  `count` int(10) unsigned DEFAULT NULL,
+  `kg_price` double DEFAULT NULL,
+  `weight` double DEFAULT NULL,
+  `calc_value` double DEFAULT NULL,
+  `incoming_header_id` int(10) unsigned DEFAULT NULL,
+  `date_created` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `receipts_details`
+--
+
+LOCK TABLES `receipts_details` WRITE;
+/*!40000 ALTER TABLE `receipts_details` DISABLE KEYS */;
+/*!40000 ALTER TABLE `receipts_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -395,4 +434,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-02 18:47:09
+-- Dump completed on 2019-04-07 22:52:42

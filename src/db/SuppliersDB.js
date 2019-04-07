@@ -118,7 +118,6 @@ export class SuppliersDB {
     if(data) {
       // console.log(data)
       if (Array.isArray(data) && data.length ){
-        // TODO change
         // all = await dexie[this.TABLE_NAME].where('id').anyOf(data).toArray()
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id IN ( ${data.join(',')} )`)
       }

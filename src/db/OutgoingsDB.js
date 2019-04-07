@@ -133,7 +133,6 @@ export class OutgoingsDB {
         cashDAO.amount = - (cashDAO.amount)
         cashDAO.d_product = data.product_name
         // TODO check later y3n
-        // TODO show only todos
         await CustomersDB.updateDebt(data.customer_id, cashDAO)
       }
     }

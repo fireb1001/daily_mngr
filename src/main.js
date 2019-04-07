@@ -24,7 +24,7 @@ export const APP_LABELS = {
   given: 'وهبة',
   nolon: 'نولون',
   outgoing_cash: 'بيع كاش',
-  expensess: 'مصروفات',
+  expensess: 'مصروف',
   collecting: 'تحصيل',
   trans: {
     outgoing: 'بيع اجل',
@@ -41,8 +41,6 @@ export const APP_LABELS = {
 
 export { store }
 // TODO collect all todos !
-// TODO clear daily_mngr data from bedos // rename !
-// TODO go mysql go
 // TODO cashflow text detailed && cashflow after
 /*
 export const dexie = new Dexie('daily_mngr')
@@ -181,7 +179,7 @@ String.prototype.toAR= function() {
 }
 
 Vue.filter('round2' , function(number) {
-  let rounded = parseFloat(number)
+  let rounded = number? parseFloat(number) : 0
   return roundOf(rounded,2)
 })
 

@@ -1,6 +1,6 @@
 <template>
   <section class="daily-moves bg-dailymoves p-3">
-    <h2 class="text-center">كشف الحركة ليوم {{store_day.arab}}</h2>
+    <h2 class="text-center">جدول البيع {{store_day.arab}}</h2>
 
         <br/>
       <div class="table-responsive">
@@ -11,24 +11,20 @@
               <th>اسم العميل</th>
               <th>الاصناف</th>
               <th>عدد المباع</th>
-              <th>عدد المتبقي</th>
               <th>اجمالي البياعة</th>
               <th>العمولة</th>
               <th>اجمالي</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, idx) in daily_receipts" :key='idx'>
+            <tr v-for="(item, idx) in inc_header_arr" :key='idx'>
               <td>{{item.day}}</td>
               <td>{{item.supplier_name}}</td>
-              <td>{{getProducts(item.products_arr)}}</td>
-              <td>{{item.total_count - item.total_current_rest}}</td>
-              <td> 
-                <span class="text-danger" v-if="item.total_current_rest">{{item.total_current_rest}}</span>
-              </td>
-              <td>{{item.total_sell_comm}}</td>
+              <td>{{item.product_name}}</td>
+              <td>{{item.total_count - item.current_count}}</td>
+              <td>{{item.inc_total_sell_comm}}</td>
               <td>{{item.recp_comm | round2}}</td>
-              <td>{{item.total_sell_comm + item.recp_comm}}</td>
+              <td>{{item.inc_total_sell_comm + item.recp_comm}}</td>
               
             </tr>
           </tbody>
@@ -42,28 +38,21 @@
 </template>
 
 <script >
-import { ReceiptsDB } from '../db/ReceiptsDB';
+
+import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB';
 
 export default {
-  name: 'daily-moves',
+  name: 'outhead-table',
   data () {
     return {
       store_day: this.$store.state.day,
-      daily_receipts: []
+      inc_header_arr: []
     }
   },
   methods: {
     async refresh_arrs() {
-      this.daily_receipts = await ReceiptsDB.getAll({day: this.store_day.iso})
+      this.inc_header_arr = await IncomingsHeaderDB.getAll({day: this.store_day.iso})
     },
-    getProducts(products_arr){
-      let only_prod_names = []
-      let all_products = JSON.parse(products_arr)
-      all_products.forEach(prod => {
-        only_prod_names.push(prod.product)
-      });
-      return only_prod_names.join(' , ')
-    }
   },
   async mounted() {
     this.refresh_arrs()
@@ -72,3 +61,4 @@ export default {
   }
 }
 </script>
+

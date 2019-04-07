@@ -1,18 +1,26 @@
 import { inserter, conn_pool, payloader } from '../main'
+// eslint-disable-next-line no-unused-vars
+import { OutgoingHeaderDAO } from './OutgoingsHeaderDB';
+import { ReceiptDetailDAO, ReceiptsDetailsDB } from './ReceiptsDetailsDB';
 
 export class ReceiptDAO {
 
     id = 0
     day
     supplier_id
+    supplier_name
     total_nolon 
     receipt_given
     comm_rate
     sale_value
     net_value
     receipt_paid
-    d_product = ''
-
+    products_arr 
+    total_current_rest
+    total_count
+    total_sell_comm
+    recp_comm
+    out_sale_value
 
   static get INIT_DAO() {
     return {
@@ -21,10 +29,10 @@ export class ReceiptDAO {
 
   parseTypes () {
     this.total_nolon = this.total_nolon? parseFloat(this.total_nolon) : 0
-    this.receipt_given = this.receipt_given? parseFloat(this.receipt_given) : 0
-    this.comm_rate = this.comm_rate? parseFloat(this.comm_rate) : 0
-    this.sale_value = this.sale_value? parseFloat(this.sale_value) : 0
-    this.net_value = this.net_value? parseFloat(this.net_value) : 0
+    this.receipt_given = this.receipt_given? parseFloat(this.receipt_given) : null
+    this.comm_rate = this.comm_rate? parseFloat(this.comm_rate) : null
+    this.sale_value = this.sale_value? parseFloat(this.sale_value) : null
+    this.net_value = this.net_value? parseFloat(this.net_value) : null
     this.receipt_paid = this.receipt_paid? parseInt(this.receipt_paid) : 0
   }
   /*
@@ -54,20 +62,89 @@ export class ReceiptsDB {
   static async saveById(id, payload) {
     let sets = payloader(payload, new ReceiptDAO())
     let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    console.log('update_q', update_q)
     await conn_pool.query(update_q)
     return 
   }
 
   static async initReceipt(data, payload) {
     let receipts = await this.getAll({day: data.day, supplier_id: data.supplier_id})
-    let recpDAO = new ReceiptDAO()
+    let recpDAO = null
+
     if(receipts.length === 0){
       recpDAO = new ReceiptDAO(payload)
+
+      let products_arr = []
+      let total_sell_comm = 0
+      payload.incomings_headers_today.forEach(item =>{
+        products_arr.push({
+          product: item.product_name,
+          total_count: item.total_count,
+          rest: item.current_count}
+        )
+        total_sell_comm += parseFloat(item.inc_total_sell_comm)
+      })
+      recpDAO.total_sell_comm = total_sell_comm
+      recpDAO.products_arr =  JSON.stringify(products_arr)
+      delete recpDAO.incomings_headers_today
+      delete recpDAO.outgoings_headers_today
       recpDAO.id = await this.addNew(recpDAO)
       //calc_receipt.total - inc_sums.c_total_inc_nolon -(calc_receipt.total * (receipt.comm_rate / 100)) - receipt.receipt_given
+      // Add receipt details
+      
+      /*
+      payload.outgoings_headers_today.forEach(async item =>{
+        let outDAO = item
+        let recpDetailDAO = new ReceiptDetailDAO(outDAO)
+        recpDetailDAO.receipt_id = recpDAO.id
+        recpDetailDAO.weight = parseFloat(outDAO.total_weight)
+        recpDetailDAO.count = outDAO.sold_count
+        recpDetailDAO.calc_value = recpDetailDAO.weight * parseFloat(recpDetailDAO.kg_price)
+        await ReceiptsDetailsDB.addNew(recpDetailDAO)
+      })
+      */
+      for(const item of payload.outgoings_headers_today ) {
+        // /** @type {OutgoingHeaderDAO} */
+        let outDAO = item
+        let recpDetailDAO = new ReceiptDetailDAO(outDAO)
+        recpDetailDAO.receipt_id = recpDAO.id
+        recpDetailDAO.weight = parseFloat(outDAO.total_weight)
+        recpDetailDAO.count = outDAO.sold_count
+        recpDetailDAO.calc_value = recpDetailDAO.weight * parseFloat(recpDetailDAO.kg_price)
+        await ReceiptsDetailsDB.addNew(recpDetailDAO)
+      }
+      /*
+      recpDAO.sale_value = payload.sale_value
+      recpDAO.net_value = recpDAO.sale_value 
+      - ( recpDAO.sale_value * ( recpDAO.comm_rate / 100 )) 
+      - recpDAO.receipt_given 
+      - recpDAO.total_nolon
+      */
     }
     else {
-      recpDAO = receipts[0]
+      recpDAO = new ReceiptDAO(receipts[0])
+      // UPDATE with new data
+      recpDAO.sale_value = payload.sale_value
+      recpDAO.out_sale_value = payload.out_sale_value
+      recpDAO.total_nolon = payload.total_nolon
+      recpDAO.recp_comm =  recpDAO.sale_value * ( recpDAO.comm_rate / 100 )
+      recpDAO.net_value = recpDAO.sale_value 
+      - recpDAO.recp_comm
+      - recpDAO.receipt_given 
+      - recpDAO.total_nolon
+      recpDAO.total_current_rest = payload.total_current_rest
+      recpDAO.total_count = payload.total_count
+      let products_arr = []
+      payload.incomings_headers_today.forEach(item =>{
+        products_arr.push({
+          product: item.product_name,
+          total_count: item.total_count,
+          rest: item.current_count}
+        )
+      })
+      recpDAO.products_arr =  JSON.stringify(products_arr)
+      
+      await this.saveById(recpDAO.id, recpDAO)
     }
 
     return recpDAO
@@ -78,8 +155,12 @@ export class ReceiptsDB {
     let all = []
     let results = []
 
-    if(data.day && data.supplier_id){
+    if(data && data.day && data.supplier_id){
       let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id = ${data.supplier_id}`
+      results = await conn_pool.query(query)
+    }
+    else if (data && data.day ) {
+      let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`
       results = await conn_pool.query(query)
     }
     else {
@@ -89,4 +170,13 @@ export class ReceiptsDB {
     results.forEach( item => { all.push(new ReceiptDAO(item)) })
     return all
   }
+
+  static async deleteAll(data) {
+    // console.log(data.state, Array.isArray( data.state))
+    if(data.day && data.supplier_id){
+      let query = `DELETE FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id = ${data.supplier_id}`
+       await conn_pool.query(query)
+    }
+  }
+
 }

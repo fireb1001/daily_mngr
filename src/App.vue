@@ -184,7 +184,6 @@ export default {
 
   },
   computed: {
-    // TODO 21 مارس
     day_comp : function () {
       return this.$store.state.day
     }

@@ -1,5 +1,6 @@
 <template>
   <section class="suppliers bg-receipts p-3">
+    
     <section v-if="show_details">
 
       <button class="btn btn-primary pr-hideme" @click="$router.go(-1)">العودة</button>
@@ -101,7 +102,7 @@
     </div>
 
     <h4 class="text-danger" v-if="inc_sums.c_total_current_rest > 0"> عدد الطرود المتبقية التي لم يتم بيعها حتي الان {{ inc_sums.c_total_current_rest }} طرد</h4>
-    <button @click="show_details = false;initReceipt()" class="btn m-1 pr-hideme"
+    <button @click="initReceipt()" class="btn m-1 pr-hideme"
       :class="{'btn-danger':  inc_sums.c_total_current_rest > 0 , 'btn-success':  inc_sums.c_total_current_rest == 0}">
       <span class="fa fa-receipt"></span> &nbsp; 
       الفواتير
@@ -173,6 +174,7 @@
       </section>
 
       <section v-if="! show_details && show_receipt">
+
         <h1 class="text-danger text-center"> أولاد الحاج/ مصطفي ندا مصطفي</h1>
         <h1 class="text-primary text-center">الأستاذ / جمــال نــدا</h1>
         <h4 class="text-danger text-center"> لتجارة وتسويق الفاكهة </h4>
@@ -203,21 +205,27 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, idx) in outgoings_headers_today" :key='idx'>
+            <tr v-for="(item, idx) in receipts_details" :key='idx'>
               <td>
-                {{item.recp_kg_price *  item.recp_weight | round2 | toAR }}
+                {{item.kg_price *  item.weight | round2 | toAR }}
               </td>
-              <td>{{item.sold_count | toAR}}</td>
-              <td>{{item.recp_weight}}</td>
+              <td >
+                <input v-model="item.count" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
+                <span v-if=" print_mode || receipt.receipt_paid">{{item.count | toAR }}</span>
+              </td>
+              <td >
+                <input v-model="item.weight" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
+                <span v-if=" print_mode || receipt.receipt_paid">{{item.weight | toAR }}</span>
+              </td>
               <td>X</td>
-              <td style="width:20%">
-                <input v-model="item.recp_kg_price" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
-                <span v-if=" print_mode || receipt.receipt_paid">{{item.recp_kg_price}}</span>
+              <td >
+                <input v-model="item.kg_price" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
+                <span v-if=" print_mode || receipt.receipt_paid">{{item.kg_price | toAR }}</span>
               </td>
-              <td style="width:25%">{{item.product_name}}</td>
+              <td >{{item.product_name}}</td>
             </tr>
             <tr>
-              <td ><b class="border-top border-primary">{{calc_sale_value | round2 | toAR }} </b></td>
+              <td ><b class="border-top border-primary">{{recp_sums.calc_sale_value | round2 | toAR }} </b></td>
             <th ></th>
             <td style="border: none !important;"></td>
             <td style="border: none !important;"></td>
@@ -235,7 +243,7 @@
           </tr>
           <tr>
             
-            <td>( {{receipt.sale_value * (receipt.comm_rate / 100) | round2 | toAR }} )</td>
+            <td>( {{receipt.recp_comm | round2 | toAR }} )</td>
             <th >عمولة</th>
             <td></td>
             <td></td>
@@ -247,7 +255,7 @@
             </th>
           </tr>
           <tr>
-            <td>( {{receipt.receipt_given | toAR }} )</td>
+            <td>( {{receipt.receipt_given | round2 | toAR }} )</td>
             <th >وهبة الفاتورة</th>
             <td></td>
             <td></td>
@@ -274,16 +282,19 @@
         </p>
       <button @click="show_details = true; print_mode= false; getSupplierDetails()" class="btn btn-primary m-1 pr-hideme" >
         العودة
-      </button>
+      </button> | 
       <button v-if="! receipt.receipt_paid" @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
         حفظ الفاتورة
-      </button>
-      <button v-if="! receipt.receipt_paid" @click="saveRecp(1)" class="btn btn-success m-1 pr-hideme" >
+      </button> |
+      <button v-if="! receipt.receipt_paid" @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
+        اعادة انشاء الفاتورة
+      </button> 
+      <button v-if="! receipt.receipt_paid" @click="saveRecp(1)" class="btn btn-danger m-1 pr-hideme" >
         رصد الفاتورة
-      </button>
-      <button v-if="! receipt.receipt_paid" @click="saveRecp(2)" class="btn btn-success m-1 pr-hideme" >
+      </button> 
+      <button v-if="! receipt.receipt_paid" @click="saveRecp(2)" class="btn btn-danger m-1 pr-hideme" >
         صرف الفاتورة
-      </button>
+      </button> |
       <!--
       <button v-if="! receipt.receipt_paid " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
         استرجاع قبل الفاتورة
@@ -302,12 +313,13 @@
 
 <script >
 import { SuppliersDB, SupplierDAO } from '../db/SuppliersDB.js'
-import { OutgoingsHeaderDB, OutgoingHeaderDAO } from '../db/OutgoingsHeaderDB.js'
+import { OutgoingsHeaderDB } from '../db/OutgoingsHeaderDB.js'
 import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js'
 import { ReceiptDAO, ReceiptsDB} from '../db/ReceiptsDB.js'
 import { SupplierTransDB } from '../db/SupplierTransDB.js'
 import { APP_LABELS } from '../main.js'
 import { Settings, DateTime } from 'luxon'
+import { ReceiptsDetailsDB, ReceiptDetailDAO } from '../db/ReceiptsDetailsDB';
 
 Settings.defaultLocale = 'ar'
 Settings.defaultZoneName = 'UTC'
@@ -327,6 +339,7 @@ export default {
       //receipt: {cols: [], comm_rate: 0, nolon: 0 ,receipt_given:0, total: 0 },
       receipt: new ReceiptDAO(),
       outgoings_headers_today: [],
+      receipts_details: [],
       incomings_headers_today: [],
       supplier_payments: [],
       labels: APP_LABELS
@@ -345,7 +358,6 @@ export default {
         day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
-      console.log(this.outgoings_headers_today)
 
       this.supplier_payments = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
       
@@ -361,32 +373,49 @@ export default {
     },
     async initReceipt() {
       console.log(this.inc_sums)
-      this.receipt = await ReceiptsDB.initReceipt({day: this.store_day.iso, supplier_id: this.supplier.id},{
+      this.receipt = await ReceiptsDB.initReceipt({day: this.store_day.iso, supplier_id: this.supplier.id},
+      {
+        day: this.store_day.iso,
+        supplier_id: this.supplier.id,
+        supplier_name: this.supplier.name,
         total_nolon: this.inc_sums.c_total_inc_nolon,
-        sale_value: this.calc_sale_value,
+        sale_value: this.recp_sums.calc_sale_value,
+        total_current_rest: this.inc_sums.c_total_current_rest,
+        incomings_headers_today: this.incomings_headers_today,
+        outgoings_headers_today: this.outgoings_headers_today,
+        out_sale_value: this.calc_outgoings_value,
+        total_count: this.inc_sums.c_total_count
+      })
+      
+      this.receipts_details = await ReceiptsDetailsDB.getAll({
         day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
-      this.receipt.total_nolon = this.inc_sums.c_total_inc_nolon
-      this.receipt.sale_value = this.calc_sale_value
+      console.log('receipts_details', this.receipts_details)
+      this.show_details = false
       this.show_receipt = true
     },
     async saveRecp(paid) {
 
-      this.outgoings_headers_today.forEach(async item =>{
-        let out_head_DAO = new OutgoingHeaderDAO(item)
-        out_head_DAO.parseTypes()
-        let recp_comm_value = (out_head_DAO.recp_kg_price * out_head_DAO.recp_weight ) * (this.receipt.comm_rate / 100)
+      this.receipts_details.forEach(async item =>{
+        console.log(item)
+        let receiptDetailDAO = new ReceiptDetailDAO(item)
+        receiptDetailDAO.parseTypes()
+        // calc comm for daily moves
+        // let recp_comm_value = (out_head_DAO.recp_kg_price * out_head_DAO.recp_weight ) * (this.receipt.comm_rate / 100)
         //out_head_DAO.recp_comm_rate = (out_head_DAO.recp_comm_rate > 0) ? out_head_DAO.recp_comm_rate : 0
-        await OutgoingsHeaderDB.saveById(item.id, {
-          recp_kg_price: out_head_DAO.recp_kg_price,
-          recp_comm_rate: this.receipt.comm_rate,
-          recp_comm_value: recp_comm_value,
-          recp_total: out_head_DAO.recp_kg_price * out_head_DAO.recp_weight
+        await ReceiptsDetailsDB.saveById(item.id, {
+          kg_price: receiptDetailDAO.kg_price,
+          calc_value: receiptDetailDAO.kg_price * receiptDetailDAO.weight,
+          weight: receiptDetailDAO.weight,
+          count: receiptDetailDAO.count
+          // comm_rate: this.receipt.comm_rate,
+          // recp_comm_value: recp_comm_value,
         })
       })
-      this.receipt.receipt_paid = paid
 
+      this.receipt.receipt_paid = paid
+      console.log("this.receipt", this.receipt)
       await ReceiptsDB.saveById(this.receipt.id, this.receipt)
       if(paid == 1) {
         // Add supplier trans
@@ -398,6 +427,10 @@ export default {
       }
     },
     async discardRecp() {
+      // reinit the recp
+      await ReceiptsDB.deleteAll({day: this.store_day.iso, supplier_id: this.supplier.id})
+      await ReceiptsDetailsDB.deleteAll({day: this.store_day.iso, supplier_id: this.supplier.id})
+      /*
       this.outgoings_headers_today.forEach( async item =>{
         let out_head_DAO = new OutgoingHeaderDAO(item)
         out_head_DAO.parseTypes()
@@ -406,28 +439,61 @@ export default {
           recp_total: out_head_DAO.kg_price * out_head_DAO.total_weight
         })
       })
+      */
+      this.receipts_details = []
+      this.receipt= new ReceiptDAO()
       this.show_receipt = false
       this.show_details = true
       this.print_mode= false
-      this.getSupplierDetails()
+      this.initReceipt()
     }
   },
   computed: {
     inc_sums: function() {
-      let inc_sums ={c_total_current_rest:0 , c_total_inc_nolon: 0}
+      let inc_sums ={c_total_current_rest:0 , c_total_inc_nolon: 0, c_total_count: 0, products_sold: {}}
       this.incomings_headers_today.forEach(item =>{
         inc_sums.c_total_current_rest += parseInt(item.current_count)
+        inc_sums.c_total_count += parseInt(item.total_count)
         inc_sums.c_total_inc_nolon += parseFloat(item.inc_total_nolon)
+        let product_sold_obj = { 
+          product_id: item.product_id,
+          sold: (parseInt(item.total_count) - parseInt(item.current_count)),
+          product_name: item.product_name
+        }
+        inc_sums.products_sold[item.product_id] = product_sold_obj
       })
       return inc_sums
     },
-    calc_sale_value: function(){
+    recp_sums: function(){
+      let recp_sums = {calc_sale_value: 0 , products_sold: {}}
+
+      this.receipts_details.forEach(item =>{
+        recp_sums.calc_sale_value += parseFloat(item.weight) * parseFloat(item.kg_price)
+        
+        let product_sold_obj = { 
+          product_id: item.product_id,
+          product_name: item.product_name
+        }
+        if(recp_sums.products_sold && recp_sums.products_sold[item.product_id]) {
+          product_sold_obj.count = parseInt(recp_sums.products_sold[item.product_id].count) + parseInt(item.count)
+        } else {
+          product_sold_obj.count = parseInt(item.count)
+        }
+        recp_sums.products_sold[item.product_id] = product_sold_obj
+      })
+      // this.receipt.sale_value = sum
+      return recp_sums
+    },
+    calc_outgoings_value: function(){
       let sum =0 
       this.outgoings_headers_today.forEach(item =>{
-        sum += parseFloat(item.recp_weight) * parseFloat(item.recp_kg_price)
+        sum += parseFloat(item.total_weight) * parseFloat(item.kg_price)
       })
       // this.receipt.sale_value = sum
       return sum
+    },
+    calc_receipt_comm: function(){
+      return this.receipt.sale_value * ( this.receipt.comm_rate / 100 )
     },
     calc_receipt_net: function() {
       return this.receipt.sale_value 
@@ -437,19 +503,24 @@ export default {
     }
   },
   watch : {
-    /*
-    receipt: {
-      handler() {
-        this.receipt.calcVals()
+    recp_sums: {
+      handler(newVals) {
+        console.log(newVals)
+        this.receipt.sale_value= newVals.calc_sale_value
+        // TODO Watch rests
       },
       deep: true
     },
-    */
+    /*
     calc_sale_value: function(newval) {
       this.receipt.sale_value = newval
     },
+    */
     calc_receipt_net: function(newval) {
       this.receipt.net_value = newval
+    },
+    calc_receipt_comm: function(newval) {
+      this.receipt.recp_comm = newval
     }
   },
   components: {

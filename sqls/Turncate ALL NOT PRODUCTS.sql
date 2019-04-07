@@ -11,5 +11,6 @@ TRUNCATE TABLE outgoings_header;
 TRUNCATE TABLE supplier_trans;
 TRUNCATE TABLE suppliers;
 TRUNCATE TABLE receipts;
+TRUNCATE TABLE receipts_details;
 
 COMMIT;

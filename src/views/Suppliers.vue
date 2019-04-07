@@ -158,7 +158,6 @@ export default {
       })
       this.supplier_form = new SupplierDAO(edit_supp_obj[0])
       this.$root.$emit('bv::toggle::collapse', 'collapse_it')
-      // TODO collabse from js and check active for new supp
     },
     async archive(id, undo = '') {
       if( this.confirm_step[id] ) {

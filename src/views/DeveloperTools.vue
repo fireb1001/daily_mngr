@@ -7,10 +7,16 @@
     <button class="btn btn-danger" type="button" @click="remove('daily')"> Remove Daily </button>
     <button class="btn btn-danger" type="button" @click="remove('all')"> Remove All </button>
     -->
-    <button class="btn btn-primary" type="button" @click="bk()"> 
+    <button class="btn btn-primary m-2" type="button" @click="bk()"> 
 
       عمل نسخة احتياطية  
     </button>
+
+    <router-link class="btn btn-primary m-2" to="/outhead_table">
+      <span class="fa fa-dolly"></span>
+      جدول اجماليات البيع 
+    </router-link>
+
   </section>
 </template>
 
