@@ -161,6 +161,14 @@
             <td>{{item.kg_price}}</td>
             <td>{{item.total_weight * item.kg_price }}</td>
           </tr>
+          <tr>
+            <td></td>
+            <th>الاجمالي</th>
+            <td>{{out_sums.total_sold_count}}</td>
+            <td></td>
+            <td></td>
+            <td><b class="border-top border-primary">{{out_sums.calc_outgoings_value}}</b></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -289,17 +297,24 @@
         <p class="text-danger pr-me">
           * خالص بيد حامله ولا تلغي أي شيكات أو ايصالات امانة
         </p>
-      <div v-for="(item, idx) in inc_sums.products_sold" :key='idx' >
-        <template v-if="! print_mode && recp_sums.products_sold[idx]">
-          <div class="alert alert-danger" role="alert" v-if="(item.sold - recp_sums.products_sold[idx].count) > 0">
+      <div v-for="(item, product_id) in inc_sums.products_sold" :key='product_id' >
+        <template v-if="! print_mode && recp_sums.products_sold[product_id]">
+          <div class="alert alert-danger" role="alert" v-if="(item.sold - recp_sums.products_sold[product_id].count) > 0">
             <span class="fa fa-exclamation-circle"></span>
-            متبقي {{item.sold - recp_sums.products_sold[idx].count}} من {{item.product_name}}  
+            متبقي {{item.sold - recp_sums.products_sold[product_id].count}} من {{item.product_name}}  
+              <button class="btn text-primary" @click="newRecpDetial(item)" >
+                  انشاء جديد
+              </button>
           </div>
-          <div class="alert alert-danger" role="alert" v-if="(item.sold - recp_sums.products_sold[idx].count) < 0 ">
+          <div class="alert alert-danger" role="alert" v-if="(item.sold - recp_sums.products_sold[product_id].count) < 0 ">
             <span class="fa fa-exclamation-circle"></span>
-            عدد المبيع اكبر من الفعلي ({{item.sold - recp_sums.products_sold[idx].count}}) من {{item.product_name}}  
+            عدد المبيع اكبر من الفعلي ({{item.sold - recp_sums.products_sold[product_id].count}}) من {{item.product_name}}  
           </div>
         </template>
+        <div class="alert alert-danger" role="alert" v-if="item.sold && ! recp_sums.products_sold[product_id] ">
+            <span class="fa fa-exclamation-circle"></span>
+            متبقي {{item.sold }} من {{item.product_name}}  
+        </div>
       </div>
 
       <button @click="show_details = true; print_mode= false; getSupplierDetails()" class="btn btn-primary m-1 pr-hideme" >
@@ -388,6 +403,18 @@ export default {
       await ReceiptsDetailsDB.deleteAll({id: id})
       this.receipts_details= this.receipts_details.filter( item =>  item.id != id )
     },
+    async newRecpDetial(item) {
+      await this.saveRecp(0)
+      let newRecpDetialDAO = new ReceiptDetailDAO(item)
+      newRecpDetialDAO.supplier_id = this.supplier.id
+      newRecpDetialDAO.supplier_name = this.supplier.name
+      newRecpDetialDAO.day = this.store_day.iso
+      newRecpDetialDAO.receipt_id = this.receipt.id
+      newRecpDetialDAO.count = item.sold - this.recp_sums.products_sold[item.product_id].count
+      console.log('newRecpDetialDAO', newRecpDetialDAO)
+      await ReceiptsDetailsDB.addNew(newRecpDetialDAO)
+      await this.initReceipt()
+    },
     async addPayments(evt){
       evt.preventDefault()
       this.trans_form.day = DateTime.fromISO(this.trans_form.day).toISODate()
@@ -409,7 +436,7 @@ export default {
         total_current_rest: this.inc_sums.c_total_current_rest,
         incomings_headers_today: this.incomings_headers_today,
         outgoings_headers_today: this.outgoings_headers_today,
-        out_sale_value: this.calc_outgoings_value,
+        out_sale_value: this.out_sums.calc_outgoings_value,
         total_count: this.inc_sums.c_total_count
       })
       
@@ -510,13 +537,14 @@ export default {
       // this.receipt.sale_value = sum
       return recp_sums
     },
-    calc_outgoings_value: function(){
-      let sum =0 
+    out_sums: function(){
+      let out_sums = {calc_outgoings_value: 0 , total_sold_count: 0}
       this.outgoings_headers_today.forEach(item =>{
-        sum += parseFloat(item.total_weight) * parseFloat(item.kg_price)
+        out_sums.calc_outgoings_value += parseFloat(item.total_weight) * parseFloat(item.kg_price)
+        out_sums.total_sold_count += parseInt(item.sold_count)
       })
       // this.receipt.sale_value = sum
-      return sum
+      return out_sums
     },
     calc_receipt_comm: function(){
       return this.receipt.sale_value * ( this.receipt.comm_rate / 100 )

@@ -22,9 +22,9 @@ export class ReceiptDetailDAO {
   }
 
   parseTypes () {
-    this.count = parseFloat(this.count)
-    this.kg_price = this.kg_price? parseFloat(this.kg_price) : 0
-    this.weight = this.weight? parseFloat(this.weight) : 0
+    this.count = this.count? parseFloat(this.count) : 0
+    this.kg_price = this.kg_price? parseFloat(this.kg_price) : null
+    this.weight = this.weight? parseFloat(this.weight) : null
   }
 
   constructor( data ){
@@ -64,11 +64,11 @@ export class ReceiptsDetailsDB {
       
       if(data.day && data.supplier_id) {
         // all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id}`)
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id} order by product_id`)
       }
       else if (data.day) {
         // moves 
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' `)
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' order by product_id`)
       }
     }
     else {
@@ -85,7 +85,7 @@ export class ReceiptsDetailsDB {
       await conn_pool.query(query)
     }
     else if(data && data.id) {
-      let query = `DELETE FROM ${this.TABLE_NAME} where id = ${data.id}`
+      let query = `DELETE FROM ${this.TABLE_NAME} where id = ${data.id} `
       await conn_pool.query(query)
     }
   }
