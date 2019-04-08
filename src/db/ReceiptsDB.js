@@ -164,6 +164,12 @@ export class ReceiptsDB {
       let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`
       results = await conn_pool.query(query)
     }
+    else if (data && data.supplier_id) {
+      // only prev receipts
+      let query = `SELECT * FROM ${this.TABLE_NAME} where supplier_id = ${data.supplier_id} and receipt_paid > 0  order by day`
+      console.log(query)
+      results = await conn_pool.query(query)
+    }
     else {
       // NONE
     }

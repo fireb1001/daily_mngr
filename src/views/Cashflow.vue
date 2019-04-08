@@ -21,7 +21,7 @@
               <td>{{item.amount}}</td>
               <td>{{item.actor_name}}</td>
               <td>{{app_labels[item.state]}}
-                <span v-if="item.d_product"> - {{item.d_product}}</span>
+                <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
               </td>
               <td>{{item.notes}}</td>
             </tr>
@@ -81,7 +81,7 @@ export default {
     async refresh_cashflow_arr() {
       let states = null
       if(this.$route.name == 'expensess') {
-        states = ['given','expensess','nolon','payment']
+        states = ['given','expensess','nolon','payment', 'recp_paid']
       }
       else if(this.$route.name == 'collecting') {
         states = ['collecting','outgoing_cash'] // ['given','expense']

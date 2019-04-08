@@ -23,7 +23,7 @@
               <td>{{item.day}}</td>
               <td>{{item.supplier_name}}</td>
               <td>{{item.total_count}}</td>
-              <td>{{getProducts(item.products_arr)}}</td>
+              <td>{{item.products_arr | productsFilter }}</td>
               <td>{{item.total_count - item.total_current_rest}}</td>
               <td> 
                 <span class="text-danger" v-if="item.total_current_rest">{{item.total_current_rest}}</span>
@@ -58,14 +58,6 @@ export default {
     async refresh_arrs() {
       this.daily_receipts = await ReceiptsDB.getAll({day: this.store_day.iso})
     },
-    getProducts(products_arr){
-      let only_prod_names = []
-      let all_products = JSON.parse(products_arr)
-      all_products.forEach(prod => {
-        only_prod_names.push(prod.product)
-      });
-      return only_prod_names.join(' , ')
-    }
   },
   async mounted() {
     this.refresh_arrs()

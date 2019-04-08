@@ -22,9 +22,10 @@
             <div class="row">
               <span class="col">
                 {{supplier.balance}}
-                <span class="text-primary mr-3"  v-if="! show_payments" @click="show_payments = true">عرض الدفعات</span>
+                
               </span>
-            
+
+              <span class="btn btn-primary mr-3"  v-if="! show_payments" @click="show_payments = true">عرض الدفعات والفواتير السابقة</span>
               <button v-b-toggle.collapse_pay class="col btn btn-success ml-3 mr-3">
                 <span class="fa fa-money-bill-wave"></span> &nbsp; 
                 اضافة دفعات سابقة 
@@ -93,11 +94,47 @@
             </tr>
           </tbody>
         </table>
+
+      <h3 class="m-3">سجل فواتير العميل </h3>
+        <table class="table table-striped pr-me">
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>صافي الفاتورة</th>
+              <th>عدد الطرود</th>
+              <th>الاصناف</th>
+              <th>حالة الفاتورة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(receipt, idx) in supplier_receipts" :key='idx'>
+              <td>{{receipt.day}}</td>
+              <td>
+                {{receipt.net_value}}
+              </td>
+              <td>{{receipt.total_count}}</td>
+              <td>{{receipt.products_arr | productsFilter }}</td>
+              <td>
+                <span v-if="receipt.receipt_paid == 1">رصد</span>
+                <span v-if="receipt.receipt_paid == 2">صرف</span>
+              </td>
+
+            </tr>
+            <tr>
+              <td></td>
+              <td>اجمالي فواتير الرصد فقط = <b>{{supp_recps_sums.total_rasd}}</b> </td>
+              <td>
+                
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
         <div class="text-center">
           <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
-            <span class="fa fa-print"></span> طباعة الدفعات
+            <span class="fa fa-print"></span> طباعة 
           </button>
-          <b class="text-danger pr-hideme m-3" @click="show_payments = false">اغلاق الدفعات</b>
+          <b class="btn btn-danger pr-hideme m-3" @click="show_payments = false">اغلاق </b>
         </div>
     </div>
 
@@ -234,7 +271,7 @@
                 <span v-if=" print_mode || receipt.receipt_paid">{{item.kg_price | toAR }}</span>
               </td>
               <td >{{item.product_name}} 
-                <button class="btn text-success" @click="removeRecpDetail(item.id)" >
+                <button v-if=" ! print_mode && ! receipt.receipt_paid" class="btn text-success" @click="removeRecpDetail(item.id)" >
                   <span class="fa fa-remove "></span> 
                   حذف
                 </button>
@@ -314,6 +351,9 @@
         <div class="alert alert-danger" role="alert" v-if="item.sold && ! recp_sums.products_sold[product_id] ">
             <span class="fa fa-exclamation-circle"></span>
             متبقي {{item.sold }} من {{item.product_name}}  
+              <button class="btn text-primary" @click="newRecpDetial(item)" >
+                  انشاء جديد
+              </button>
         </div>
       </div>
 
@@ -323,7 +363,7 @@
       <button v-if="! receipt.receipt_paid" @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
         حفظ الفاتورة
       </button> |
-      <button v-if="! receipt.receipt_paid" @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
+      <button v-if="receipt.receipt_paid != 2 " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
         اعادة انشاء الفاتورة
       </button> 
       <button v-if="! receipt.receipt_paid" @click="saveRecp(1)" class="btn btn-danger m-1 pr-hideme" >
@@ -357,6 +397,7 @@ import { SupplierTransDB } from '../db/SupplierTransDB.js'
 import { APP_LABELS } from '../main.js'
 import { Settings, DateTime } from 'luxon'
 import { ReceiptsDetailsDB, ReceiptDetailDAO } from '../db/ReceiptsDetailsDB';
+import { CashflowDAO, CashflowDB } from '../db/CashflowDB';
 
 Settings.defaultLocale = 'ar'
 Settings.defaultZoneName = 'UTC'
@@ -379,6 +420,7 @@ export default {
       receipts_details: [],
       incomings_headers_today: [],
       supplier_payments: [],
+      supplier_receipts: [],
       labels: APP_LABELS
     }
   },
@@ -397,6 +439,7 @@ export default {
       })
 
       this.supplier_payments = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
+      this.supplier_receipts = await ReceiptsDB.getAll({supplier_id: this.supplier.id})
       
     },
     async removeRecpDetail(id){
@@ -410,7 +453,13 @@ export default {
       newRecpDetialDAO.supplier_name = this.supplier.name
       newRecpDetialDAO.day = this.store_day.iso
       newRecpDetialDAO.receipt_id = this.receipt.id
-      newRecpDetialDAO.count = item.sold - this.recp_sums.products_sold[item.product_id].count
+
+      if(this.recp_sums.products_sold && this.recp_sums.products_sold[item.product_id]) {
+         newRecpDetialDAO.count = item.sold - this.recp_sums.products_sold[item.product_id].count
+      } else {
+         newRecpDetialDAO.count = item.sold 
+      }
+     
       console.log('newRecpDetialDAO', newRecpDetialDAO)
       await ReceiptsDetailsDB.addNew(newRecpDetialDAO)
       await this.initReceipt()
@@ -470,14 +519,26 @@ export default {
       this.receipt.receipt_paid = paid
       console.log("this.receipt", this.receipt)
       await ReceiptsDB.saveById(this.receipt.id, this.receipt)
-      if(paid == 1) {
-        // Add supplier trans
-        await SuppliersDB.updateBalance(this.supplier_id, {
-          day: this.store_day.iso,
-          amount: this.receipt.net_value,
-          trans_type: 'receipt_1'
-        })
+      // Add supplier trans if paid == 1
+      /*
+      await SuppliersDB.updateBalance(this.supplier_id, {
+        day: this.store_day.iso,
+        amount: this.receipt.net_value,
+        trans_type: 'receipt_1'
+      })
+      */
+      if(paid == 2) {
+       // Save cashflow
+       let cashflowDAO = new CashflowDAO(CashflowDAO.RECP_PAIED_DAO)
+       cashflowDAO.day = this.store_day.iso
+       cashflowDAO.actor_id = this.supplier.id
+       cashflowDAO.actor_name = this.supplier.name
+       cashflowDAO.amount = this.receipt.net_value
+       cashflowDAO.d_product = this.receipt.products_arr
+
+       CashflowDB.addNew(cashflowDAO)
       }
+      await this.getSupplierDetails()
     },
     async discardRecp() {
       // reinit the recp
@@ -554,6 +615,15 @@ export default {
       - ( this.receipt.sale_value * ( this.receipt.comm_rate / 100 )) 
       - this.receipt.receipt_given 
       - this.receipt.total_nolon
+    },
+    supp_recps_sums: function(){
+      let supp_recps_sums = {total_rasd: 0 }
+      this.supplier_receipts.forEach(item =>{
+        if(item.receipt_paid == 1)
+          supp_recps_sums.total_rasd += parseFloat(item.net_value)
+      })
+      // this.receipt.sale_value = sum
+      return supp_recps_sums
     }
   },
   watch : {

@@ -26,6 +26,7 @@ export const APP_LABELS = {
   outgoing_cash: 'بيع كاش',
   expensess: 'مصروف',
   collecting: 'تحصيل',
+  recp_paid: 'فاتورة صرف',
   trans: {
     outgoing: 'بيع اجل',
     collecting: 'تحصيل',
@@ -186,4 +187,32 @@ Vue.filter('round2' , function(number) {
 Vue.filter('toAR' , function(number) {
   let num = parseFloat(number).toString()
   return num.toAR()
+})
+
+function testJSON(text){
+  if (typeof text!=="string"){
+      return false;
+  }
+  try{
+      JSON.parse(text);
+      return true;
+  }
+  catch (error){
+      return false;
+  }
+}
+
+Vue.filter('productsFilter' , function(products) {
+
+  if(testJSON(products)) {
+    let only_prod_names = []
+    let all_products = JSON.parse(products)
+    console.log(JSON.parse(products))
+    all_products.forEach(prod => {
+      only_prod_names.push(prod.product)
+    });
+    return only_prod_names.join(' , ')
+  } else {
+    return products
+  }
 })

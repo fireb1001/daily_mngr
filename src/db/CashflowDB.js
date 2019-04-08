@@ -22,6 +22,13 @@ export class CashflowDAO {
     }
   }
 
+  static get RECP_PAIED_DAO() {
+    return {
+      sum: '-',
+      state: 'recp_paid'
+    }
+  }
+
   static get COLLECTING_DAO() {
     return {
       sum: '+',
