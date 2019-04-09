@@ -171,7 +171,6 @@ export default {
       this.refresh_inc_arr()
     },
     async refresh_inc_arr() {
-      // console.log(require('moment')(this.store_day.iso).format("X"))
       this.incomings_arr = await IncomingsDB.getAll({day: this.store_day.iso})
     }
   },

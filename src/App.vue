@@ -18,7 +18,7 @@
               {{ day_comp.d_week }}
             </b>
             <h3 class="d-flex justify-content-between align-items-center px-3  mb-1 text-muted">
-              <router-link to="/daily" > {{day_comp.iso | arDate }} </router-link>
+              <router-link to="/daily" > {{ day_comp.arab }} </router-link>
             </h3>
             <b class="m-3 ">
               <router-link class="text-danger" to="/daily" style="float:left;padding: 0 10px;">
@@ -162,6 +162,7 @@
 //<router-view/>
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import { moment } from './main.js'
 import { Settings, DateTime } from 'luxon'
 
 Settings.defaultLocale = 'ar'
@@ -174,11 +175,11 @@ export default {
     }
   },
   beforeMount () {
-    let iso = require('moment')().format('YYYY-MM-DD')
-    let arab =  DateTime.fromISO(iso).toLocaleString(DateTime.DATE_FULL)
-    let d_week = DateTime.fromISO(iso).toLocaleString({ weekday: 'long'})
-    if ( ! this.$store.state.day.now)
-      this.$store.commit('setDay' ,{ts: Date.now(), iso: iso, arab: arab, d_week: d_week })
+    let dateTime= DateTime.fromJSDate(new Date())
+    let arab = moment().format('LL')
+    let d_week = dateTime.toLocaleString({ weekday: 'long'})
+    if ( ! this.$store.state.day.now )
+      this.$store.commit('setDay' ,{ts: Date.now(), iso: dateTime.toISODate(), arab: arab, d_week: d_week })
   },
   methods: {
 

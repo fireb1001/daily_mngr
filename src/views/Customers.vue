@@ -147,7 +147,7 @@ export default {
       show_active: true,
       zm_mode: false,
       confirm_step: [],
-      now_moment: ''
+      now_moment: moment().format('lll')
     }
   },
   methods: {
@@ -186,7 +186,6 @@ export default {
       }
     },
     async refresh_all() {
-      this.now_moment = moment().format('lll')
       this.customers_arr = await CustomersDB.getAll()
     }
   },

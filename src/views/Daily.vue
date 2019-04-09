@@ -7,6 +7,7 @@
 </template>
 
 <script >
+import { moment } from '../main.js'
 import { Settings, DateTime } from 'luxon'
 
 Settings.defaultLocale = 'ar'
@@ -26,7 +27,6 @@ export default {
   methods: {
     change_luxon_date(date){
       //console.log(DateTime.toUTC(date))
-      console.log('change date to ', date , this.luxon_date)
       let dateTime = DateTime.fromISO(date)
       if(dateTime.valueOf()) {
         console.log('valueOf ',dateTime.valueOf())
@@ -34,7 +34,7 @@ export default {
           ts: dateTime.valueOf(),
           iso: dateTime.toISODate(),
           d_week: dateTime.toLocaleString({ weekday: 'long'}),
-          arab: dateTime.toLocaleString(DateTime.DATE_FULL) 
+          arab: moment(dateTime.toISODate()).format('LL') 
         })
       }
     }
