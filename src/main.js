@@ -155,14 +155,6 @@ pool.query = util.promisify(pool.query)
 
 export const conn_pool = pool
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
-
-Vue.prototype.vue_window = window
-Vue.prototype.vue_document = document
 
 function roundOf(n, p) {
   const n1 = n * Math.pow(10, p + 1);
@@ -173,9 +165,6 @@ function roundOf(n, p) {
   return n2 / Math.pow(10, p);
 }
 
-String.prototype.toAR= function() {
-  return this.replace(/\d/g, d =>  '٠١٢٣٤٥٦٧٨٩'[d])
-}
 
 Vue.filter('round2' , function(number) {
   let rounded = number? parseFloat(number) : 0
@@ -184,12 +173,15 @@ Vue.filter('round2' , function(number) {
 
 const moment = require('moment')
 moment.locale('ar')
-export {moment}
+export { moment }
 
 Vue.filter('arDate' , function(date) {
   return moment(date).format('LL')
 })
 
+String.prototype.toAR= function() {
+  return this.replace(/\d/g, d =>  '٠١٢٣٤٥٦٧٨٩'[d])
+}
 
 Vue.filter('toAR' , function(number) {
   /*
@@ -226,3 +218,12 @@ Vue.filter('productsFilter' , function(products) {
     return products
   }
 })
+
+new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
+
+Vue.prototype.vue_window = window
+Vue.prototype.vue_document = document
