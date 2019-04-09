@@ -13,8 +13,10 @@
           <td>{{customer.address}}</td>
         </tr>
       </table>
-      <h3 class="text-center"> الزرع المتبقي في حساب المحل </h3>
+      
       <div class=" row d-print-none p-1 "  v-if="customer.is_self">
+        <h3 class="text-center"> الزرع المتبقي في حساب المحل </h3>
+        <br>
         <button v-for="(item, idx) in self_rest_products" :key="idx" 
         v-b-toggle.collapse_sell  @click="sell_rest = item"
         class="btn btn-lg btn-primary m-1 btn-block">
@@ -54,21 +56,25 @@
           </thead>
           <tbody>
             <tr v-for="(trans, idx) in customer_trans" :key='idx'>
-              <td>{{trans.day}}</td>
+              <td>{{trans.day | arDate }}</td>
               <td>
                 {{labels.trans[trans.trans_type]}}
-                <span v-if="trans.trans_type === 'outgoing'"> - {{trans.product_name}}</span>
+                <span v-if="trans.trans_type === 'outgoing'"> 
+                  - {{trans.product_name}} 
+                  - وزن {{trans.weight | toAR }}
+                  - سعر {{trans.kg_price | toAR }}
+                </span>
                 <span v-if="trans.notes">- {{trans.notes}} </span> 
               </td>
-              <td>{{trans.amount}}</td>
-              <td>{{trans.debt_after}}</td>
+              <td>{{trans.amount | toAR}}</td>
+              <td>{{trans.debt_after | toAR}}</td>
             </tr>
             <tr>
               <td></td>
               <td>رصيد المديونية الحالي</td>
               <td></td>
               <td>
-                <b>{{customer.debt}}</b>
+                <b>{{customer.debt | toAR}}</b>
               </td>
             </tr>
           </tbody>
@@ -194,10 +200,9 @@ export default {
   },
   mounted() {
     this.getCustomerDetails()
+  },
+  computed: {
   }
 }
 </script>
 
-<style scoped lang="scss">
-
-</style>

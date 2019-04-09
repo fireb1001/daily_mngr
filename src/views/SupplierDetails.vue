@@ -338,7 +338,7 @@
         <template v-if="! print_mode && recp_sums.products_sold[product_id]">
           <div class="alert alert-danger" role="alert" v-if="(item.sold - recp_sums.products_sold[product_id].count) > 0">
             <span class="fa fa-exclamation-circle"></span>
-            متبقي {{item.sold - recp_sums.products_sold[product_id].count}} من {{item.product_name}}  
+            متبقي {{item.sold - recp_sums.products_sold[product_id].count}} من {{item.product_name}} تم بيعه ولم يتم احتسابه في الفاتورة
               <button class="btn text-primary" @click="newRecpDetial(item)" >
                   انشاء جديد
               </button>
@@ -350,7 +350,7 @@
         </template>
         <div class="alert alert-danger" role="alert" v-if="item.sold && ! recp_sums.products_sold[product_id] ">
             <span class="fa fa-exclamation-circle"></span>
-            متبقي {{item.sold }} من {{item.product_name}}  
+            متبقي {{item.sold }} من {{item.product_name}} تم بيعه ولم يتم احتسابه في الفاتورة
               <button class="btn text-primary" @click="newRecpDetial(item)" >
                   انشاء جديد
               </button>
@@ -377,11 +377,15 @@
         استرجاع قبل الفاتورة
       </button>
       -->
-      <button v-if=" print_mode || receipt.receipt_paid " class="btn btn-printo pr-hideme m-1" @click="vue_window.print()">
+      <button v-if=" print_mode" class="btn btn-printo pr-hideme m-1" @click="vue_window.print()">
         <span class="fa fa-print"></span> طباعة 
       </button>
 
-      <button v-if="! print_mode && ! receipt.receipt_paid" @click="print_mode= true" class="btn btn-primary m-1 pr-hideme" >
+      <button v-if=" print_mode " @click="print_mode= false" class="btn btn-primary m-1 pr-hideme" >
+        اغلاق معاينة طباعة
+      </button>
+
+      <button v-if="! print_mode " @click="print_mode= true" class="btn btn-primary m-1 pr-hideme" >
         معاينة طباعة
       </button>
       </section>

@@ -11,6 +11,11 @@
 - Changing icon and builder options https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/configuration.html#table-of-contents
 - Changing icon for serve in background.js main window BrowserWindow config `icon:  'assets/logo.png'`
 
+## VS Code ext
+- MySQL : Jun Han
+- Todo+ : Fabio Spampinato
+- Vue.js Extension Pack : Muhammad Ubaid Raza
+
 ## Mysql Configs
 
 - go with aysnc await https://medium.com/@mhagemann/create-a-mysql-database-middleware-with-node-js-8-and-async-await-6984a09d49f4

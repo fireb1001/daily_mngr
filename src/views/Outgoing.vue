@@ -131,7 +131,7 @@ class="btn btn-lg btn-primary m-1 btn-block">
   <div class="m-3  ">
   <h2>بيع اليوم {{store_day.arab}}</h2>
       <div class="table-responsive">
-        <table class="table table-striped table-sm">
+        <table class="table table-striped table-sm pr-me">
           <thead>
             <tr>
               <th>#</th>

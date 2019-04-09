@@ -15,6 +15,8 @@ export class CustomerTransDAO {
   debt_after = 0
   notes
   count = 0
+  weight
+  kg_price
   actual_sale = 0
 
   constructor(data) {
@@ -53,7 +55,9 @@ export class CustomerTransDB {
 
     if(data) {
       if(data.customer_id) {
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where customer_id=${data.customer_id}`)
+        let query = `SELECT ${this.TABLE_NAME}.*, outgoings.kg_price, outgoings.weight FROM  ${this.TABLE_NAME}
+LEFT JOIN outgoings ON  ${this.TABLE_NAME}.outgoing_id = outgoings.id where ${this.TABLE_NAME}.customer_id =1`
+        results = await conn_pool.query(query)
       }
     }
     else {

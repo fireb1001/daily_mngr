@@ -18,7 +18,7 @@
               {{ day_comp.d_week }}
             </b>
             <h3 class="d-flex justify-content-between align-items-center px-3  mb-1 text-muted">
-              <router-link to="/daily" > {{day_comp.arab}} </router-link>
+              <router-link to="/daily" > {{day_comp.iso | arDate }} </router-link>
             </h3>
             <b class="m-3 ">
               <router-link class="text-danger" to="/daily" style="float:left;padding: 0 10px;">
@@ -347,6 +347,13 @@ h1,h2,h3,h4,h5 {
   color: #444;
 }
 
+.collect-box {
+  margin: 5px;
+  width: 100%;
+  height: 3em;
+  display: block;
+  border: 2px solid;
+}
 /*
 #app {
   direction: rtl;
@@ -435,8 +442,20 @@ h1,h2,h3,h4,h5 {
     max-width: 100%; } }
 
 @media print {
+  h1, h2 {
+    margin: 1rem;
+    font-size: 3rem;
+    color: black !important;
+  }
+  h3, h4 {
+    margin: 1rem;
+    font-size: 2rem;
+    color: black !important;
+  }
   .pr-me {
-    font-size: x-large }
+    color: black !important;
+    font-size: x-large
+  }
   .pr-hideme {
     display: none
   }
@@ -447,7 +466,27 @@ h1,h2,h3,h4,h5 {
     margin-top: 3em;
   }
   .nav-link {
-    text-decoration: none;
+    text-decoration: none !important;
+    color: black !important;
   }
+  .table thead tr , .table thead tr td  {
+    /*
+    ,.table tbody tr
+    border-color: black !important;
+    
+    border-top-style: solid !important;
+    border-top-width: 3px;
+    
+    border-top: 1px solid #000  !important;
+    */
+    border-top-width: 2px;
+    border-top-style: solid;
+
+    border-bottom-style: solid;
+    border-color: black;
+    -webkit-print-color-adjust:exact;
+    -webkit-border-vertical-spacing: 0px !important;
+  }
+
 }
 </style>

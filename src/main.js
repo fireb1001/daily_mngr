@@ -13,7 +13,6 @@ import 'vue-datetime/dist/vue-datetime.css'
 
 Vue.use(Datetime)
 
-
 Vue.config.productionTip = false
 
 export const appConfig = {
@@ -38,7 +37,6 @@ export const APP_LABELS = {
     receipt_1: 'فاتورة رصد'
   }
 }
-
 
 export { store }
 // TODO collect all todos !
@@ -184,9 +182,22 @@ Vue.filter('round2' , function(number) {
   return roundOf(rounded,2)
 })
 
+const moment = require('moment')
+moment.locale('ar')
+export {moment}
+
+Vue.filter('arDate' , function(date) {
+  return moment(date).format('LL')
+})
+
+
 Vue.filter('toAR' , function(number) {
+  /*
   let num = parseFloat(number).toString()
   return num.toAR()
+  */
+  let num = parseFloat(number)
+  return num.toLocaleString('ar-EG')
 })
 
 function testJSON(text){
@@ -207,7 +218,6 @@ Vue.filter('productsFilter' , function(products) {
   if(testJSON(products)) {
     let only_prod_names = []
     let all_products = JSON.parse(products)
-    console.log(JSON.parse(products))
     all_products.forEach(prod => {
       only_prod_names.push(prod.product)
     });

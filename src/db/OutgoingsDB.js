@@ -154,6 +154,12 @@ export class OutgoingsDB {
       })
       return Object.values(all_obj)
     }
+
+    static async getDAOById(id) {
+      // return await dexie[this.TABLE_NAME].get(id)
+      let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id=${id}`)
+      return new OutgoingDAO(row[0])
+    }
   
     static async getAll(data) {
       let all = []

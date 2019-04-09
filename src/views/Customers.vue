@@ -65,22 +65,28 @@
     </div>
   </b-collapse>
   </div>
-  <div class="col-7 col-print-10 pr-me">
+  <div class="col-7 col-print-12 pr-me">
     <br/>
   <h2 :class="{ 'text-danger': ! show_active }">
-    <span v-if="show_active"> ادارة </span>
+    <span v-if="show_active"> كشف </span>
     <span v-if="! show_active"> ارشيف </span>
-     البائعين 
+     الزمامات 
+
   </h2>
+  <h4 v-if="zm_mode">
+    {{now_moment}}
+  </h4>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
             <tr>
-              <th> # </th>
+              <th> رقم البائع </th>
               <th>اسم البائع</th>
-              <th>التليفون</th>
+              <th v-if="! zm_mode" >التليفون</th>
               <th>المديونية</th>
+              <th v-if=" zm_mode" width="25%">تحصيل</th>
               <th>ملاحظات</th>
+              
               <th></th>
             </tr>
           </thead>
@@ -92,10 +98,14 @@
                 {{item.name}}
                 </router-link>
               </td>
-              <td>{{item.phone}}</td>
-              <td>{{item.debt}}</td>
+              <td v-if="! zm_mode"  >{{item.phone}}</td>
+              <td>{{item.debt | toAR }}</td>
+              <td v-if=" zm_mode" >
+                <span class="collect-box "></span>
+              </td>
               <td>{{item.notes}}</td>
-              <td class="d-print-none">
+
+              <td v-if="! zm_mode" class="d-print-none">
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">
                   <span class="fa fa-archive "></span> 
                   <template v-if="! confirm_step[item.id]"> أرشفة</template>
@@ -114,8 +124,11 @@
           </tbody>
         </table>
       </div>
-          <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
+          <button class="btn btn-printo pr-hideme m-1" @click="vue_window.print()">
             <span class="fa fa-print"></span> طباعة
+          </button>
+          <button v-if="! zm_mode" class="btn btn-primary pr-hideme m-1" @click="zm_mode = true">
+            <span class="fa fa-print"></span> كشف الزمامات
           </button>
   </div>
   </section>
@@ -123,7 +136,7 @@
 
 <script >
 import {CustomersDB, CustomerDAO} from '../db/CustomersDB'
-
+import { moment } from '../main.js'
 export default {
   name: 'customers',
   data () {
@@ -132,7 +145,9 @@ export default {
       customers_arr: [],
       edit_id: 0,
       show_active: true,
-      confirm_step: []
+      zm_mode: false,
+      confirm_step: [],
+      now_moment: ''
     }
   },
   methods: {
@@ -171,6 +186,7 @@ export default {
       }
     },
     async refresh_all() {
+      this.now_moment = moment().format('lll')
       this.customers_arr = await CustomersDB.getAll()
     }
   },

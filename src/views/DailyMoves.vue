@@ -15,6 +15,7 @@
               <th>عدد المتبقي</th>
               <th>اجمالي البياعة</th>
               <th>العمولة</th>
+              <th>فرق الفاتورة</th>
               <th>اجمالي</th>
             </tr>
           </thead>
@@ -30,6 +31,9 @@
               </td>
               <td>{{item.total_sell_comm}}</td>
               <td>{{item.recp_comm | round2}}</td>
+              <td >
+                {{ item.out_sale_value - item.net_value }}
+              </td>
               <td>{{item.total_sell_comm + item.recp_comm}}</td>
               
             </tr>
