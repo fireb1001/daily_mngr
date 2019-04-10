@@ -13,7 +13,7 @@ export class ReceiptDetailDAO {
     kg_price
     weight
     calc_value
-    incoming_header_id
+    income_head_id
     date_created
 
   static get INIT_DAO() {

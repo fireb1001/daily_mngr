@@ -23,11 +23,16 @@
 <button v-for="(incom, idx) in incoming_headers" :key="idx" 
 v-b-toggle.collapse2 
 @click="selected_inc_hdr= incom"
-class="btn btn-lg btn-primary m-1 btn-block">
+class="btn btn-lg  m-1 btn-block" 
+:class="{'btn-primary': incom.day === store_day.iso, 'btn-danger': incom.day !== store_day.iso}">
   <span class="fa fa-shopping-cart"></span> &nbsp; 
   {{incom.product_name}} - 
   زرع <b> {{incom.supplier_name}} </b> - 
-  متبقي ({{incom.current_count}}) {{incom.unit}}
+  متبقي ({{incom.current_count}}) {{incom.unit}} 
+  <span v-if="incom.day !== store_day.iso"><br/> 
+وارد {{incom.day | arDate }}
+  </span>
+  
 </button>
 </div>
 
@@ -250,10 +255,11 @@ export default {
         this.outgoings_arr.push(new Outgoing(values))
       }
       */
-      console.log(this.value_calc)
+      // console.log(this.value_calc)
       this.outgoing_form.value_calc = this.value_calc
       
-      this.outgoing_form.incoming_header_id = this.selected_inc_hdr.id
+      this.outgoing_form.income_head_id = this.selected_inc_hdr.id
+      this.outgoing_form.income_day = this.selected_inc_hdr.day
       this.outgoing_form.supplier_id = this.selected_inc_hdr.supplier_id
       this.outgoing_form.supplier_name = this.selected_inc_hdr.supplier_name
       this.outgoing_form.product_id = this.selected_inc_hdr.product_id

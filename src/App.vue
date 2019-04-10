@@ -46,7 +46,7 @@
               <li class="nav-item bg-dailymoves">
                 <router-link class="nav-link active" to="/daily_moves">
                   <span class="fa fa-dolly"></span>
-                  كشف الحركة <span class="sr-only">(current)</span>
+                  حركات اليومية <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item bg-receipts">

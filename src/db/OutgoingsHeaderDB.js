@@ -15,7 +15,7 @@ export class OutgoingHeaderDAO {
   kg_price
   total_weight
   total_value
-  incoming_header_id
+  income_head_id
   recp_weight
   recp_kg_price
   recp_comm_rate
@@ -76,8 +76,8 @@ export class OutgoingsHeaderDB {
   static async addPlus(data) {
     let headDAO = await this.getDayHeader(data)
     if ( ! headDAO ) {
-        let header_id = await this.addNew(data)
-        return header_id
+      let header_id = await this.addNew(data)
+      return header_id
     } // else update
     else {
         console.log(headDAO)
@@ -132,7 +132,8 @@ export class OutgoingsHeaderDB {
 
   static async getDayHeader(data) {
     // console.log(data)
-    let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and incoming_header_id=${data.incoming_header_id} and kg_price=${data.kg_price}`)
+    // day='${data.day}' and
+    let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where income_head_id=${data.income_head_id} and kg_price=${data.kg_price}`)
     if(row.length)
       return new OutgoingHeaderDAO(row[0])
     else 

@@ -8,13 +8,15 @@ export class OutgoingDAO {
 
   id = 0
   day = ''
+  income_day = ''
   date_created = 0
   
   supplier_id = 0
   supplier_name
   product_id = 0
   product_name
-  incoming_id = 0
+
+  income_head_id
 
   customer_select = {}
   customer_id = 0
@@ -79,7 +81,7 @@ export class OutgoingsDB {
       let outgoing_id = ok.insertId
 
       // decrease Incoming 
-      let inc_header = await IncomingsHeaderDB.getDAOById(data.incoming_header_id)
+      let inc_header = await IncomingsHeaderDB.getDAOById(data.income_head_id)
       inc_header.parseTypes()
       inc_header.current_count -= parseInt(data.count)
       inc_header.inc_total_sell_comm += parseFloat(data.sell_comm_value)

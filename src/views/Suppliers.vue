@@ -84,8 +84,8 @@
                 </router-link>
                </td>
               <td>{{item.phone}}</td>
-              <td>{{item.total_count}}</td>
-              <td>{{item.balance}}</td>
+              <td>{{item.total_count | toAR}}</td>
+              <td>{{item.balance | toAR}}</td>
               <td class="d-print-none">
                 <button class="btn text-danger" @click="archive(item.id)" v-if="item.active === 1">
                   <span class="fa fa-archive "></span> 

@@ -22,6 +22,12 @@
               <td>{{item.actor_name}}</td>
               <td>{{app_labels[item.state]}}
                 <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
+                <span v-if="item.outgoing_id"> - عدد {{ item.count }} - وزن {{ item.weight }}
+                  <span v-if="item.income_day !== store_day.iso " class="text-danger">
+                      <br/>
+                      * الزرع وارد يوم {{item.income_day | arDate }}
+                  </span>
+                </span>
               </td>
               <td>{{item.notes}}</td>
             </tr>
@@ -36,9 +42,21 @@
     <button class="btn btn-success" v-b-toggle.collapse_cash >اضافة جديد </button>
 
       <!-- Element to collapse  <div class="m-2"></div>-->
-  <b-collapse id="collapse_cash" style="padding:25px;">
+  <b-collapse id="collapse_cash" class="m-5">
     <div class="entry-form">
     <form  @submit="addCashflow">
+
+
+      <div class="form-group row">
+        <label class="col-sm-2" >نوع المصروف</label>
+        <div class="col-sm-10">
+        <select class="form-control " v-model="cashflow_form.state">
+          <option value="expensess">مصروفات يومية</option>
+          <option value="men_account">حساب الرجالة</option>
+        </select>
+        </div>
+      </div>
+
       <div class="form-group row">
         <label  class="col-sm-2">مبلغ ال{{app_labels[$route.name]}}</label>
         <div class="col-sm-10">
@@ -71,7 +89,7 @@ export default {
     return {
       cashflow_arr: [],
       store_day: this.$store.state.day,
-      cashflow_form: {},
+      cashflow_form: {state:'expensess'},
       app_labels : APP_LABELS
     }
   },
@@ -99,7 +117,7 @@ export default {
     async addCashflow(evt) {
       evt.preventDefault()
       let cashDAO = new CashflowDAO(this.cashflow_form)
-      cashDAO.state = this.$route.name
+      cashDAO.state = (this.cashflow_form.state) ? this.cashflow_form.state : this.$route.name
       cashDAO.day = this.store_day.iso
       if(this.$route.name == 'expensess')
       cashDAO.sum = '-'

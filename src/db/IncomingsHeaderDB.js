@@ -150,9 +150,9 @@ export class IncomingsHeaderDB {
     let all = []
     let results = []
     if(data) {
-      if(data.current_count == '> 0' && data.day){
+      if(data.current_count == '> 0') { //  && data.day
         //all = await dexie[this.TABLE_NAME].where({day:data.day}).and( row => row.current_count > 0 ).toArray()
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and current_count > 0`)
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where current_count > 0  `) // and day='${data.day}'
       }
       else if(data.day && data.supplier_id) {
         //all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
@@ -160,7 +160,7 @@ export class IncomingsHeaderDB {
       }
       else if(data.day) {
         // results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
-        results = await conn_pool.query(`SELECT PT.*,(SELECT SUM(CT.recp_comm_value ) FROM outgoings_header AS CT WHERE CT.incoming_header_id = PT.id  ) as recp_comm FROM incomings_header AS PT where PT.day='${data.day}' order by PT.supplier_id`)
+        results = await conn_pool.query(`SELECT PT.*,(SELECT SUM(CT.recp_comm_value ) FROM outgoings_header AS CT WHERE CT.income_head_id = PT.id  ) as recp_comm FROM incomings_header AS PT where PT.day='${data.day}' order by PT.supplier_id`)
       }
     }
     else {

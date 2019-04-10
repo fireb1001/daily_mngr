@@ -1,8 +1,9 @@
 <template>
   <section class="daily-moves bg-dailymoves p-3">
-    <h2 class="text-center">كشف الحركة ليوم {{store_day.arab}}</h2>
+    <h1 class="text-center"> حركات يومية {{store_day.arab}}</h1>
 
         <br/>
+      <h2>فواتير اليومية</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm pr-me1">
           <thead>

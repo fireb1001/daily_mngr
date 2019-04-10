@@ -16,7 +16,11 @@ export class CashflowDAO {
     amount
     date_created
     notes = ''
-
+    count 
+    weight
+    kg_price
+    income_day
+    
   static get INIT_DAO() {
     return {
     }
@@ -96,8 +100,8 @@ export class CashflowDB {
 
     if(data.day && data.states && Array.isArray( data.states)){
       data.states = data.states.map(d => `'${d}'`).join(',')
-      let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' `
-        + `and state IN (${data.states})`
+      let query = `SELECT cashflow.*, outgoings.count, outgoings.kg_price, outgoings.weight, outgoings.income_day FROM ${this.TABLE_NAME} LEFT JOIN outgoings ON  ${this.TABLE_NAME}.outgoing_id = outgoings.id where cashflow.day='${data.day}' `
+        + `and cashflow.state IN (${data.states})`
       // console.log(query)
       results = await conn_pool.query(query)
       // all = await table.where({ day: data.day}).and( row => states_arr.includes(row.state) ).toArray()      

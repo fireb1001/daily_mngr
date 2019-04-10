@@ -156,7 +156,7 @@
     </button>
 
     <div class="table-responsive" v-if="! show_payments">
-      <h3>اجماليات وارد اليوم {{store_day.iso}}</h3>
+      <h3>اجماليات وارد اليوم {{store_day.arab}}</h3>
       <table class="table table-striped table-sm pr-me">
         <thead>
           <tr>
@@ -184,7 +184,7 @@
     <hr>
     <div class="pr-mt-2"></div>
     <div class="table-responsive" v-if="! show_payments">
-      <h3>اجماليات بيع اليوم {{store_day.iso}}</h3>
+      <h3>اجماليات البيع من وارد اليوم </h3>
       <table class="table table-striped table-sm pr-me">
         <thead>
           <tr>
