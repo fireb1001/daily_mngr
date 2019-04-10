@@ -11,11 +11,12 @@
 
       عمل نسخة احتياطية  
     </button>
-
+    <!--
     <router-link class="btn btn-primary m-2" to="/outhead_table">
       <span class="fa fa-dolly"></span>
       جدول اجماليات البيع 
     </router-link>
+    -->
 
   </section>
 </template>
@@ -43,7 +44,7 @@ export default {
     },
     bk() {
       var exec = require('child_process').exec
-      exec(`D:\\xampp\\mysql\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr\\daily_mngr-${Date.now()}.sql`, (err)=>{
+      exec(`D:\\xampp\\mysql\\bin\\mysqldump.exe --user root daily_mngr | 7z a -si D:\\00_system_backup\\daily_mngr-${Date.now()}.sql.7z`, (err)=>{
       //exec('D:\\laragon\\bin\\mysql\\mysql-5.7.24-winx64\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr.sql', (err)=>{
         if (err) 
           console.error(`exec error: ${err}`)

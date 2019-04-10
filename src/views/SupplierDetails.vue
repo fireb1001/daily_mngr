@@ -28,7 +28,7 @@
               <span class="btn btn-primary mr-3"  v-if="! show_payments" @click="show_payments = true">عرض الدفعات والفواتير السابقة</span>
               <button v-b-toggle.collapse_pay class="col btn btn-success ml-3 mr-3">
                 <span class="fa fa-money-bill-wave"></span> &nbsp; 
-                اضافة دفعات سابقة 
+                دفعات / تحصيلات
               </button>
             </div>
           </td>
@@ -39,13 +39,20 @@
   <b-collapse id="collapse_pay" style="padding:25px;" class="pr-hideme">
     <div class="entry-form">
     <form  @submit="addPayments">
+      <b-form-group label="نوع الحركة">
+        <b-form-radio-group  v-model="trans_form.sum">
+          <b-form-radio value="-">دفعة سابقة</b-form-radio>
+          <b-form-radio value="+">تحصيل</b-form-radio>
+        </b-form-radio-group>
+      </b-form-group>
+
       <div class="form-group row">
         <label  class="col-sm-2">المبلغ</label>
         <div class="col-sm-10">
-          <input v-model="trans_form.amount" class="form-control "  placeholder="ادخل مبلغ الدفعة">
+          <input v-model="trans_form.amount" class="form-control "  placeholder="ادخل المبلغ">
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" v-if="trans_form.sum === '-'">
         <label  class="col-sm-2">تاريخ الدفعة</label>
         <div class="col-sm-10">
           <datetime v-model="trans_form.day" :auto="true" class="datetime" min-datetime="2018-01-01"></datetime>
@@ -58,7 +65,10 @@
         </div>
       </div>     
 
-      <button type="submit" class="btn btn-success" :disabled="! trans_form.day || ! trans_form.amount">اضافة</button>
+      <button type="submit" class="btn btn-success" :disabled="! valid_payments_form ">
+        <span v-if="trans_form.sum && trans_form.sum == '-'">اضافة دفعة</span>
+        <span v-if="trans_form.sum && trans_form.sum == '+'">تحصيل مبلغ</span>
+      </button>
       <button type="button" class="btn btn-danger mr-1"  v-b-toggle.collapse_pay >  اغلاق</button>
     </form>
     </div>
@@ -222,16 +232,16 @@
       <template v-if="print_mode">
         <h1 class="text-danger text-center"> أولاد الحاج/ مصطفي ندا مصطفي</h1>
         <h1 class="text-primary text-center">الأستاذ / جمــال نــدا</h1>
-        <h4 class="text-danger text-center"> لتجارة وتسويق الفاكهة </h4>
-        <h5 class="text-primary text-center">
+        <h3 class="text-danger text-center"> لتجارة وتسويق الفاكهة </h3>
+        <h4 class="text-primary text-center">
           سوق العبور - القاهرة - محل رقم ١٥٠ عنبر ٤ فاكهة س.ت :٢٨٤٠٤٠
-        </h5>
-        <h5 class="text-primary text-center">
+        </h4>
+        <h4 class="text-primary text-center">
           ت : ٤٤٧٠٣٥٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
-        </h5>
+        </h4>
       </template>
 
-        <h3 class="text-danger text-center"> فاتـورة </h3>
+        <h2 class="text-danger text-center"> فاتـورة </h2>
         <!-- # {{receipt.id | toAR}} -->
         <p class="pr-me">
           تحريراً في {{store_day.arab }}
@@ -417,7 +427,7 @@ export default {
       show_receipt: false,
       print_mode: false,
       store_day: this.$store.state.day,
-      trans_form: {},
+      trans_form: {sum: '-'},
       //receipt: {cols: [], comm_rate: 0, nolon: 0 ,receipt_given:0, total: 0 },
       receipt: new ReceiptDAO(),
       outgoings_headers_today: [],
@@ -470,22 +480,38 @@ export default {
     },
     async addPayments(evt){
       evt.preventDefault()
-      this.trans_form.day = DateTime.fromISO(this.trans_form.day).toISODate()
-      this.trans_form.amount = - parseFloat(this.trans_form.amount)
+
+      if(this.trans_form.day)
+        this.trans_form.day = DateTime.fromISO(this.trans_form.day).toISODate()
+      else 
+        this.trans_form.day = this.store_day.iso
+
+      if(this.trans_form.sum == '+') {
+        this.trans_form.amount = parseFloat(this.trans_form.amount)
+        let cashflowDAO = new CashflowDAO(CashflowDAO.SUPP_COLLECT_DAO)
+        cashflowDAO.amount = this.trans_form.amount
+        cashflowDAO.day = this.store_day.iso
+        cashflowDAO.actor_id = this.supplier.id
+        cashflowDAO.actor_name = this.supplier.name
+
+        this.trans_form.cashflow_id = await CashflowDB.addNew(cashflowDAO)
+      }
+      else {
+        this.trans_form.amount = - parseFloat(this.trans_form.amount)
+      }
+
       await SuppliersDB.updateBalance(this.supplier_id,this.trans_form)
-      this.trans_form = {}
+      this.trans_form = {sum: '-'}
       this.$root.$emit('bv::toggle::collapse', 'collapse_pay')
       this.getSupplierDetails()
     },
     async initReceipt() {
-      console.log(this.inc_sums)
       this.receipt = await ReceiptsDB.initReceipt({day: this.store_day.iso, supplier_id: this.supplier.id},
       {
         day: this.store_day.iso,
         supplier_id: this.supplier.id,
         supplier_name: this.supplier.name,
         total_nolon: this.inc_sums.c_total_inc_nolon,
-        sale_value: this.recp_sums.calc_sale_value,
         total_current_rest: this.inc_sums.c_total_current_rest,
         incomings_headers_today: this.incomings_headers_today,
         outgoings_headers_today: this.outgoings_headers_today,
@@ -497,14 +523,14 @@ export default {
         day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
-      console.log('receipts_details', this.receipts_details)
+      // save Receipt as Precaution procedure
+      // await ReceiptsDB.saveById(this.receipt.id, this.receipt)
       this.show_details = false
       this.show_receipt = true
     },
     async saveRecp(paid) {
-
+      console.log('saveRecp paid', paid)
       this.receipts_details.forEach(async item =>{
-        console.log(item)
         let receiptDetailDAO = new ReceiptDetailDAO(item)
         receiptDetailDAO.parseTypes()
         // calc comm for daily moves
@@ -533,7 +559,7 @@ export default {
       */
       if(paid == 2) {
        // Save cashflow
-       let cashflowDAO = new CashflowDAO(CashflowDAO.RECP_PAIED_DAO)
+       let cashflowDAO = new CashflowDAO(CashflowDAO.RECP_PAID_DAO)
        cashflowDAO.day = this.store_day.iso
        cashflowDAO.actor_id = this.supplier.id
        cashflowDAO.actor_name = this.supplier.name
@@ -628,14 +654,26 @@ export default {
       })
       // this.receipt.sale_value = sum
       return supp_recps_sums
+    },
+    valid_payments_form: function() {
+
+      if(this.trans_form.sum && this.trans_form.amount && parseFloat(this.trans_form.amount)) {
+        if(this.trans_form.sum == '-' && ! this.trans_form.day)
+          return false
+        else 
+          return true
+      }
+      return false
+
     }
   },
   watch : {
     recp_sums: {
-      handler(newVals) {
-        console.log(newVals)
+      async handler(newVals) {
+        console.log("recp_sums changed calc_sale_value", newVals.calc_sale_value)
         this.receipt.sale_value= newVals.calc_sale_value
         // TODO Watch rests
+        // await this.saveRecp(this.receipt.receipt_paid)
       },
       deep: true
     },

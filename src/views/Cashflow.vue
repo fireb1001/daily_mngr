@@ -26,8 +26,9 @@
               <td>{{item.notes}}</td>
             </tr>
             <tr>
-              <th>مجموع</th>
               <td>{{total_cash}}</td>
+              <th>مجموع</th>
+              
             </tr>
           </tbody>
         </table>
@@ -52,7 +53,7 @@
         </div>
       </div>     
 
-      <button type="submit" class="btn btn-success" :disabled="! cashflow_form.amount">اضافة</button>
+      <button type="submit" class="btn btn-success" :disabled="! valid_form" >اضافة</button>
       <button type="button" class="btn btn-danger mr-1"  v-b-toggle.collapse_pay >  اغلاق</button>
     </form>
     </div>
@@ -62,7 +63,7 @@
 
 <script>
 // import { db } from '../main'
-import { CashflowDB, CashflowDAO} from '../db/CashflowDB.js'
+import { CashflowDB, CashflowDAO } from '../db/CashflowDB.js'
 import { APP_LABELS } from '../main.js'
 export default {
   name: 'cashflow',
@@ -81,10 +82,10 @@ export default {
     async refresh_cashflow_arr() {
       let states = null
       if(this.$route.name == 'expensess') {
-        states = ['given','expensess','nolon','payment', 'recp_paid']
+        states = ['given','expensess','nolon','payment', 'recp_paid','paid']
       }
       else if(this.$route.name == 'collecting') {
-        states = ['collecting','outgoing_cash'] // ['given','expense']
+        states = ['collecting','outgoing_cash','supp_collect'] 
       }
       // else if (this.$route.name == 'payments') { states = []   }
       
@@ -129,6 +130,12 @@ export default {
         sum += parseFloat(item.amount)
       })
       return sum
+    },
+    valid_form: function() {
+      if(this.cashflow_form.amount && parseFloat(this.cashflow_form.amount) ){
+        console.log(parseFloat(this.cashflow_form.amount))
+        return true
+      }
     }
   },
   watch : {

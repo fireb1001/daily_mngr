@@ -72,20 +72,25 @@ export class CustomersDB {
     let customerDAO = await this.getDAOById(id)
     if( payload.amount ){
       customerDAO.parseTypes()
-      // updating debt after
-      if (! customerDAO.debt) {
-        customerDAO.debt = 0
-      }
-      customerDAO.debt += parseFloat(payload.amount)
-      
+      let amount = parseFloat(payload.amount)
       let customerTransDao = new CustomerTransDAO(payload)
-      customerTransDao.customer_id = id
       // Collecting cashflow
-      if( payload.state && payload.state == 'collecting') { 
+      if( payload.state ) { 
+        console.log(payload, "payload")
         // payload.amount < 0 && payload.cashflow_id &&
         customerTransDao.cashflow_id = payload.id
-        customerTransDao.trans_type = 'collecting'
+        customerTransDao.trans_type = payload.state
+        // collecting
+        if(payload.sum === '+')
+          amount = - Math.abs(amount)
       }
+      
+      // updating debt after
+      customerDAO.debt = customerDAO.debt ? customerDAO.debt : 0
+      customerDAO.debt += parseFloat(amount)
+
+      customerTransDao.amount = amount
+      customerTransDao.customer_id = id
 
       customerTransDao.debt_after = customerDAO.debt
       await CustomerTransDB.addNew(customerTransDao)

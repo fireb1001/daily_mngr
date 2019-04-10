@@ -64,7 +64,7 @@ export class ReceiptsDetailsDB {
       
       if(data.day && data.supplier_id) {
         // all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id} order by product_id`)
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id} order by kg_price desc`)
       }
       else if (data.day) {
         // moves 

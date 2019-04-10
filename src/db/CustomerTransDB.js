@@ -56,7 +56,7 @@ export class CustomerTransDB {
     if(data) {
       if(data.customer_id) {
         let query = `SELECT ${this.TABLE_NAME}.*, outgoings.kg_price, outgoings.weight FROM  ${this.TABLE_NAME}
-LEFT JOIN outgoings ON  ${this.TABLE_NAME}.outgoing_id = outgoings.id where ${this.TABLE_NAME}.customer_id =1`
+LEFT JOIN outgoings ON  ${this.TABLE_NAME}.outgoing_id = outgoings.id where ${this.TABLE_NAME}.customer_id =${data.customer_id}`
         results = await conn_pool.query(query)
       }
     }

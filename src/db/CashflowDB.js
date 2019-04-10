@@ -22,7 +22,7 @@ export class CashflowDAO {
     }
   }
 
-  static get RECP_PAIED_DAO() {
+  static get RECP_PAID_DAO() {
     return {
       sum: '-',
       state: 'recp_paid'
@@ -36,6 +36,19 @@ export class CashflowDAO {
     }
   }
 
+  static get SUPP_COLLECT_DAO() {
+    return {
+      sum: '+',
+      state: 'supp_collect'
+    }
+  }
+  static get PAID_DAO() {
+    return {
+      sum: '-',
+      state: 'paid'
+    }
+  }
+
   static INST_STATE(payload){
     let instance = new this()
     instance.state = payload.state
@@ -45,7 +58,7 @@ export class CashflowDAO {
   }
 
   parseTypes () {
-    this.amount = parseFloat(this.amount)
+    this.amount = Math.abs(parseFloat(this.amount))
     if(typeof this.state_data === 'object')
       this.state_data= JSON.stringify(this.state_data)
   }

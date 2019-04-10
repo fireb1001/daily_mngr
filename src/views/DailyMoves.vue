@@ -4,10 +4,9 @@
 
         <br/>
       <div class="table-responsive">
-        <table class="table table-striped table-sm pr-me">
+        <table class="table table-striped table-sm pr-me1">
           <thead>
             <tr>
-              <th>التاريخ</th>
               <th>اسم العميل</th>
               <th>عدد الطرود</th>
               <th>الاصناف</th>
@@ -21,7 +20,6 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in daily_receipts" :key='idx'>
-              <td>{{item.day}}</td>
               <td>{{item.supplier_name}}</td>
               <td>{{item.total_count}}</td>
               <td>{{item.products_arr | productsFilter }}</td>
@@ -32,15 +30,83 @@
               <td>{{item.total_sell_comm}}</td>
               <td>{{item.recp_comm | round2}}</td>
               <td >
-                {{ item.out_sale_value - item.net_value }}
+                {{ item.out_sale_value - item.sale_value }}
               </td>
               <td>{{item.total_sell_comm + item.recp_comm}}</td>
+              
+            </tr>
+            <tr>
+              <td></td>
+              <th>{{recp_sums.count}}</th>
+              <th>المجموع</th>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>مخرجات اليومية</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm pr-me1">
+          <thead>
+            <tr>
+              <th>المبلغ</th>
+              <th>
+                الي 
+              </th>
+              <th>نوع</th>
+              <th>ملاحظات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, idx) in cashflow_arr_out" :key='idx'>
+              <td>{{item.amount}}</td>
+              <td>{{item.actor_name}}</td>
+              <td>{{app_labels[item.state]}}
+                <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
+              </td>
+              <td>{{item.notes}}</td>
+            </tr>
+            <tr>
+              <th>{{total_cash_out}}</th>
+              <th>مجموع</th>
               
             </tr>
           </tbody>
         </table>
       </div>
 
+      <h2>مدخلات اليومية</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm pr-me1">
+          <thead>
+            <tr>
+              <th>المبلغ</th>
+              <th>
+                من 
+              </th>
+              <th>نوع</th>
+              <th>ملاحظات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, idx) in cashflow_arr_in" :key='idx'>
+              <td>{{item.amount}}</td>
+              <td>{{item.actor_name}}</td>
+              <td>{{app_labels[item.state]}}
+                <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
+              </td>
+              <td>{{item.notes}}</td>
+            </tr>
+            <tr>
+              <th>{{total_cash_in}}</th>
+              <th>مجموع</th>
+              
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
         <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
           <span class="fa fa-print"></span> طباعة 
         </button>
@@ -49,18 +115,59 @@
 
 <script >
 import { ReceiptsDB } from '../db/ReceiptsDB';
+import { APP_LABELS } from '../main.js'
+import { CashflowDB } from '../db/CashflowDB.js'
 
 export default {
   name: 'daily-moves',
   data () {
     return {
       store_day: this.$store.state.day,
-      daily_receipts: []
+      daily_receipts: [],
+      cashflow_arr_in: [],
+      cashflow_arr_out: [],
+      app_labels : APP_LABELS
     }
   },
   methods: {
     async refresh_arrs() {
       this.daily_receipts = await ReceiptsDB.getAll({day: this.store_day.iso})
+
+      this.cashflow_arr_out = await CashflowDB.getAll({
+        // state:this.$route.name
+        day: this.$store.state.day.iso,
+        states: ['given','expensess','nolon','payment', 'recp_paid','paid']
+      })
+
+      this.cashflow_arr_in = await CashflowDB.getAll({
+        // state:this.$route.name
+        day: this.$store.state.day.iso,
+        states: ['collecting','outgoing_cash','supp_collect'] 
+      })
+    },
+  },
+  computed: {
+    recp_sums: function() {
+      let recp_sums = {count:0 }
+      this.daily_receipts.forEach( recp => {
+        console.log(recp)
+        recp_sums.count += parseInt(recp.total_count)
+      })
+      return recp_sums
+    },
+    total_cash_in : function() {
+      let sum = 0
+      this.cashflow_arr_in.forEach(item => {
+        sum += parseFloat(item.amount)
+      })
+      return sum
+    },
+    total_cash_out : function() {
+      let sum = 0
+      this.cashflow_arr_out.forEach(item => {
+        sum += parseFloat(item.amount)
+      })
+      return sum
     },
   },
   async mounted() {

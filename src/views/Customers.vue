@@ -74,7 +74,7 @@
 
   </h2>
   <h4 v-if="zm_mode">
-    {{now_moment}}
+    {{now_day}} - {{now_hour}}
   </h4>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
@@ -92,7 +92,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in comp_customers_arr" :key='idx' >
-              <td>{{idx + 1}}</td>
+              <td>{{item.id}}</td>
               <td>
                 <router-link class="nav-link " :to="{name:'customer_details', params: {id: item.id}}">
                 {{item.name}}
@@ -147,7 +147,8 @@ export default {
       show_active: true,
       zm_mode: false,
       confirm_step: [],
-      now_moment: moment().format('lll')
+      now_day: moment().format('LL'),
+      now_hour: moment().format('hh:mm a')
     }
   },
   methods: {

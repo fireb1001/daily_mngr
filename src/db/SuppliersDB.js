@@ -89,9 +89,16 @@ export class SuppliersDB {
       else if (payload.trans_type && payload.trans_type == 'receipt_1') {
         suppTransDAO = new SupplierTransDAO(payload)
       }
-      else { // if trans_form or from details page
-        suppTransDAO = new SupplierTransDAO(SupplierTransDAO.PAYMENT_DAO)
+      else { 
+        // if trans_form or from details page
+        if(payload.sum && payload.sum === '-') {
+          suppTransDAO = new SupplierTransDAO(SupplierTransDAO.PAYMENT_DAO)
+        }
+        else if (payload.sum && payload.sum === '+' && payload.cashflow_id){
+          suppTransDAO = new SupplierTransDAO(SupplierTransDAO.COLLECT_DAO)
+        }
       }
+
       suppTransDAO.amount = amount
       suppTransDAO.day = payload.day
       suppTransDAO.notes = payload.notes

@@ -50,6 +50,7 @@
             <tr>
               <th>التاريخ</th>
               <th>الحركة</th>
+              <th>الصنف</th>
               <th>المبلغ</th>
               <th>باقي</th>
             </tr>
@@ -60,12 +61,13 @@
               <td>
                 {{labels.trans[trans.trans_type]}}
                 <span v-if="trans.trans_type === 'outgoing'"> 
-                  - {{trans.product_name}} 
+                  - عدد {{trans.count | toAR }} 
                   - وزن {{trans.weight | toAR }}
                   - سعر {{trans.kg_price | toAR }}
                 </span>
                 <span v-if="trans.notes">- {{trans.notes}} </span> 
               </td>
+              <td>{{trans.product_name}} </td>
               <td>{{trans.amount | toAR}}</td>
               <td>{{trans.debt_after | toAR}}</td>
             </tr>
@@ -81,8 +83,10 @@
         </table>
   <button v-b-toggle.collapse_collect class="btn btn-success m-1 d-print-none">
     <span class="fa fa-credit-card"></span> &nbsp; 
-    تحصيل مبلغ
+    حركة نقدية : تحصيل / امانة 
   </button>
+
+
         <button class="btn btn-printo pr-hideme m-1" 
         @click="clipboard.writeText('حساب البائع '+ customer.name);vue_window.print()">
           <span class="fa fa-print"></span> طباعة
@@ -92,10 +96,19 @@
   <b-collapse id="collapse_collect" class="d-print-none p-1">
     <div class="entry-form">
     <form  @submit="addCollecting" class="m-2">
+      <b-form-group label="نوع الحركة">
+        <b-form-radio-group  v-model="collect_form.sum">
+          <b-form-radio value="+">تحصيل</b-form-radio>
+          <b-form-radio value="-">سلفة</b-form-radio>
+          <b-form-radio value="$">امانة</b-form-radio>
+          <b-form-radio value="#">رد امانة</b-form-radio>
+        </b-form-radio-group>
+      </b-form-group>
+
       <div class="form-group row">
         <label  class="col-sm-2">المبلغ</label>
         <div class="col-sm-10">
-          <input v-model="collect_form.amount" class="form-control "  placeholder="ادخل المبلغ المحصل">
+          <input v-model="collect_form.amount" class="form-control "  placeholder="ادخل المبلغ ">
         </div>
       </div>
       <div class="form-group row">
@@ -104,7 +117,11 @@
           <input v-model="collect_form.notes" class="form-control " placeholder="ادخال الملاحظات">
         </div>
       </div>
-      <button type="submit" class="btn btn-success" :disabled="! collect_form.amount">تحصيل</button>
+
+      <button type="submit" class="btn btn-success" :disabled="! valid_form">
+        <span v-if="collect_form.sum && collect_form.sum =='-'">دفع</span>
+        <span v-if="! collect_form.sum || collect_form.sum =='+'">تحصيل</span>
+      </button>
     </form>
     </div>
   </b-collapse>
@@ -123,7 +140,7 @@ export default {
   data () {
     return {
       customer: {},
-      collect_form: {},
+      collect_form: {sum:'+', amount: null},
       store_day: this.$store.state.day,
       customer_trans: [],
       self_rest_products: [],
@@ -151,6 +168,10 @@ export default {
         })
       }
     },
+    solfa(){
+      console.log(this.collect_form)
+      this.collect_form.sum = '-'
+    },
     async sellRest(evt) {
       evt.preventDefault()
 
@@ -175,14 +196,19 @@ export default {
     },
     async addCollecting(evt ) {
       evt.preventDefault()
-      let cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
+      let cashDAO = null
+      if(this.collect_form.sum == '-')
+        cashDAO = new CashflowDAO(CashflowDAO.PAID_DAO)
+      else 
+        cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
+
       cashDAO.day = this.store_day.iso
       cashDAO.amount = parseFloat(this.collect_form.amount)
       cashDAO.actor_id = this.customer_id
       cashDAO.actor_name = this.customer.name
       cashDAO.notes = this.collect_form.notes
       cashDAO.id = await CashflowDB.addNew(cashDAO)
-      cashDAO.amount = - (cashDAO.amount)
+
       await CustomersDB.updateDebt(this.customer_id, cashDAO)
 
       this.getCustomerDetails()
@@ -202,6 +228,11 @@ export default {
     this.getCustomerDetails()
   },
   computed: {
+    valid_form: function() {
+      if(this.collect_form.amount && parseFloat(this.collect_form.amount) && this.collect_form.sum){
+        return true
+      }
+    }
   }
 }
 </script>

@@ -69,6 +69,7 @@ export class ReceiptsDB {
   }
 
   static async initReceipt(data, payload) {
+    console.log('payload', payload)
     let receipts = await this.getAll({day: data.day, supplier_id: data.supplier_id})
     let recpDAO = null
 
@@ -125,7 +126,10 @@ export class ReceiptsDB {
     else {
       recpDAO = new ReceiptDAO(receipts[0])
       // UPDATE with new data
-      recpDAO.sale_value = payload.sale_value
+      console.log(recpDAO.sale_value)
+      if(payload.sale_value)
+        recpDAO.sale_value = payload.sale_value
+
       recpDAO.out_sale_value = payload.out_sale_value
       recpDAO.total_nolon = payload.total_nolon
       recpDAO.recp_comm =  recpDAO.sale_value * ( recpDAO.comm_rate / 100 )

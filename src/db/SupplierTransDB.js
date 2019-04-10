@@ -26,6 +26,12 @@ export class SupplierTransDAO {
     }
   }
 
+  static get COLLECT_DAO() {
+    return {
+      trans_type: 'supp_collect'
+    }
+  }
+
   static get NOLON_DAO() {
     return {
       trans_type: 'nolon',

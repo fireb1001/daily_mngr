@@ -24,16 +24,20 @@ export const APP_LABELS = {
   nolon: 'نولون',
   outgoing_cash: 'بيع كاش',
   expensess: 'مصروف',
+  paid: 'سلفة',
   collecting: 'تحصيل',
+  supp_collect: 'تحصيل من العميل',
   recp_paid: 'فاتورة صرف',
   trans: {
     outgoing: 'بيع اجل',
     collecting: 'تحصيل',
-    init: 'رصيد مديونية'
+    init: 'رصيد مديونية',
+    paid: 'سلفة'
   },
   payments: {
     payment: 'دفعة',
     nolon: 'نولون',
+    supp_collect: 'تحصيل من العميل',
     receipt_1: 'فاتورة رصد'
   }
 }

@@ -72,13 +72,13 @@
               <li class="nav-item">
                 <router-link class="nav-link active" to="/expensess">
                   <span class="fa fa-money-bill-wave"></span>
-                  مصروفات 
+                  مخرجات 
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link class="nav-link active" to="/collecting">
                   <span class="fa fa-credit-card"></span>
-                  تحصيلات 
+                  مدخلات 
                 </router-link>
               </li>
 
@@ -456,6 +456,10 @@ h1,h2,h3,h4,h5 {
   .pr-me {
     color: black !important;
     font-size: x-large
+  }
+  .pr-me1 {
+    color: black !important;
+    font-size: large
   }
   .pr-hideme {
     display: none
