@@ -196,7 +196,6 @@
               (بيع)
             </th>
             <th>المبلغ</th>
-
           </tr>
         </thead>
         <tbody>
@@ -220,12 +219,12 @@
       </table>
     </div>
 
-        <div v-if="! show_payments">
-          <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
-            <span class="fa fa-print"></span> طباعة الاجماليات
-          </button>
+      <div v-if="! show_payments">
+        <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
+          <span class="fa fa-print"></span> طباعة الاجماليات
+        </button>
 
-        </div>
+      </div>
       </section>
 
       <section v-if="! show_details && show_receipt">
