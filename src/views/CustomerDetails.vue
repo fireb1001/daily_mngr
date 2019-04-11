@@ -118,9 +118,9 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-success" :disabled="! valid_form">
-        <span v-if="collect_form.sum && collect_form.sum =='-'">دفع</span>
-        <span v-if="! collect_form.sum || collect_form.sum =='+'">تحصيل</span>
+      <button  v-if="collect_form.sum" type="submit" class="btn btn-success" :disabled="! valid_form">
+        <span v-if=" collect_form.sum =='-' || collect_form.sum =='#' ">دفع</span>
+        <span v-if=" collect_form.sum =='+' || collect_form.sum =='$' ">تحصيل</span>
       </button>
     </form>
     </div>
@@ -168,10 +168,6 @@ export default {
         })
       }
     },
-    solfa(){
-      console.log(this.collect_form)
-      this.collect_form.sum = '-'
-    },
     async sellRest(evt) {
       evt.preventDefault()
 
@@ -197,9 +193,14 @@ export default {
     async addCollecting(evt ) {
       evt.preventDefault()
       let cashDAO = null
+      
       if(this.collect_form.sum == '-')
         cashDAO = new CashflowDAO(CashflowDAO.PAID_DAO)
-      else 
+      else if(this.collect_form.sum == '$')
+        cashDAO = new CashflowDAO(CashflowDAO.CUST_TRUST_DAO)
+      else if(this.collect_form.sum == '#')
+        cashDAO = new CashflowDAO(CashflowDAO.REPAY_CUST_TRUST_DAO)
+      else if(this.collect_form.sum == '+')
         cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
 
       cashDAO.day = this.store_day.iso

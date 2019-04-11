@@ -100,10 +100,10 @@ export default {
     async refresh_cashflow_arr() {
       let states = null
       if(this.$route.name == 'expensess') {
-        states = ['given','expensess','nolon','payment', 'recp_paid','paid']
+        states = ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust']
       }
       else if(this.$route.name == 'collecting') {
-        states = ['collecting','outgoing_cash','supp_collect'] 
+        states = ['collecting','outgoing_cash','supp_collect','cust_trust'] 
       }
       // else if (this.$route.name == 'payments') { states = []   }
       

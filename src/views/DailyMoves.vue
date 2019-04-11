@@ -46,6 +46,8 @@
         </table>
       </div>
 
+      <hr>
+
       <h2>مخرجات اليومية</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm pr-me1">
@@ -76,6 +78,8 @@
           </tbody>
         </table>
       </div>
+
+      <hr>
 
       <h2>مدخلات اليومية</h2>
       <div class="table-responsive">
@@ -108,9 +112,51 @@
           </tbody>
         </table>
       </div>
+
+      <hr>
+
+      <h2>زمامات اليوم</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm pr-me1">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>عدد</th>
+              <th>الصنف</th>
+              <th>اسم البياع</th>
+              
+              <th>السعر</th>
+              <th>المبلغ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, idx) in outgoings_today_arr" :key='idx'>
+              <td>{{item.id}}</td>
+              <td>
+                {{item.product_name}}
+                - زرع {{item.supplier_name}}
+              </td>
+              <td>{{item.customer_name}}</td>
+              <td>{{item.count}}</td>
+              <td>{{item.kg_price}}</td>
+              <td>{{item.value_calc}}</td>
+            </tr>
+            <tr>
+              <th></th>
+              <th>مجموع الزمام</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <th>{{total_oncredit}}</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
         <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
           <span class="fa fa-print"></span> طباعة 
         </button>
+        
   </section>
 </template>
 
@@ -118,6 +164,7 @@
 import { ReceiptsDB } from '../db/ReceiptsDB';
 import { APP_LABELS } from '../main.js'
 import { CashflowDB } from '../db/CashflowDB.js'
+import { OutgoingsDB } from '../db/OutgoingsDB';
 
 export default {
   name: 'daily-moves',
@@ -126,6 +173,7 @@ export default {
       store_day: this.$store.state.day,
       daily_receipts: [],
       cashflow_arr_in: [],
+      outgoings_today_arr: [],
       cashflow_arr_out: [],
       app_labels : APP_LABELS
     }
@@ -137,14 +185,16 @@ export default {
       this.cashflow_arr_out = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['given','expensess','nolon','payment', 'recp_paid','paid']
+        states: ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust']
       })
 
       this.cashflow_arr_in = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['collecting','outgoing_cash','supp_collect'] 
+        states: ['collecting','outgoing_cash','supp_collect','cust_trust'] 
       })
+
+      this.outgoings_today_arr = await OutgoingsDB.getAll({day: this.store_day.iso, customer : '> 0'})
     },
   },
   computed: {
@@ -167,6 +217,13 @@ export default {
       let sum = 0
       this.cashflow_arr_out.forEach(item => {
         sum += parseFloat(item.amount)
+      })
+      return sum
+    },
+    total_oncredit: function() {
+      let sum = 0
+      this.outgoings_today_arr.forEach(item => {
+        sum += parseFloat(item.value_calc)
       })
       return sum
     },

@@ -46,10 +46,25 @@ export class CashflowDAO {
       state: 'supp_collect'
     }
   }
+
   static get PAID_DAO() {
     return {
       sum: '-',
       state: 'paid'
+    }
+  }
+
+  static get CUST_TRUST_DAO() {
+    return {
+      sum: '+',
+      state: 'cust_trust'
+    }
+  }
+
+  static get REPAY_CUST_TRUST_DAO() {
+    return {
+      sum: '-',
+      state: 'repay_cust_trust'
     }
   }
 

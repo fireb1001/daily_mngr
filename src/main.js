@@ -28,11 +28,15 @@ export const APP_LABELS = {
   collecting: 'تحصيل',
   supp_collect: 'تحصيل من العميل',
   recp_paid: 'فاتورة صرف',
+  cust_trust: 'امانة بائع',
+  repay_cust_trust: 'رد امانة بائع',
   trans: {
     outgoing: 'بيع اجل',
     collecting: 'تحصيل',
     init: 'رصيد مديونية',
-    paid: 'سلفة'
+    paid: 'سلفة',
+    cust_trust: 'امانة بائع',
+    repay_cust_trust: 'رد امانة بائع'
   },
   payments: {
     payment: 'دفعة',
@@ -192,7 +196,7 @@ Vue.filter('toAR' , function(number) {
   let num = parseFloat(number).toString()
   return num.toAR()
   */
-  let num = number? parseFloat(number) : '--'
+  let num = ( number || number === 0 ) ? parseFloat(number) : '--'
   return num.toLocaleString('ar-EG')
 })
 

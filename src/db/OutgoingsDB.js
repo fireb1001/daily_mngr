@@ -168,7 +168,10 @@ export class OutgoingsDB {
       let results = []
   
       if(data) {
-        if(data.day) {
+        if(data.day && data.customer && data.customer == '> 0' ) {
+          results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and customer_id > 0`)
+        }
+        else if(data.day) {
           results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
         }
       }
