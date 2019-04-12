@@ -96,7 +96,7 @@ export class OutgoingsHeaderDB {
           total_sell_comm_value: headDAO.total_sell_comm_value,
           recp_kg_price: headDAO.recp_kg_price,
           recp_weight: headDAO.recp_weight,
-          recp_total: headDAO.recp_total
+          recp_total: headDAO.recp_total,
         })
         return headDAO.id
     }

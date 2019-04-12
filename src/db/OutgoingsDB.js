@@ -90,6 +90,8 @@ export class OutgoingsDB {
 
       // Add outgoing header according to price
       let outHeadDAO = new OutgoingHeaderDAO(data)
+      // تاريخ الوارد وليس البيع
+      outHeadDAO.day = data.income_day
       // console.log("outHeadDAO", outHeadDAO)
       await OutgoingsHeaderDB.addPlus(outHeadDAO)
 

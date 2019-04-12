@@ -26,11 +26,18 @@ export const APP_LABELS = {
   expensess: 'مصروف',
   paid: 'سلفة',
   collecting: 'تحصيل',
-  supp_collect: 'تحصيل من العميل',
+  supp_collect: 'داخل من العميل',
   recp_paid: 'فاتورة صرف',
   cust_trust: 'امانة بائع',
   repay_cust_trust: 'رد امانة بائع',
+  men_account: 'حساب الرجالة',
+  repay_cust_rahn: 'رد رهن لبائع',
+  cust_rahn: 'رهن من بائع',
+  supp_payment: 'دفعة نقدية',
+  out_receipt: 'مصاريف فاتورة',
   trans: {
+    repay_cust_rahn: 'رد رهن لبائع',
+    cust_rahn: 'رهن من بائع',
     outgoing: 'بيع اجل',
     collecting: 'تحصيل',
     init: 'رصيد مديونية',
@@ -41,8 +48,14 @@ export const APP_LABELS = {
   payments: {
     payment: 'دفعة',
     nolon: 'نولون',
-    supp_collect: 'تحصيل من العميل',
-    receipt_1: 'فاتورة رصد'
+    supp_collect: 'داخل من العميل',
+    receipt_1: 'فاتورة رصد',
+    out_receipt: 'مصاريف فاتورة'
+  },
+  recps: {
+    0: 'حفظ',
+    1: 'رصد',
+    2: 'صرف'
   }
 }
 
@@ -213,15 +226,16 @@ function testJSON(text){
   }
 }
 
-Vue.filter('productsFilter' , function(products) {
+Vue.filter('productsFilter' , function(products, separator) {
 
+  separator = separator? separator : ' , '
   if(testJSON(products)) {
     let only_prod_names = []
     let all_products = JSON.parse(products)
     all_products.forEach(prod => {
       only_prod_names.push(prod.product)
     });
-    return only_prod_names.join(' , ')
+    return only_prod_names.join(separator)
   } else {
     return products
   }

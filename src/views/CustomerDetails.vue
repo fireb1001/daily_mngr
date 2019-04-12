@@ -100,8 +100,12 @@
         <b-form-radio-group  v-model="collect_form.sum">
           <b-form-radio value="+">تحصيل</b-form-radio>
           <b-form-radio value="-">سلفة</b-form-radio>
+          |
           <b-form-radio value="$">امانة</b-form-radio>
           <b-form-radio value="#">رد امانة</b-form-radio>
+          |
+          <b-form-radio value="rhn">رهن</b-form-radio>
+          <b-form-radio value="p_rhn">رد رهن</b-form-radio>
         </b-form-radio-group>
       </b-form-group>
 
@@ -119,8 +123,8 @@
       </div>
 
       <button  v-if="collect_form.sum" type="submit" class="btn btn-success" :disabled="! valid_form">
-        <span v-if=" collect_form.sum =='-' || collect_form.sum =='#' ">دفع</span>
-        <span v-if=" collect_form.sum =='+' || collect_form.sum =='$' ">تحصيل</span>
+        <span v-if=" collect_form.sum =='-' || collect_form.sum =='#' || collect_form.sum == 'p_rhn'  ">دفع</span>
+        <span v-if=" collect_form.sum =='+' || collect_form.sum =='$' || collect_form.sum == 'rhn' ">تحصيل</span>
       </button>
     </form>
     </div>
@@ -194,14 +198,18 @@ export default {
       evt.preventDefault()
       let cashDAO = null
       
-      if(this.collect_form.sum == '-')
+      if(this.collect_form.sum === '-')
         cashDAO = new CashflowDAO(CashflowDAO.PAID_DAO)
-      else if(this.collect_form.sum == '$')
+      else if(this.collect_form.sum === '$')
         cashDAO = new CashflowDAO(CashflowDAO.CUST_TRUST_DAO)
-      else if(this.collect_form.sum == '#')
+      else if(this.collect_form.sum === '#')
         cashDAO = new CashflowDAO(CashflowDAO.REPAY_CUST_TRUST_DAO)
-      else if(this.collect_form.sum == '+')
+      else if(this.collect_form.sum === '+')
         cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
+      else if(this.collect_form.sum === 'rhn')
+        cashDAO = new CashflowDAO(CashflowDAO.CUST_RAHN_DAO)
+      else if(this.collect_form.sum === 'p_rhn')
+        cashDAO = new CashflowDAO(CashflowDAO.REPAY_CUST_RAHN_DAO)
 
       cashDAO.day = this.store_day.iso
       cashDAO.amount = parseFloat(this.collect_form.amount)

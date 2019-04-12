@@ -97,6 +97,12 @@ export class SuppliersDB {
         else if (payload.sum && payload.sum === '+' && payload.cashflow_id){
           suppTransDAO = new SupplierTransDAO(SupplierTransDAO.COLLECT_DAO)
         }
+        else if (payload.sum && payload.sum === '--' && payload.cashflow_id){
+          suppTransDAO = new SupplierTransDAO(SupplierTransDAO.PAYMENT_DAO)
+        }
+        else if (payload.sum && payload.sum === '-r' && payload.cashflow_id){
+          suppTransDAO = new SupplierTransDAO(SupplierTransDAO.OUT_RECEIPT_DAO)
+        }
       }
 
       suppTransDAO.amount = amount

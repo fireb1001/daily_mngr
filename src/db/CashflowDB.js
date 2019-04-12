@@ -47,6 +47,20 @@ export class CashflowDAO {
     }
   }
 
+  static get SUPP_PAY_DAO() {
+    return {
+      sum: '-',
+      state: 'supp_payment'
+    }
+  }
+
+  static get OUT_RECEIPT_DAO() {
+    return {
+      sum: '-',
+      state: 'out_receipt'
+    }
+  }
+
   static get PAID_DAO() {
     return {
       sum: '-',
@@ -67,6 +81,22 @@ export class CashflowDAO {
       state: 'repay_cust_trust'
     }
   }
+
+
+  static get CUST_RAHN_DAO() {
+    return {
+      sum: '-',
+      state: 'cust_rahn'
+    }
+  }
+
+  static get REPAY_CUST_RAHN_DAO() {
+    return {
+      sum: '+',
+      state: 'repay_cust_rahn'
+    }
+  }
+
 
   static INST_STATE(payload){
     let instance = new this()

@@ -17,13 +17,16 @@
               <th>العمولة</th>
               <th>فرق الفاتورة</th>
               <th>اجمالي</th>
+              <th>النوالين</th>
+              <th>صافي الفاتورة</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, idx) in daily_receipts" :key='idx'>
               <td>{{item.supplier_name}}</td>
               <td>{{item.total_count}}</td>
-              <td>{{item.products_arr | productsFilter }}</td>
+              <td v-html="$options.filters.productsFilter(item.products_arr,'<br/> , ')"></td>
               <td>{{item.total_count - item.total_current_rest}}</td>
               <td> 
                 <span class="text-danger" v-if="item.total_current_rest">{{item.total_current_rest}}</span>
@@ -31,19 +34,38 @@
               <td>{{item.total_sell_comm}}</td>
               <td>{{item.recp_comm | round2}}</td>
               <td >
+                <span v-if="(item.out_sale_value - item.sale_value) > 0">+</span>
                 {{ item.out_sale_value - item.sale_value }}
               </td>
               <td>{{item.total_sell_comm + item.recp_comm}}</td>
-              
+              <td>{{item.total_nolon}}</td>
+              <td>{{item.net_value}}</td>
+              <th>
+                {{app_labels.recps[item.receipt_paid]}}
+              </th>
             </tr>
             <tr>
               <td></td>
               <th>{{recp_sums.count}}</th>
               <th>المجموع</th>
               <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <th>
+                <span v-if="recp_sums.diff  > 0">+</span>
+                {{recp_sums.diff}}
+              </th>
+              <td></td>
+              <th>{{recp_sums.total_nolons_sum}}</th>
+              <th></th>
+
             </tr>
           </tbody>
         </table>
+        <div>
+          <b>اجمالي فواتير الرصد فقط : {{recp_sums.total_rasd_net}}</b>
+        </div>
       </div>
 
       <hr>
@@ -98,8 +120,15 @@
             <tr v-for="(item, idx) in cashflow_arr_in" :key='idx'>
               <td>{{item.amount}}</td>
               <td>{{item.actor_name}}</td>
+              
               <td>{{app_labels[item.state]}}
                 <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
+                <span v-if="item.outgoing_id"> - عدد {{ item.count }} - وزن {{ item.weight }}
+                  <span v-if="item.income_day !== store_day.iso " class="text-danger"> 
+                    <br>
+                      <span class="fa fa-star text-primary"></span> الزرع وارد يوم {{item.income_day | arDate }}
+                  </span>
+                </span>
               </td>
               <td>{{item.notes}}</td>
             </tr>
@@ -131,7 +160,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in outgoings_today_arr" :key='idx'>
-              <td>{{item.id}}</td>
+              <td>{{item.value_calc}}</td>
               <td>
                 {{item.product_name}}
                 - زرع {{item.supplier_name}}
@@ -139,15 +168,50 @@
               <td>{{item.customer_name}}</td>
               <td>{{item.count}}</td>
               <td>{{item.kg_price}}</td>
-              <td>{{item.value_calc}}</td>
+              
             </tr>
             <tr>
-              <th></th>
+              <th>{{total_oncredit}}</th>
               <th>مجموع الزمام</th>
               <td></td>
               <td></td>
               <td></td>
-              <th>{{total_oncredit}}</th>
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr>
+
+      <h2>تحصيلات اليوم</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm pr-me1">
+          <thead>
+            <tr>
+              <th>المبلغ</th>
+              <th>
+                من 
+              </th>
+              <th></th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <template v-for="(item, idx) in cashflow_arr_in"  >
+              <tr v-if="item.state ==='collecting' && item.actor_id " :key='idx'>
+                <td>{{item.amount}}</td>
+                <td>{{item.actor_name}}</td>
+                <td>{{app_labels[item.state]}}
+                  <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
+                </td>
+              </tr>
+            </template>
+            <tr>
+              <th>{{total_cash_collect}}</th>
+              <th>مجموع</th>
+              
+              
             </tr>
           </tbody>
         </table>
@@ -185,13 +249,13 @@ export default {
       this.cashflow_arr_out = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust']
+        states: ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       })
 
       this.cashflow_arr_in = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['collecting','outgoing_cash','supp_collect','cust_trust'] 
+        states: ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn'] 
       })
 
       this.outgoings_today_arr = await OutgoingsDB.getAll({day: this.store_day.iso, customer : '> 0'})
@@ -199,10 +263,14 @@ export default {
   },
   computed: {
     recp_sums: function() {
-      let recp_sums = {count:0 }
+      let recp_sums = {count:0, diff:0, total_nolons_sum: 0  , total_net_value: 0, total_rasd_net: 0 }
       this.daily_receipts.forEach( recp => {
-        console.log(recp)
         recp_sums.count += parseInt(recp.total_count)
+        recp_sums.diff += ( recp.out_sale_value - recp.sale_value )
+        recp_sums.total_nolons_sum += recp.total_nolon
+        recp_sums.total_net_value += recp.net_value
+        if(recp.receipt_paid == 1)
+          recp_sums.total_rasd_net += recp.net_value
       })
       return recp_sums
     },
@@ -210,6 +278,14 @@ export default {
       let sum = 0
       this.cashflow_arr_in.forEach(item => {
         sum += parseFloat(item.amount)
+      })
+      return sum
+    },
+    total_cash_collect: function() {
+      let sum = 0
+      this.cashflow_arr_in.forEach(item => {
+        if(item.state === 'collecting')
+          sum += parseFloat(item.amount)
       })
       return sum
     },

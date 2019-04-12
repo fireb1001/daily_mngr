@@ -100,7 +100,7 @@
               <li class="nav-item">
                 <router-link class="nav-link active" to="/customers">
                   <span class="fa fa-handshake"></span>
-                  ادارة البائعين <span class="sr-only">(current)</span>
+                  الزمامات <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item">

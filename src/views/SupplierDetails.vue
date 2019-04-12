@@ -43,6 +43,8 @@
         <b-form-radio-group  v-model="trans_form.sum">
           <b-form-radio value="-">دفعة سابقة</b-form-radio>
           <b-form-radio value="+">تحصيل</b-form-radio>
+          <b-form-radio value="--">دفعة اليوم</b-form-radio>
+          <b-form-radio value="-r">مصروف فاتورة</b-form-radio>
         </b-form-radio-group>
       </b-form-group>
 
@@ -66,7 +68,7 @@
       </div>     
 
       <button type="submit" class="btn btn-success" :disabled="! valid_payments_form ">
-        <span v-if="trans_form.sum && trans_form.sum == '-'">اضافة دفعة</span>
+        <span v-if="trans_form.sum && (trans_form.sum === '-' || trans_form.sum === '--' || trans_form.sum === '-r')">اضافة دفعة</span>
         <span v-if="trans_form.sum && trans_form.sum == '+'">تحصيل مبلغ</span>
       </button>
       <button type="button" class="btn btn-danger mr-1"  v-b-toggle.collapse_pay >  اغلاق</button>
@@ -330,6 +332,15 @@
               </th>
           </tr>
           <tr>
+            
+            <td>( {{c_receipt_ex | round2 | toAR }} )</td>
+            <th >مصاريف الفاتورة</th>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+            <td style="border: none !important;"></td>
+          </tr>
+          <tr>
             <td> <b class="border-top border-primary">{{receipt.net_value | round2 | toAR }} </b></td>
             <th >صافي الفاتورة</th>
             <td style="border: none !important;"></td>
@@ -434,6 +445,7 @@ export default {
       incomings_headers_today: [],
       supplier_payments: [],
       supplier_receipts: [],
+      supplier_trans: [],
       labels: APP_LABELS
     }
   },
@@ -480,16 +492,43 @@ export default {
     async addPayments(evt){
       evt.preventDefault()
 
-      if(this.trans_form.day)
+      if(this.trans_form.day) {
         this.trans_form.day = DateTime.fromISO(this.trans_form.day).toISODate()
-      else 
+      }
+      else {
         this.trans_form.day = this.store_day.iso
+      }
 
-      if(this.trans_form.sum == '+') {
+      if(this.trans_form.sum === '+' ) {
         this.trans_form.amount = parseFloat(this.trans_form.amount)
         let cashflowDAO = new CashflowDAO(CashflowDAO.SUPP_COLLECT_DAO)
         cashflowDAO.amount = this.trans_form.amount
         cashflowDAO.day = this.store_day.iso
+        this.trans_form.day = this.store_day.iso
+        cashflowDAO.actor_id = this.supplier.id
+        cashflowDAO.actor_name = this.supplier.name
+
+        this.trans_form.cashflow_id = await CashflowDB.addNew(cashflowDAO)
+      }
+      else if ( this.trans_form.sum === '--') {
+
+        let cashflowDAO = new CashflowDAO(CashflowDAO.SUPP_PAY_DAO)
+        cashflowDAO.amount = parseFloat( this.trans_form.amount )
+        this.trans_form.amount = - parseFloat(this.trans_form.amount)
+        cashflowDAO.day = this.store_day.iso
+        this.trans_form.day = this.store_day.iso
+        cashflowDAO.actor_id = this.supplier.id
+        cashflowDAO.actor_name = this.supplier.name
+
+        this.trans_form.cashflow_id = await CashflowDB.addNew(cashflowDAO)
+      }
+      else if ( this.trans_form.sum === '-r') {
+        
+        let cashflowDAO = new CashflowDAO(CashflowDAO.OUT_RECEIPT_DAO)
+        cashflowDAO.amount = parseFloat( this.trans_form.amount )
+        this.trans_form.amount = - parseFloat(this.trans_form.amount)
+        cashflowDAO.day = this.store_day.iso
+        this.trans_form.day = this.store_day.iso
         cashflowDAO.actor_id = this.supplier.id
         cashflowDAO.actor_name = this.supplier.name
 
@@ -499,7 +538,7 @@ export default {
         this.trans_form.amount = - parseFloat(this.trans_form.amount)
       }
 
-      await SuppliersDB.updateBalance(this.supplier_id,this.trans_form)
+      await SuppliersDB.updateBalance(this.supplier_id, this.trans_form)
       this.trans_form = {sum: '-'}
       this.$root.$emit('bv::toggle::collapse', 'collapse_pay')
       this.getSupplierDetails()
@@ -636,6 +675,9 @@ export default {
       // this.receipt.sale_value = sum
       return out_sums
     },
+    c_receipt_ex: function(){
+      return 0
+    },
     calc_receipt_comm: function(){
       return this.receipt.sale_value * ( this.receipt.comm_rate / 100 )
     },
@@ -686,7 +728,10 @@ export default {
     },
     calc_receipt_comm: function(newval) {
       this.receipt.recp_comm = newval
-    }
+    },
+    c_receipt_ex: function(newval){
+      this.receipt.receipt_ex = newval
+    },
   },
   components: {
   },

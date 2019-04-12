@@ -23,9 +23,9 @@
               <td>{{app_labels[item.state]}}
                 <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
                 <span v-if="item.outgoing_id"> - عدد {{ item.count }} - وزن {{ item.weight }}
-                  <span v-if="item.income_day !== store_day.iso " class="text-danger">
-                      <br/>
-                      * الزرع وارد يوم {{item.income_day | arDate }}
+                  <span v-if="item.income_day !== store_day.iso " class="text-danger"> 
+                    <br>
+                      <span class="fa fa-star text-primary"></span> الزرع وارد يوم {{item.income_day | arDate }}
                   </span>
                 </span>
               </td>
@@ -45,9 +45,8 @@
   <b-collapse id="collapse_cash" class="m-5">
     <div class="entry-form">
     <form  @submit="addCashflow">
-
-
-      <div class="form-group row">
+      {{cashflow_form.state}}
+      <div class="form-group row" v-if="$route.name == 'expensess'"> 
         <label class="col-sm-2" >نوع المصروف</label>
         <div class="col-sm-10">
         <select class="form-control " v-model="cashflow_form.state">
@@ -57,9 +56,15 @@
         </div>
       </div>
 
+
       <div class="form-group row">
         <label  class="col-sm-2">مبلغ ال{{app_labels[$route.name]}}</label>
         <div class="col-sm-10">
+          <div v-if="cashflow_form.state === 'men_account'" class="m-1">
+            عدد الطرود المباعة اليوم {{day_count}} X 
+            <input v-model="men_rate" class=""  placeholder="بياعة الرجالة">
+            <br>
+          </div>
           <input v-model="cashflow_form.amount" class="form-control "  placeholder="ادخل المبلغ ">
         </div>
       </div>
@@ -82,6 +87,8 @@
 <script>
 // import { db } from '../main'
 import { CashflowDB, CashflowDAO } from '../db/CashflowDB.js'
+import { DailyDB } from '../db/DailyDB.js'
+
 import { APP_LABELS } from '../main.js'
 export default {
   name: 'cashflow',
@@ -89,8 +96,10 @@ export default {
     return {
       cashflow_arr: [],
       store_day: this.$store.state.day,
-      cashflow_form: {state:'expensess'},
-      app_labels : APP_LABELS
+      cashflow_form: {state:this.$route.name , amount: null},
+      app_labels : APP_LABELS,
+      day_count : 0,
+      men_rate : 1.5
     }
   },
   firestore () {
@@ -100,10 +109,10 @@ export default {
     async refresh_cashflow_arr() {
       let states = null
       if(this.$route.name == 'expensess') {
-        states = ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust']
+        states = ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       }
       else if(this.$route.name == 'collecting') {
-        states = ['collecting','outgoing_cash','supp_collect','cust_trust'] 
+        states = ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn'] 
       }
       // else if (this.$route.name == 'payments') { states = []   }
       
@@ -113,6 +122,8 @@ export default {
         day: this.$store.state.day.iso,
         states: states
       })
+      
+      this.day_count = await DailyDB.getTodayCount(this.store_day.iso)
     },
     async addCashflow(evt) {
       evt.preventDefault()
@@ -159,6 +170,14 @@ export default {
   watch : {
     "$route": function() {
       this.refresh_cashflow_arr()
+    },
+    "cashflow_form.state": function(val) {
+      if(val === 'men_account') {
+        this.cashflow_form.amount = this.day_count * this.men_rate
+      }
+    },
+    men_rate: function(newval) {
+      this.cashflow_form.amount = this.day_count * newval
     }
   }
 }

@@ -1,3 +1,4 @@
+import { conn_pool } from '../main'
 
 export class DailyDAO {
 
@@ -45,4 +46,9 @@ export class DailyDB {
     return all
   }
   */
+  static async getTodayCount(day) {
+    let row = await conn_pool.query(` SELECT sum(count) as sum_count FROM outgoings where day='${day}'`)
+    return parseInt(row[0].sum_count)
+  }
+
 }
