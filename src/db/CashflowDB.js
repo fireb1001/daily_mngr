@@ -82,14 +82,6 @@ export class CashflowDAO {
     }
   }
 
-
-  static get CUST_RAHN_DAO() {
-    return {
-      sum: '-',
-      state: 'cust_rahn'
-    }
-  }
-
   static get REPAY_CUST_RAHN_DAO() {
     return {
       sum: '+',

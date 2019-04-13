@@ -207,7 +207,7 @@ export default {
       else if(this.collect_form.sum === '+')
         cashDAO = new CashflowDAO(CashflowDAO.COLLECTING_DAO)
       else if(this.collect_form.sum === 'rhn')
-        cashDAO = new CashflowDAO(CashflowDAO.CUST_RAHN_DAO)
+        cashDAO = new CashflowDAO({state: 'cust_rahn', sum: '-'})
       else if(this.collect_form.sum === 'p_rhn')
         cashDAO = new CashflowDAO(CashflowDAO.REPAY_CUST_RAHN_DAO)
 

@@ -8,8 +8,8 @@
               <th>التاريخ</th>
               <th>المبلغ</th>
               <th>
-                <span v-if="$route.name == 'expensess'">الي </span>
-                <span v-if="$route.name != 'expensess'">من </span>
+                <span v-if="$route.name == 'expenses'">الي </span>
+                <span v-if="$route.name != 'expenses'">من </span>
               </th>
               <th>نوع</th>
               <th>ملاحظات</th>
@@ -46,11 +46,11 @@
     <div class="entry-form">
     <form  @submit="addCashflow">
       {{cashflow_form.state}}
-      <div class="form-group row" v-if="$route.name == 'expensess'"> 
+      <div class="form-group row" v-if="$route.name == 'expenses'"> 
         <label class="col-sm-2" >نوع المصروف</label>
         <div class="col-sm-10">
         <select class="form-control " v-model="cashflow_form.state">
-          <option value="expensess">مصروفات يومية</option>
+          <option value="expenses">مصروفات يومية</option>
           <option value="men_account">حساب الرجالة</option>
         </select>
         </div>
@@ -108,8 +108,8 @@ export default {
   methods: {
     async refresh_cashflow_arr() {
       let states = null
-      if(this.$route.name == 'expensess') {
-        states = ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
+      if(this.$route.name == 'expenses') {
+        states = ['given','expenses','nolon','payment', 'recp_paid','paid','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       }
       else if(this.$route.name == 'collecting') {
         states = ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn'] 
@@ -130,7 +130,7 @@ export default {
       let cashDAO = new CashflowDAO(this.cashflow_form)
       cashDAO.state = (this.cashflow_form.state) ? this.cashflow_form.state : this.$route.name
       cashDAO.day = this.store_day.iso
-      if(this.$route.name == 'expensess')
+      if(this.$route.name == 'expenses')
       cashDAO.sum = '-'
 
       await CashflowDB.addNew(cashDAO)

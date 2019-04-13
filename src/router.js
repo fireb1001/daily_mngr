@@ -71,8 +71,8 @@ export default new Router({
       component: Customers
     },
     {
-      path: '/expensess',
-      name: 'expensess',
+      path: '/expenses',
+      name: 'expenses',
       component: Cashflow
     },
     {

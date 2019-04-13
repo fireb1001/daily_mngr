@@ -10,17 +10,18 @@ export class ReceiptDAO {
     supplier_id
     supplier_name
     total_nolon 
-    receipt_given
+    recp_given
     comm_rate
     sale_value
     net_value
-    receipt_paid
+    recp_paid
     products_arr 
     total_current_rest
     total_count
     total_sell_comm
     recp_comm
     out_sale_value
+    recp_expenses
 
   static get INIT_DAO() {
     return {
@@ -29,16 +30,17 @@ export class ReceiptDAO {
 
   parseTypes () {
     this.total_nolon = this.total_nolon? parseFloat(this.total_nolon) : 0
-    this.receipt_given = this.receipt_given? parseFloat(this.receipt_given) : null
+    this.recp_given = this.recp_given? parseFloat(this.recp_given) : null
     this.comm_rate = this.comm_rate? parseFloat(this.comm_rate) : null
     this.sale_value = this.sale_value? parseFloat(this.sale_value) : null
     this.net_value = this.net_value? parseFloat(this.net_value) : null
-    this.receipt_paid = this.receipt_paid? parseInt(this.receipt_paid) : 0
+    this.recp_paid = this.recp_paid? parseInt(this.recp_paid) : 0
+    this.recp_expenses = this.recp_expenses ? parseFloat(this.recp_expenses) : 0
   }
   /*
   calcVals() {
     this.parseTypes()
-    this.net_value = this.sale_value - ( this.sale_value * ( this.comm_rate / 100 )) - this.receipt_given - this.total_nolon
+    this.net_value = this.sale_value - ( this.sale_value * ( this.comm_rate / 100 )) - this.recp_given - this.total_nolon
   }
   */
   constructor( data ){
@@ -91,7 +93,7 @@ export class ReceiptsDB {
       delete recpDAO.incomings_headers_today
       delete recpDAO.outgoings_headers_today
       recpDAO.id = await this.addNew(recpDAO)
-      //calc_receipt.total - inc_sums.c_total_inc_nolon -(calc_receipt.total * (receipt.comm_rate / 100)) - receipt.receipt_given
+      //calc_receipt.total - inc_sums.c_total_inc_nolon -(calc_receipt.total * (receipt.comm_rate / 100)) - receipt.recp_given
       // Add receipt details
       
       /*
@@ -119,7 +121,7 @@ export class ReceiptsDB {
       recpDAO.sale_value = payload.sale_value
       recpDAO.net_value = recpDAO.sale_value 
       - ( recpDAO.sale_value * ( recpDAO.comm_rate / 100 )) 
-      - recpDAO.receipt_given 
+      - recpDAO.recp_given 
       - recpDAO.total_nolon
       */
     }
@@ -135,8 +137,10 @@ export class ReceiptsDB {
       recpDAO.recp_comm =  recpDAO.sale_value * ( recpDAO.comm_rate / 100 )
       recpDAO.net_value = recpDAO.sale_value 
       - recpDAO.recp_comm
-      - recpDAO.receipt_given 
+      - recpDAO.recp_given 
       - recpDAO.total_nolon
+      - recpDAO.recp_expenses
+
       recpDAO.total_current_rest = payload.total_current_rest
       recpDAO.total_count = payload.total_count
       let products_arr = []
@@ -170,7 +174,7 @@ export class ReceiptsDB {
     }
     else if (data && data.supplier_id) {
       // only prev receipts
-      let query = `SELECT * FROM ${this.TABLE_NAME} where supplier_id = ${data.supplier_id} and receipt_paid > 0  order by day`
+      let query = `SELECT * FROM ${this.TABLE_NAME} where supplier_id = ${data.supplier_id} and recp_paid > 0  order by day`
       console.log(query)
       results = await conn_pool.query(query)
     }

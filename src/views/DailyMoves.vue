@@ -19,7 +19,7 @@
               <th>اجمالي</th>
               <th>النوالين</th>
               <th>صافي الفاتورة</th>
-              <th></th>
+              <th>النوع</th>
             </tr>
           </thead>
           <tbody>
@@ -41,7 +41,7 @@
               <td>{{item.total_nolon}}</td>
               <td>{{item.net_value}}</td>
               <th>
-                {{app_labels.recps[item.receipt_paid]}}
+                {{app_labels.recps[item.recp_paid]}}
               </th>
             </tr>
             <tr>
@@ -249,7 +249,7 @@ export default {
       this.cashflow_arr_out = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['given','expensess','nolon','payment', 'recp_paid','paid','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
+        states: ['given','expenses','nolon','payment', 'recp_paid','paid','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       })
 
       this.cashflow_arr_in = await CashflowDB.getAll({
@@ -269,7 +269,7 @@ export default {
         recp_sums.diff += ( recp.out_sale_value - recp.sale_value )
         recp_sums.total_nolons_sum += recp.total_nolon
         recp_sums.total_net_value += recp.net_value
-        if(recp.receipt_paid == 1)
+        if(recp.recp_paid == 1)
           recp_sums.total_rasd_net += recp.net_value
       })
       return recp_sums

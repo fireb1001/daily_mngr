@@ -9,7 +9,7 @@ export class SupplierReceiptDAO {
   date_created
   amount = 0
   total_nolon = 0
-  receipt_given = 0
+  recp_given = 0
   comm_rate
 
   static get INIT_DAO() {

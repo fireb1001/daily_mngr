@@ -70,7 +70,7 @@
               </li>
               -->
               <li class="nav-item">
-                <router-link class="nav-link active" to="/expensess">
+                <router-link class="nav-link active" to="/expenses">
                   <span class="fa fa-money-bill-wave"></span>
                   مخرجات 
                 </router-link>

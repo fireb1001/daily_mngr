@@ -89,10 +89,13 @@ export class SupplierTransDB {
     let results = []
 
     if(data) {
+      /*
       if(data.day && data.supplier_id && data.trans_type == 'out_receipt'){
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where supplier_id=${data.supplier_id} and day ='${data.day}' and trans_type = 'out_receipt'`)
       }
-      else if(data.supplier_id) {
+      else
+      */
+      if(data.supplier_id) {
         // order by day
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where supplier_id=${data.supplier_id} `)
       }

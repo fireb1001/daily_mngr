@@ -23,7 +23,7 @@ export const APP_LABELS = {
   given: 'وهبة',
   nolon: 'نولون',
   outgoing_cash: 'بيع كاش',
-  expensess: 'مصروف',
+  expenses: 'مصروفات',
   paid: 'سلفة',
   collecting: 'تحصيل',
   supp_collect: 'داخل من العميل',

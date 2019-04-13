@@ -88,7 +88,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(payment, idx) in supplier_payments" :key='idx'>
+            <tr v-for="(payment, idx) in supplier_trans" :key='idx'>
               <td>{{payment.day}}</td>
               <td>
                 {{labels.payments[payment.trans_type]}}
@@ -127,8 +127,8 @@
               <td>{{receipt.total_count}}</td>
               <td>{{receipt.products_arr | productsFilter }}</td>
               <td>
-                <span v-if="receipt.receipt_paid == 1">رصد</span>
-                <span v-if="receipt.receipt_paid == 2">صرف</span>
+                <span v-if="receipt.recp_paid == 1">رصد</span>
+                <span v-if="receipt.recp_paid == 2">صرف</span>
               </td>
 
             </tr>
@@ -269,20 +269,20 @@
                 {{item.kg_price *  item.weight | round2 | toAR }}
               </td>
               <td >
-                <input v-model="item.count" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
-                <span v-if=" print_mode || receipt.receipt_paid">{{item.count | toAR }}</span>
+                <input v-model="item.count" class="form-control"  v-if="! print_mode && ! receipt.recp_paid">
+                <span v-if=" print_mode || receipt.recp_paid">{{item.count | toAR }}</span>
               </td>
               <td >
-                <input v-model="item.weight" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
-                <span v-if=" print_mode || receipt.receipt_paid">{{item.weight | toAR }}</span>
+                <input v-model="item.weight" class="form-control"  v-if="! print_mode && ! receipt.recp_paid">
+                <span v-if=" print_mode || receipt.recp_paid">{{item.weight | toAR }}</span>
               </td>
               <td>X</td>
               <td >
-                <input v-model="item.kg_price" class="form-control"  v-if="! print_mode && ! receipt.receipt_paid">
-                <span v-if=" print_mode || receipt.receipt_paid">{{item.kg_price | toAR }}</span>
+                <input v-model="item.kg_price" class="form-control"  v-if="! print_mode && ! receipt.recp_paid">
+                <span v-if=" print_mode || receipt.recp_paid">{{item.kg_price | toAR }}</span>
               </td>
               <td >{{item.product_name}} 
-                <button v-if=" ! print_mode && ! receipt.receipt_paid" class="btn text-success" @click="removeRecpDetail(item.id)" >
+                <button v-if=" ! print_mode && ! receipt.recp_paid" class="btn text-success" @click="removeRecpDetail(item.id)" >
                   <span class="fa fa-remove "></span> 
                   حذف
                 </button>
@@ -299,7 +299,7 @@
             </tr>
           <tr>
             
-            <td>( {{inc_sums.c_total_inc_nolon | round2 | toAR }} )</td>
+            <td>( {{receipt.total_nolon | round2 | toAR }} )</td>
             <th >مشال</th>
             <td style="border: none !important;"></td>
             <td style="border: none !important;"></td>
@@ -312,28 +312,28 @@
             <th >عمولة</th>
             <td></td>
             <td></td>
-            <td ><input v-if="! print_mode && ! receipt.receipt_paid" v-model="receipt.comm_rate" class="form-control"  ></td>
+            <td ><input v-if="! print_mode && ! receipt.recp_paid" v-model="receipt.comm_rate" class="form-control"  ></td>
             <th>
-              <span v-if="! print_mode && ! receipt.receipt_paid">
+              <span v-if="! print_mode && ! receipt.recp_paid">
                نسبة العمولة {{receipt.comm_rate }}%  
                </span>
             </th>
           </tr>
           <tr>
-            <td>( {{receipt.receipt_given | round2 | toAR }} )</td>
+            <td>( {{receipt.recp_given | round2 | toAR }} )</td>
             <th >وهبة الفاتورة</th>
             <td></td>
             <td></td>
-            <td ><input v-if="! print_mode && ! receipt.receipt_paid" v-model="receipt.receipt_given" class="form-control"  ></td>
+            <td ><input v-if="! print_mode && ! receipt.recp_paid" v-model="receipt.recp_given" class="form-control"  ></td>
             <th >
-              <span v-if="! print_mode && ! receipt.receipt_paid">
+              <span v-if="! print_mode && ! receipt.recp_paid">
               ادخل مبلغ الوهبة
               </span>
               </th>
           </tr>
           <tr>
             
-            <td>( {{c_receipt_ex | round2 | toAR }} )</td>
+            <td>( {{receipt.recp_expenses | round2 | toAR }} )</td>
             <th >مصاريف الفاتورة</th>
             <td style="border: none !important;"></td>
             <td style="border: none !important;"></td>
@@ -380,20 +380,20 @@
       <button @click="show_details = true; print_mode= false; getSupplierDetails()" class="btn btn-primary m-1 pr-hideme" >
         العودة
       </button> | 
-      <button v-if="! receipt.receipt_paid" @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
+      <button v-if="! receipt.recp_paid" @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
         حفظ الفاتورة
       </button> |
-      <button v-if="receipt.receipt_paid != 2 " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
+      <button v-if="receipt.recp_paid != 2 " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
         اعادة انشاء الفاتورة
       </button> 
-      <button v-if="! receipt.receipt_paid" @click="saveRecp(1)" class="btn btn-danger m-1 pr-hideme" >
+      <button v-if="! receipt.recp_paid" @click="saveRecp(1)" class="btn btn-danger m-1 pr-hideme" >
         رصد الفاتورة
       </button> 
-      <button v-if="! receipt.receipt_paid" @click="saveRecp(2)" class="btn btn-danger m-1 pr-hideme" >
+      <button v-if="! receipt.recp_paid" @click="saveRecp(2)" class="btn btn-danger m-1 pr-hideme" >
         صرف الفاتورة
       </button> |
       <!--
-      <button v-if="! receipt.receipt_paid " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
+      <button v-if="! receipt.recp_paid " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
         استرجاع قبل الفاتورة
       </button>
       -->
@@ -438,14 +438,13 @@ export default {
       print_mode: false,
       store_day: this.$store.state.day,
       trans_form: {sum: '-'},
-      //receipt: {cols: [], comm_rate: 0, nolon: 0 ,receipt_given:0, total: 0 },
+      //receipt: {cols: [], comm_rate: 0, nolon: 0 ,recp_given:0, total: 0 },
       receipt: new ReceiptDAO(),
       outgoings_headers_today: [],
       receipts_details: [],
       incomings_headers_today: [],
-      supplier_payments: [],
-      supplier_receipts: [],
       supplier_trans: [],
+      supplier_receipts: [],
       labels: APP_LABELS
     }
   },
@@ -463,7 +462,7 @@ export default {
         supplier_id: this.supplier.id
       })
 
-      this.supplier_payments = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
+      this.supplier_trans = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
       this.supplier_receipts = await ReceiptsDB.getAll({supplier_id: this.supplier.id})
       
     },
@@ -554,7 +553,8 @@ export default {
         incomings_headers_today: this.incomings_headers_today,
         outgoings_headers_today: this.outgoings_headers_today,
         out_sale_value: this.out_sums.calc_outgoings_value,
-        total_count: this.inc_sums.c_total_count
+        total_count: this.inc_sums.c_total_count,
+        recp_expenses: this.c_receipt_ex
       })
       
       this.receipts_details = await ReceiptsDetailsDB.getAll({
@@ -584,7 +584,7 @@ export default {
         })
       })
 
-      this.receipt.receipt_paid = paid
+      this.receipt.recp_paid = paid
       console.log("this.receipt", this.receipt)
       await ReceiptsDB.saveById(this.receipt.id, this.receipt)
       // Add supplier trans if paid == 1
@@ -676,7 +676,12 @@ export default {
       return out_sums
     },
     c_receipt_ex: function(){
-      return 0
+      let sum = 0
+      this.supplier_trans.forEach(trans => {
+        if(trans.day == this.store_day.iso && trans.trans_type == 'out_receipt')
+          sum += Math.abs(trans.amount)
+      })
+      return sum
     },
     calc_receipt_comm: function(){
       return this.receipt.sale_value * ( this.receipt.comm_rate / 100 )
@@ -684,13 +689,14 @@ export default {
     calc_receipt_net: function() {
       return this.receipt.sale_value 
       - ( this.receipt.sale_value * ( this.receipt.comm_rate / 100 )) 
-      - this.receipt.receipt_given 
+      - this.receipt.recp_given 
+      - this.receipt.recp_expenses
       - this.receipt.total_nolon
     },
     supp_recps_sums: function(){
       let supp_recps_sums = {total_rasd: 0 }
       this.supplier_receipts.forEach(item =>{
-        if(item.receipt_paid == 1)
+        if(item.recp_paid == 1)
           supp_recps_sums.total_rasd += parseFloat(item.net_value)
       })
       // this.receipt.sale_value = sum
@@ -714,7 +720,7 @@ export default {
         console.log("recp_sums changed calc_sale_value", newVals.calc_sale_value)
         this.receipt.sale_value= newVals.calc_sale_value
         // TODO Watch rests
-        // await this.saveRecp(this.receipt.receipt_paid)
+        // await this.saveRecp(this.receipt.recp_paid)
       },
       deep: true
     },
@@ -730,7 +736,7 @@ export default {
       this.receipt.recp_comm = newval
     },
     c_receipt_ex: function(newval){
-      this.receipt.receipt_ex = newval
+      this.receipt.recp_expenses = newval
     },
   },
   components: {

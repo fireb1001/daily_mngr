@@ -110,20 +110,20 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>التاريخ</th>
               <th>العميل</th>
               <th>الصنف</th>
               <th>عدد الطرود</th>
+              <th>النولون</th>
               <th>ملاحظات</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(incom, idx) in incomings_arr" :key='idx'>
               <td>{{incom.id}}</td>
-              <td>{{incom.day}}</td>
               <td>{{incom.supplier_name}}</td>
               <td>{{incom.product_name}}</td>
               <td>{{incom.count}}</td>
+              <td>{{incom.nolon}}</td>
               <td>{{incom.notes}}</td>
             </tr>
           </tbody>
