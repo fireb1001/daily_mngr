@@ -22,7 +22,7 @@ export const appConfig = {
 export const APP_LABELS = {
   given: 'وهبة',
   nolon: 'نولون',
-  outgoing_cash: 'بيع كاش',
+  outgoing_cash: 'بيع نقدي',
   expenses: 'مصروفات',
   paid: 'سلفة',
   collecting: 'تحصيل',
