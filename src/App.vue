@@ -162,7 +162,6 @@
 //<router-view/>
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import { moment } from './main.js'
 import { Settings, DateTime } from 'luxon'
 
 Settings.defaultLocale = 'ar'
@@ -175,11 +174,23 @@ export default {
     }
   },
   beforeMount () {
-    let dateTime= DateTime.fromJSDate(new Date())
-    let arab = moment().format('LL')
-    let d_week = dateTime.toLocaleString({ weekday: 'long'})
-    if ( ! this.$store.state.day.now )
-      this.$store.commit('setDay' ,{ts: Date.now(), iso: dateTime.toISODate(), arab: arab, d_week: d_week })
+    const moment = require('moment')
+    // to get current local time correctly
+    moment.locale('en')
+    let dateTime= DateTime.fromISO(moment().format('YYYY-MM-DD'))
+    moment.locale('ar')
+
+    if ( ! this.$store.state.day.now ) {
+      this.$store.commit('setDay' ,{
+          ts: dateTime.valueOf(),
+          iso: dateTime.toISODate(),
+          d_week: dateTime.toLocaleString({ weekday: 'long'}),
+          arab: moment().format('LL')
+        })
+      
+    }
+
+
   },
   methods: {
 
