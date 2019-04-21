@@ -20,6 +20,18 @@
 
 - go with aysnc await https://medium.com/@mhagemann/create-a-mysql-database-middleware-with-node-js-8-and-async-await-6984a09d49f4
 
+## Demo TODOS
+
+- Demo Products form Oboor site.
+- Multi Users Support
+- Accounting Support !
+- 10 Price / 1 Comm (Yearly ) includes PC & Printer
+- 24/7 Support ( 9 am - 3 am )
+- Printed Manual / porshoor
+
+https://www.one-tab.com/page/fGSgcjVnSKWCl9TEhVbkPg
+
+## APP TODOS 
 
 ## Project setup
 ```
