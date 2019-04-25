@@ -27,11 +27,15 @@
 - Accounting Support !
 - 10 Price / 1 Comm (Yearly ) includes PC & Printer
 - 24/7 Support ( 9 am - 3 am )
-- Printed Manual / porshoor
-
-https://www.one-tab.com/page/fGSgcjVnSKWCl9TEhVbkPg
+- Printed Manual / Brochure
 
 ## APP TODOS 
+
+- mysql views, trans and SP
+
+`
+SELECT *, sum(weight) as sum_weight, sum(count) as sum_count FROM outgoings GROUP BY income_head_id, kg_price;
+`
 
 ## Project setup
 ```
