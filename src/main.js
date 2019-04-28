@@ -25,6 +25,7 @@ export const APP_LABELS = {
   outgoing_cash: 'بيع نقدي',
   expenses: 'مصروفات',
   paid: 'سلفة',
+  acc_rest: 'باقي حساب',
   collecting: 'تحصيل',
   supp_collect: 'داخل من العميل',
   recp_paid: 'فاتورة صرف',
@@ -42,6 +43,7 @@ export const APP_LABELS = {
     collecting: 'تحصيل',
     init: 'رصيد مديونية',
     paid: 'سلفة',
+    acc_rest: 'باقي حساب',
     cust_trust: 'امانة بائع',
     repay_cust_trust: 'رد امانة بائع'
   },

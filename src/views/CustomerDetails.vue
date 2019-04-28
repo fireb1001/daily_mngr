@@ -100,6 +100,7 @@
         <b-form-radio-group  v-model="collect_form.sum">
           <b-form-radio value="+">تحصيل</b-form-radio>
           <b-form-radio value="-">سلفة</b-form-radio>
+          <b-form-radio value="r">باقي حساب</b-form-radio>
           |
           <b-form-radio value="$">امانة</b-form-radio>
           <b-form-radio value="#">رد امانة</b-form-radio>
@@ -123,7 +124,7 @@
       </div>
 
       <button  v-if="collect_form.sum" type="submit" class="btn btn-success" :disabled="! valid_form">
-        <span v-if=" collect_form.sum =='-' || collect_form.sum =='#' || collect_form.sum == 'p_rhn'  ">دفع</span>
+        <span v-if=" collect_form.sum =='-' || collect_form.sum =='r' || collect_form.sum =='#' || collect_form.sum == 'p_rhn'  ">دفع</span>
         <span v-if=" collect_form.sum =='+' || collect_form.sum =='$' || collect_form.sum == 'rhn' ">تحصيل</span>
       </button>
     </form>
@@ -200,6 +201,8 @@ export default {
       
       if(this.collect_form.sum === '-')
         cashDAO = new CashflowDAO(CashflowDAO.PAID_DAO)
+      else if(this.collect_form.sum === 'r')
+        cashDAO = new CashflowDAO({state: 'acc_rest', sum: '-'})
       else if(this.collect_form.sum === '$')
         cashDAO = new CashflowDAO(CashflowDAO.CUST_TRUST_DAO)
       else if(this.collect_form.sum === '#')

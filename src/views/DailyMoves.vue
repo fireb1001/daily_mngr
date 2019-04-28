@@ -303,7 +303,7 @@ export default {
       this.cashflow_arr_out = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['given','expenses','nolon','payment', 'recp_paid','paid','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
+        states: ['given','expenses','nolon','payment', 'recp_paid','paid','acc_rest','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       })
 
       this.cashflow_exp_arr_out = await CashflowDB.getAll({
