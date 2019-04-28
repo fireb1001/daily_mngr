@@ -73,6 +73,22 @@ export class IncomingsDB {
   static createTableQ () {
     return `CREATE TABLE ${this.TABLE_NAME} ( ${this.sql_types()}) ;`
   }
+
+  static async discard(id) {
+    let incDAO = await this.getDAOById(id)
+    console.log("incDAO", incDAO)
+    let incHeaderDAO = await IncomingsHeaderDB.getDayHeader(incDAO)
+    console.log("incHeaderDAO", incHeaderDAO)
+    if(incDAO.count == incHeaderDAO.total_count && incHeaderDAO.total_count == incHeaderDAO.current_count) {
+      await IncomingsHeaderDB.removeById(incHeaderDAO.id)
+      await this.removeById(id)
+      return true
+    } 
+    else {
+      return false
+    }
+    
+  }
   
   /**@param {IncomingDAO} data */
   static async addNew(data) {
@@ -146,9 +162,21 @@ export class IncomingsDB {
 
   }
 
+  static async getDAOById(id) {
+    // return await dexie[this.TABLE_NAME].get(id)
+    let row = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where id=${id}`)
+    return new IncomingDAO(row[0])
+  }
+
   static async saveById(id, payload) {
     let sets = payloader(payload, new IncomingDAO())
     let update_q = `UPDATE ${this.TABLE_NAME} SET ${sets.join(',')} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return 
+  }
+
+  static async removeById(id) {
+    let update_q = `DELETE FROM  ${this.TABLE_NAME} WHERE id = ${id}`
     await conn_pool.query(update_q)
     return 
   }

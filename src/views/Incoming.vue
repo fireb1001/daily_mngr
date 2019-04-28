@@ -1,6 +1,6 @@
 <template>
   <div class="home row">
-    <div class="col-6 bg-incoming minh90 d-print-none">
+    <div class="col-6 bg-incoming minh90 d-print-none" v-if="detailed === false">
     <br/>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> 
     <HelloWorld msg="Welcome to Your Vue.js App"/>
@@ -102,7 +102,7 @@
   
 </form>
 </div>
-<div class="col-6 p-3 col-print-10 pr-me" >
+<div class="col-6 p-4 col-print-10 pr-me" >
   <br/>
   <h2>وارد اليوم {{store_day.arab}}</h2>
       <div class="table-responsive">
@@ -115,6 +115,7 @@
               <th>عدد الطرود</th>
               <th>النولون</th>
               <th>ملاحظات</th>
+              <th v-if="detailed"></th>
             </tr>
           </thead>
           <tbody>
@@ -125,10 +126,19 @@
               <td>{{incom.count}}</td>
               <td>{{incom.nolon}}</td>
               <td>{{incom.notes}}</td>
+              <td v-if="detailed" class="d-print-none">
+                <button class="btn text-danger" @click="discard(incom.id)" >
+                  <span class="fa fa-archive "></span> 
+                  <template v-if="! confirm_step[incom.id]"> حذف الوارد</template>
+                  <template v-if="confirm_step[incom.id]"> تأكيد </template>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
-        <button class="btn btn-printo pr-hideme" 
+        <button class="btn btn-primary pr-hideme" v-if="detailed === false" @click="detailed = true"> عرض التفاصيل </button>
+        
+        <button class="btn btn-printo pr-hideme"  v-if="detailed" 
         @click="clipboard.writeText('وارد اليوم '+ store_day.iso);vue_window.print()">
           <span class="fa fa-print"></span> طباعة
         </button>
@@ -156,6 +166,8 @@ export default {
       store_day: this.$store.state.day,
       active_suppliers: [],
       active_products: [],
+      confirm_step: [],
+      detailed: false,
       clipboard: clipboard,
       incoming_form: new IncomingDAO(IncomingDAO.INIT_DAO) // set defaults 
     }
@@ -172,6 +184,19 @@ export default {
     },
     async refresh_inc_arr() {
       this.incomings_arr = await IncomingsDB.getAll({day: this.store_day.iso})
+    },
+    async discard(id) {
+      if( this.confirm_step[id] ) {
+        // Discard Incoming
+        let success = await IncomingsDB.discard(id)
+        console.log("success", success)
+        this.confirm_step = []
+        this.refresh_inc_arr()
+      }
+      else {
+        this.confirm_step = []
+        this.confirm_step[id] = true
+      }
     }
   },
   async mounted() {
