@@ -238,7 +238,7 @@
           سوق العبور - القاهرة - محل رقم ١٥٠ عنبر ٤ فاكهة س.ت :٢٨٤٠٤٠
         </h4>
         <h4 class="text-primary text-center">
-          ت : ٤٤٧٠٣٥٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
+          ت : ٤٤٧٠١٨٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
         </h4>
       </template>
 
@@ -549,6 +549,7 @@ export default {
         supplier_id: this.supplier.id,
         supplier_name: this.supplier.name,
         total_nolon: this.inc_sums.c_total_inc_nolon,
+        total_sell_comm: this.inc_sums.c_total_sell_comm,
         total_current_rest: this.inc_sums.c_total_current_rest,
         incomings_headers_today: this.incomings_headers_today,
         outgoings_headers_today: this.outgoings_headers_today,
@@ -632,11 +633,12 @@ export default {
   },
   computed: {
     inc_sums: function() {
-      let inc_sums ={c_total_current_rest:0 , c_total_inc_nolon: 0, c_total_count: 0, products_sold: {}}
+      let inc_sums ={c_total_current_rest:0 ,c_total_sell_comm: 0, c_total_inc_nolon: 0, c_total_count: 0, products_sold: {}}
       this.incomings_headers_today.forEach(item =>{
         inc_sums.c_total_current_rest += parseInt(item.current_count)
         inc_sums.c_total_count += parseInt(item.total_count)
         inc_sums.c_total_inc_nolon += parseFloat(item.inc_total_nolon)
+        inc_sums.c_total_sell_comm += parseFloat(item.inc_total_sell_comm)
         let product_sold_obj = { 
           product_id: item.product_id,
           sold: (parseInt(item.total_count) - parseInt(item.current_count)),

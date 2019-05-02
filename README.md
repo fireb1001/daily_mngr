@@ -37,6 +37,10 @@
 SELECT *, sum(weight) as sum_weight, sum(count) as sum_count FROM outgoings GROUP BY income_head_id, kg_price;
 `
 
+## Tricks
+
+- increase backup file size from php.ini post_max_size , upload_max_filesize
+
 ## Project setup
 ```
 npm install

@@ -110,6 +110,7 @@ export class IncomingsDB {
       cashDAO.amount = data.nolon
       cashDAO.sum = '-'
       cashDAO.state = 'nolon'
+      cashDAO.incoming_id = incoming_id
       cashDAO.state_data = {
         incoming_id: incoming_id,
         supplier_id: data.supplier_id,

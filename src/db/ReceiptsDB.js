@@ -79,16 +79,16 @@ export class ReceiptsDB {
       recpDAO = new ReceiptDAO(payload)
 
       let products_arr = []
-      let total_sell_comm = 0
+      // let total_sell_comm = 0
       payload.incomings_headers_today.forEach(item =>{
         products_arr.push({
           product: item.product_name,
           total_count: item.total_count,
           rest: item.current_count}
         )
-        total_sell_comm += parseFloat(item.inc_total_sell_comm)
+        // total_sell_comm += parseFloat(item.inc_total_sell_comm)
       })
-      recpDAO.total_sell_comm = total_sell_comm
+      // recpDAO.total_sell_comm = total_sell_comm
       recpDAO.products_arr =  JSON.stringify(products_arr)
       delete recpDAO.incomings_headers_today
       delete recpDAO.outgoings_headers_today
