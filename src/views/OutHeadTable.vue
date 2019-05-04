@@ -11,9 +11,9 @@
               <th>اسم العميل</th>
               <th>الاصناف</th>
               <th>عدد المباع</th>
-              <th>اجمالي البياعة</th>
+
               <th>العمولة</th>
-              <th>اجمالي</th>
+
             </tr>
           </thead>
           <tbody>
@@ -22,9 +22,9 @@
               <td>{{item.supplier_name}}</td>
               <td>{{item.product_name}}</td>
               <td>{{item.total_count - item.current_count}}</td>
-              <td>{{item.inc_total_sell_comm}}</td>
+
               <td>{{item.recp_comm | round2}}</td>
-              <td>{{item.inc_total_sell_comm + item.recp_comm}}</td>
+
               
             </tr>
           </tbody>

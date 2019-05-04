@@ -84,7 +84,6 @@ export class OutgoingsDB {
       let inc_header = await IncomingsHeaderDB.getDAOById(data.income_head_id)
       inc_header.parseTypes()
       inc_header.current_count -= parseInt(data.count)
-      inc_header.inc_total_sell_comm += parseFloat(data.sell_comm_value)
       inc_header.inc_total_sale_value += parseFloat(data.value_calc) - parseFloat(data.sell_comm_value)
       await IncomingsHeaderDB.saveById(inc_header.id, inc_header)
 
@@ -157,6 +156,11 @@ export class OutgoingsDB {
           all_obj[item.customer_id] = item.customer_id
       })
       return Object.values(all_obj)
+    }
+
+    static async getTotalSellComm(data){
+      let row = await conn_pool.query(`SELECT sum(sell_comm_value) as total_sell_comm_sum FROM ${this.TABLE_NAME} where supplier_id = ${data.supplier_id} and day='${data.day}'`)
+      return row[0].total_sell_comm_sum ? row[0].total_sell_comm_sum : 0
     }
 
     static async getDAOById(id) {

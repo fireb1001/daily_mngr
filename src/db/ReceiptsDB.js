@@ -86,9 +86,7 @@ export class ReceiptsDB {
           total_count: item.total_count,
           rest: item.current_count}
         )
-        // total_sell_comm += parseFloat(item.inc_total_sell_comm)
       })
-      // recpDAO.total_sell_comm = total_sell_comm
       recpDAO.products_arr =  JSON.stringify(products_arr)
       delete recpDAO.incomings_headers_today
       delete recpDAO.outgoings_headers_today
