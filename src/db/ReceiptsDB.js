@@ -1,6 +1,4 @@
 import { inserter, conn_pool, payloader } from '../main'
-// eslint-disable-next-line no-unused-vars
-import { OutgoingHeaderDAO } from './OutgoingsHeaderDB';
 import { ReceiptDetailDAO, ReceiptsDetailsDB } from './ReceiptsDetailsDB';
 
 export class ReceiptDAO {
@@ -89,29 +87,18 @@ export class ReceiptsDB {
       })
       recpDAO.products_arr =  JSON.stringify(products_arr)
       delete recpDAO.incomings_headers_today
-      delete recpDAO.outgoings_headers_today
+      delete recpDAO.outgoings_grpd_sums
       recpDAO.id = await this.addNew(recpDAO)
       //calc_receipt.total - inc_sums.c_total_inc_nolon -(calc_receipt.total * (receipt.comm_rate / 100)) - receipt.recp_given
       // Add receipt details
       
-      /*
-      payload.outgoings_headers_today.forEach(async item =>{
+      for(const item of payload.outgoings_grpd_sums ) {
         let outDAO = item
         let recpDetailDAO = new ReceiptDetailDAO(outDAO)
         recpDetailDAO.receipt_id = recpDAO.id
-        recpDetailDAO.weight = parseFloat(outDAO.total_weight)
-        recpDetailDAO.count = outDAO.sold_count
-        recpDetailDAO.calc_value = recpDetailDAO.weight * parseFloat(recpDetailDAO.kg_price)
-        await ReceiptsDetailsDB.addNew(recpDetailDAO)
-      })
-      */
-      for(const item of payload.outgoings_headers_today ) {
-        // /** @type {OutgoingHeaderDAO} */
-        let outDAO = item
-        let recpDetailDAO = new ReceiptDetailDAO(outDAO)
-        recpDetailDAO.receipt_id = recpDAO.id
-        recpDetailDAO.weight = parseFloat(outDAO.total_weight)
-        recpDetailDAO.count = outDAO.sold_count
+        recpDetailDAO.weight = parseFloat(outDAO.sum_weight)
+        recpDetailDAO.count = outDAO.sum_count
+        recpDetailDAO.day = outDAO.income_day
         recpDetailDAO.calc_value = recpDetailDAO.weight * parseFloat(recpDetailDAO.kg_price)
         await ReceiptsDetailsDB.addNew(recpDetailDAO)
       }

@@ -31,6 +31,8 @@ export class OutgoingDAO {
   value_calc = 0
   collecting
   notes = ''
+  sum_count
+  sum_weight
   
   parseTypes () {
     this.count = parseInt(this.count)
@@ -158,8 +160,30 @@ export class OutgoingsDB {
       return Object.values(all_obj)
     }
 
+    static async getGroupedSums(data) {
+      let all = []
+let sql_query = `SELECT income_day,
+supplier_id,
+supplier_name,
+product_id,
+product_name,
+kg_price,
+income_head_id,
+sell_comm,
+sum(weight) as sum_weight,
+sum(count) as sum_count FROM ${this.TABLE_NAME} 
+where supplier_id =${data.supplier_id} and income_day='${data.income_day}'
+GROUP BY income_head_id, kg_price 
+order by kg_price desc ;
+`
+      let results = await conn_pool.query(sql_query)
+      results.forEach( item => { all.push(new OutgoingDAO(item)) })
+      console.log(all)
+      return all
+    }
+
     static async getTotalSellComm(data){
-      let row = await conn_pool.query(`SELECT sum(sell_comm_value) as total_sell_comm_sum FROM ${this.TABLE_NAME} where supplier_id = ${data.supplier_id} and day='${data.day}'`)
+      let row = await conn_pool.query(`SELECT sum(sell_comm_value) as total_sell_comm_sum FROM ${this.TABLE_NAME} where supplier_id = ${data.supplier_id} and income_day='${data.income_day}'`)
       return row[0].total_sell_comm_sum ? row[0].total_sell_comm_sum : 0
     }
 

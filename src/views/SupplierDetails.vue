@@ -28,7 +28,7 @@
               <span class="btn btn-primary mr-3"  v-if="! show_payments" @click="show_payments = true">عرض الدفعات والفواتير السابقة</span>
               <button v-b-toggle.collapse_pay class="col btn btn-success ml-3 mr-3">
                 <span class="fa fa-money-bill-wave"></span> &nbsp; 
-                دفعات / تحصيلات
+              اضافة فواتير سابقة / دفعات / تحصيلات
               </button>
             </div>
           </td>
@@ -42,6 +42,7 @@
       <b-form-group label="نوع الحركة">
         <b-form-radio-group  v-model="trans_form.sum">
           <b-form-radio value="-">دفعة سابقة</b-form-radio>
+          <b-form-radio value="$$">فاتورة سابقة</b-form-radio>
           <b-form-radio value="+">تحصيل</b-form-radio>
           <b-form-radio value="--">دفعة اليوم</b-form-radio>
           <b-form-radio value="-r">مصروف فاتورة</b-form-radio>
@@ -54,8 +55,8 @@
           <input v-model="trans_form.amount" class="form-control "  placeholder="ادخل المبلغ">
         </div>
       </div>
-      <div class="form-group row" v-if="trans_form.sum === '-'">
-        <label  class="col-sm-2">تاريخ الدفعة</label>
+      <div class="form-group row" v-if="trans_form.sum === '-' || trans_form.sum === '$$'">
+        <label  class="col-sm-2">تاريخ</label>
         <div class="col-sm-10">
           <datetime v-model="trans_form.day" :auto="true" class="datetime" min-datetime="2018-01-01"></datetime>
         </div>
@@ -69,6 +70,7 @@
 
       <button type="submit" class="btn btn-success" :disabled="! valid_payments_form ">
         <span v-if="trans_form.sum && (trans_form.sum === '-' || trans_form.sum === '--' || trans_form.sum === '-r')">اضافة دفعة</span>
+        <span v-if="trans_form.sum && (trans_form.sum === '$$' )">اضافة الفاتورة</span>
         <span v-if="trans_form.sum && trans_form.sum == '+'">تحصيل مبلغ</span>
       </button>
       <button type="button" class="btn btn-danger mr-1"  v-b-toggle.collapse_pay >  اغلاق</button>
@@ -201,13 +203,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, idx) in outgoings_headers_today" :key='idx'>
+          <tr v-for="(item, idx) in outgoings_grpd_sums" :key='idx'>
             <td></td>
             <td>{{item.product_name}}</td>
-            <td>{{item.sold_count}}</td>
-            <td>{{item.total_weight}}</td>
+            <td>{{item.sum_count}}</td>
+            <td>{{item.sum_weight}}</td>
             <td>{{item.kg_price}}</td>
-            <td>{{item.total_weight * item.kg_price }}</td>
+            <td>{{item.sum_weight * item.kg_price }}</td>
           </tr>
           <tr>
             <td></td>
@@ -419,7 +421,6 @@
 
 <script >
 import { SuppliersDB, SupplierDAO } from '../db/SuppliersDB.js'
-import { OutgoingsHeaderDB } from '../db/OutgoingsHeaderDB.js'
 import { IncomingsHeaderDB } from '../db/IncomingsHeaderDB.js'
 import { ReceiptDAO, ReceiptsDB} from '../db/ReceiptsDB.js'
 import { SupplierTransDB } from '../db/SupplierTransDB.js'
@@ -447,7 +448,7 @@ export default {
       trans_form: {sum: '-'},
       //receipt: {cols: [], comm_rate: 0, nolon: 0 ,recp_given:0, total: 0 },
       receipt: new ReceiptDAO(),
-      outgoings_headers_today: [],
+      outgoings_grpd_sums: [],
       receipts_details: [],
       incomings_headers_today: [],
       supplier_trans: [],
@@ -463,9 +464,14 @@ export default {
         day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
-
+      /*
       this.outgoings_headers_today = await OutgoingsHeaderDB.getAll({
         day: this.store_day.iso,
+        supplier_id: this.supplier.id
+      })
+      */
+      this.outgoings_grpd_sums = await OutgoingsDB.getGroupedSums({
+        income_day: this.store_day.iso,
         supplier_id: this.supplier.id
       })
 
@@ -540,17 +546,29 @@ export default {
 
         this.trans_form.cashflow_id = await CashflowDB.addNew(cashflowDAO)
       }
+      else if (this.trans_form.sum === '$$') {
+        console.log(this.trans_form)
+        let recp = new ReceiptDAO()
+        recp.day = this.trans_form.day
+        recp.net_value = this.trans_form.amount
+        recp.supplier_id = this.supplier.id
+        recp.supplier_name = this.supplier.name
+        recp.recp_paid = 1
+        await ReceiptsDB.addNew(recp)
+      }
       else {
         this.trans_form.amount = - parseFloat(this.trans_form.amount)
       }
 
-      await SuppliersDB.updateBalance(this.supplier_id, this.trans_form)
+      if(this.trans_form.sum !== '$$')
+        await SuppliersDB.updateBalance(this.supplier_id, this.trans_form)
+      
       this.trans_form = {sum: '-'}
       this.$root.$emit('bv::toggle::collapse', 'collapse_pay')
       this.getSupplierDetails()
     },
     async initReceipt() {
-      let total_sell_comm = await OutgoingsDB.getTotalSellComm({day: this.store_day.iso, supplier_id: this.supplier.id})
+      let total_sell_comm = await OutgoingsDB.getTotalSellComm({income_day: this.store_day.iso, supplier_id: this.supplier.id})
       
       this.receipt = await ReceiptsDB.initReceipt({day: this.store_day.iso, supplier_id: this.supplier.id},
       {
@@ -561,7 +579,7 @@ export default {
         total_sell_comm: total_sell_comm,
         total_current_rest: this.inc_sums.c_total_current_rest,
         incomings_headers_today: this.incomings_headers_today,
-        outgoings_headers_today: this.outgoings_headers_today,
+        outgoings_grpd_sums: this.outgoings_grpd_sums,
         out_sale_value: this.out_sums.calc_outgoings_value,
         total_count: this.inc_sums.c_total_count,
         recp_expenses: this.c_receipt_ex
@@ -623,16 +641,7 @@ export default {
       // reinit the recp
       await ReceiptsDB.deleteAll({day: this.store_day.iso, supplier_id: this.supplier.id})
       await ReceiptsDetailsDB.deleteAll({day: this.store_day.iso, supplier_id: this.supplier.id})
-      /*
-      this.outgoings_headers_today.forEach( async item =>{
-        let out_head_DAO = new OutgoingHeaderDAO(item)
-        out_head_DAO.parseTypes()
-        await OutgoingsHeaderDB.saveById(item.id, {
-          recp_kg_price: out_head_DAO.kg_price,
-          recp_total: out_head_DAO.kg_price * out_head_DAO.total_weight
-        })
-      })
-      */
+
       this.receipts_details = []
       this.receipt= new ReceiptDAO()
       this.show_receipt = false
@@ -679,9 +688,9 @@ export default {
     },
     out_sums: function(){
       let out_sums = {calc_outgoings_value: 0 , total_sold_count: 0}
-      this.outgoings_headers_today.forEach(item =>{
-        out_sums.calc_outgoings_value += parseFloat(item.total_weight) * parseFloat(item.kg_price)
-        out_sums.total_sold_count += parseInt(item.sold_count)
+      this.outgoings_grpd_sums.forEach(item =>{
+        out_sums.calc_outgoings_value += parseFloat(item.sum_weight) * parseFloat(item.kg_price)
+        out_sums.total_sold_count += parseInt(item.sum_count)
       })
       // this.receipt.sale_value = sum
       return out_sums

@@ -150,7 +150,7 @@ export class IncomingsHeaderDB {
     if(data) {
       if(data.current_count == '> 0') { //  && data.day
         //all = await dexie[this.TABLE_NAME].where({day:data.day}).and( row => row.current_count > 0 ).toArray()
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where current_count > 0  `) // and day='${data.day}'
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where current_count > 0  `) // old and day='${data.day}'
       }
       else if(data.day && data.supplier_id) {
         //all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()

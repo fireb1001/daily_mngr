@@ -83,7 +83,18 @@ export class IncomingsDB {
       await IncomingsHeaderDB.removeById(incHeaderDAO.id)
       await this.removeById(id)
       return true
-    } 
+    }
+    // remove also if current count > income count 
+    else if (incDAO.count < incHeaderDAO.current_count) {
+      incHeaderDAO.current_count -= parseInt(incDAO.count)
+      incHeaderDAO.total_count -= parseInt(incDAO.count)
+      await IncomingsHeaderDB.saveById(incHeaderDAO.id, {
+        current_count: incHeaderDAO.current_count,
+        total_count: incHeaderDAO.total_count
+      })
+      await this.removeById(id)
+      return true
+    }
     else {
       return false
     }
