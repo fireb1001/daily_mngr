@@ -104,6 +104,11 @@
 </div>
 <div class="col-6 p-4 col-print-10 pr-me" >
   <br/>
+  <b-alert :show="discard_success === false">
+      لا يمكن حذف هذا الوارد 
+      <b class="text-danger float-left " @click="discard_success = null">اغلاق x</b>
+  </b-alert> 
+
   <h2>وارد اليوم {{store_day.arab}}</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
@@ -167,6 +172,7 @@ export default {
       active_suppliers: [],
       active_products: [],
       confirm_step: [],
+      discard_success: null,
       detailed: false,
       clipboard: clipboard,
       incoming_form: new IncomingDAO(IncomingDAO.INIT_DAO) // set defaults 
@@ -188,8 +194,8 @@ export default {
     async discard(id) {
       if( this.confirm_step[id] ) {
         // Discard Incoming
-        let success = await IncomingsDB.discard(id)
-        console.log("success", success)
+        this.discard_success = await IncomingsDB.discard(id)
+        
         this.confirm_step = []
         this.refresh_inc_arr()
       }

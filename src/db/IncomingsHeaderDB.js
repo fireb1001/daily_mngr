@@ -12,9 +12,6 @@ export class IncomingsHeaderDAO {
   total_count = 0
   current_count = 0
   inc_total_nolon
-  inc_total_recp_comm
-  inc_total_sale_value
-  inc_recp_comm_rate
   recp_comm // join
   notes
 
@@ -42,9 +39,6 @@ export class IncomingsHeaderDAO {
     this.total_count = parseInt(this.total_count)
     this.current_count = parseInt(this.current_count)
     this.inc_total_nolon = this.inc_total_nolon? parseFloat(this.inc_total_nolon) : 0
-    this.inc_total_recp_comm = this.inc_total_recp_comm? parseFloat(this.inc_total_recp_comm) : null
-    this.inc_total_sale_value = this.inc_total_sale_value? parseFloat(this.inc_total_sale_value) : null
-    this.inc_recp_comm_rate = this.inc_recp_comm_rate? parseFloat(this.inc_recp_comm_rate) : null
   }
 
 }

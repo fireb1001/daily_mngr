@@ -351,6 +351,11 @@
           </tbody>
         </table>
       </div>
+
+  <b-alert :show="recp_saved " class="pr-hideme">
+      تم حفظ الفاتورة
+      <b class="text-danger float-left " @click="recp_saved = null">اغلاق x</b>
+  </b-alert> 
         <p class="text-danger pr-me">
           * خالص بيد حامله ولا تلغي أي شيكات أو ايصالات امانة
         </p>
@@ -437,6 +442,7 @@ export default {
       show_payments : false,
       show_receipt: false,
       print_mode: false,
+      recp_saved: null,
       store_day: this.$store.state.day,
       trans_form: {sum: '-'},
       //receipt: {cols: [], comm_rate: 0, nolon: 0 ,recp_given:0, total: 0 },
@@ -611,6 +617,7 @@ export default {
        CashflowDB.addNew(cashflowDAO)
       }
       await this.getSupplierDetails()
+      this.recp_saved = true
     },
     async discardRecp() {
       // reinit the recp

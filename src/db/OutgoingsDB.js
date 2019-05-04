@@ -84,7 +84,7 @@ export class OutgoingsDB {
       let inc_header = await IncomingsHeaderDB.getDAOById(data.income_head_id)
       inc_header.parseTypes()
       inc_header.current_count -= parseInt(data.count)
-      inc_header.inc_total_sale_value += parseFloat(data.value_calc) - parseFloat(data.sell_comm_value)
+
       await IncomingsHeaderDB.saveById(inc_header.id, inc_header)
 
       // Add outgoing header according to price

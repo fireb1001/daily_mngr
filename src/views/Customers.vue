@@ -73,6 +73,9 @@
      الزمامات 
 
   </h2>
+  <div class="pr-hideme">
+    <input v-model="search_term" class="form-control "  placeholder="بحث في البائعين">
+  </div>
   <h4 v-if="zm_mode">
     {{now_day}} - {{now_hour}}
   </h4>
@@ -147,6 +150,7 @@ export default {
       show_active: true,
       zm_mode: false,
       confirm_step: [],
+      search_term: '',
       now_day: moment().format('LL'),
       now_hour: moment().format('hh:mm a')
     }
@@ -196,7 +200,9 @@ export default {
   computed: {
     comp_customers_arr: function () {
       let active = (this.show_active ) ? 1 : 0;
-      return this.customers_arr.filter( item => item.active === active)
+      return this.customers_arr.filter( item => {
+        return (item.active === active && item.name.includes(this.search_term))
+      })
     }
   }
 }
