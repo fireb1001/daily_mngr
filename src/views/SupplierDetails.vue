@@ -24,16 +24,34 @@
                 {{supplier.balance}}
                 
               </span>
+              <!--
+              <span class="btn btn-primary mr-3"  v-if="! show_payments" @click="show_payments = true">
+                عرض الدفعات والفواتير السابقة
+              </span>
 
-              <span class="btn btn-primary mr-3"  v-if="! show_payments" @click="show_payments = true">عرض الدفعات والفواتير السابقة</span>
-              <button v-b-toggle.collapse_pay class="col btn btn-success ml-3 mr-3">
+              <button v-b-toggle.collapse_pay class="col btn btn-success ml-3 mr-3" v-if="show_payments">
                 <span class="fa fa-money-bill-wave"></span> &nbsp; 
               اضافة فواتير سابقة / دفعات / تحصيلات
               </button>
+              -->
             </div>
           </td>
         </tr>
       </table>
+
+      <div class="row">
+        <span class="btn btn-primary mr-3"  v-if="! show_payments" @click="show_payments = true">
+          عرض الدفعات والفواتير السابقة
+        </span>
+        
+        <button v-b-toggle.collapse_pay class=" btn btn-success ml-3 mr-3" v-if="show_payments">
+          <span class="fa fa-money-bill-wave"></span> &nbsp; 
+        اضافة فواتير سابقة / دفعات / تحصيلات
+        </button>
+        <!--
+        <b class="btn btn-danger pr-hideme m-3" v-if="show_payments" @click="show_payments = false">اغلاق </b>
+        -->
+      </div>
 
   <!-- Element to collapse  <div class="m-2"></div>-->
   <b-collapse id="collapse_pay" style="padding:25px;" class="pr-hideme">
@@ -148,7 +166,7 @@
           <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
             <span class="fa fa-print"></span> طباعة 
           </button>
-          <b class="btn btn-danger pr-hideme m-3" @click="show_payments = false">اغلاق </b>
+          <b class="btn btn-danger pr-hideme m-3" @click="show_payments = false">اغلاق الفواتير والدفعات السابقة </b>
         </div>
     </div>
 
