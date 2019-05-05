@@ -79,10 +79,22 @@
           <datetime v-model="trans_form.day" :auto="true" class="datetime" min-datetime="2018-01-01"></datetime>
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" v-if=" trans_form.sum !== '$$'">
         <label  class="col-sm-2">ملاحظات</label>
         <div class="col-sm-10">
           <input v-model="trans_form.notes" class="form-control " placeholder="ادخال الملاحظات">
+        </div>
+      </div>     
+      <div class="form-group row" v-if=" trans_form.sum === '$$'">
+        <label  class="col-sm-2">عدد الطرود</label>
+        <div class="col-sm-10">
+          <input v-model="trans_form.count" class="form-control " placeholder="ادخال العدد">
+        </div>
+      </div>     
+      <div class="form-group row" v-if=" trans_form.sum === '$$'">
+        <label  class="col-sm-2">الاصناف</label>
+        <div class="col-sm-10">
+          <input v-model="trans_form.products" class="form-control " placeholder="ادخال الاصناف">
         </div>
       </div>     
 
@@ -114,14 +126,14 @@
                 {{labels.payments[payment.trans_type]}}
                 <span v-if="payment.notes">- {{payment.notes}} </span>
               </td>
-              <td>{{payment.amount}}</td>
-              <td>{{payment.balance_after}}</td>
+              <td>{{payment.amount | toAR}}</td>
+              <td>{{payment.balance_after | toAR}}</td>
             </tr>
             <tr>
               <td></td>
               <td>رصيد العميل الحالي</td>
               <td>
-                <b>{{supplier.balance}}</b>
+                <b>{{supplier.balance | toAR}}</b>
               </td>
             </tr>
           </tbody>
@@ -142,9 +154,9 @@
             <tr v-for="(receipt, idx) in supplier_receipts" :key='idx'>
               <td>{{receipt.day}}</td>
               <td>
-                {{receipt.net_value}}
+                {{receipt.net_value | round2 | toAR}}
               </td>
-              <td>{{receipt.total_count}}</td>
+              <td>{{receipt.total_count | toAR}}</td>
               <td>{{receipt.products_arr | productsFilter }}</td>
               <td>
                 <span v-if="receipt.recp_paid == 1">رصد</span>
@@ -154,7 +166,7 @@
             </tr>
             <tr>
               <td></td>
-              <td>اجمالي فواتير الرصد فقط = <b>{{supp_recps_sums.total_rasd}}</b> </td>
+              <td>اجمالي فواتير الرصد فقط = <b>{{supp_recps_sums.total_rasd | round2 | toAR}}</b> </td>
               <td>
                 
               </td>
@@ -258,7 +270,7 @@
           سوق العبور - القاهرة - محل رقم ١٥٠ عنبر ٤ فاكهة س.ت :٢٨٤٠٤٠
         </h4>
         <h4 class="text-primary text-center">
-          ت : ٤٤٧٠١٨٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
+          ت : ٤٤٧٧٠١٨٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
         </h4>
       </template>
 
@@ -568,6 +580,8 @@ export default {
         console.log(this.trans_form)
         let recp = new ReceiptDAO()
         recp.day = this.trans_form.day
+        recp.total_count = parseInt(this.trans_form.count)
+        recp.products_arr = this.trans_form.products
         recp.net_value = this.trans_form.amount
         recp.supplier_id = this.supplier.id
         recp.supplier_name = this.supplier.name

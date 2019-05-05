@@ -123,6 +123,7 @@ export class IncomingsHeaderDB {
       }
     })
     */
+    data.only = true
     let all = await this.getAll(data)
     console.log(all)
     all.forEach( item => {
@@ -156,11 +157,15 @@ export class IncomingsHeaderDB {
         //all = await dexie[this.TABLE_NAME].where({day:data.day, supplier_id: data.supplier_id}).toArray()
         results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and supplier_id= ${data.supplier_id}`)
       }
+      else if (data.day && data.only) {
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' `)
+      }
       else if(data.day) {
         // results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`)
         results = await conn_pool.query(`SELECT PT.*,(SELECT SUM(CT.recp_comm_value ) FROM outgoings_header AS CT WHERE CT.income_head_id = PT.id  ) as recp_comm FROM incomings_header AS PT where PT.day='${data.day}' order by PT.supplier_id`)
       }
     }
+    // NOW NO NEED
     else {
       results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
     }
