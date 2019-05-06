@@ -113,6 +113,7 @@
         <table class="table table-striped pr-me">
           <thead>
             <tr>
+              <th>م </th>
               <th>التاريخ</th>
               <th>الحركة</th>
               <th>المبلغ</th>
@@ -121,7 +122,8 @@
           </thead>
           <tbody>
             <tr v-for="(payment, idx) in supplier_trans" :key='idx'>
-              <td>{{payment.day}}</td>
+              <th>{{idx +1 | toAR }} </th>
+              <td>{{payment.day | arDate }}</td>
               <td>
                 {{labels.payments[payment.trans_type]}}
                 <span v-if="payment.notes">- {{payment.notes}} </span>
@@ -143,37 +145,32 @@
         <table class="table table-striped pr-me">
           <thead>
             <tr>
-              <th>التاريخ</th>
+              <th>م </th>
               <th>صافي الفاتورة</th>
               <th>عدد الطرود</th>
               <th>الاصناف</th>
+              <th>التاريخ</th>
               <th>حالة الفاتورة</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(receipt, idx) in supplier_receipts" :key='idx'>
-              <td>{{receipt.day}}</td>
+              <th>{{idx +1 | toAR }}</th>
               <td>
                 {{receipt.net_value | round2 | toAR}}
               </td>
               <td>{{receipt.total_count | toAR}}</td>
               <td>{{receipt.products_arr | productsFilter }}</td>
+              <td>{{receipt.day | arDate}}</td>
               <td>
                 <span v-if="receipt.recp_paid == 1">رصد</span>
                 <span v-if="receipt.recp_paid == 2">صرف</span>
               </td>
 
             </tr>
-            <tr>
-              <td></td>
-              <td>اجمالي فواتير الرصد فقط = <b>{{supp_recps_sums.total_rasd | round2 | toAR}}</b> </td>
-              <td>
-                
-              </td>
-            </tr>
           </tbody>
         </table>
-
+<div class="m-3">اجمالي فواتير الرصد فقط = <b>{{supp_recps_sums.total_rasd | round2 | toAR}}</b> </div>
         <div class="text-center">
           <button class="btn btn-printo pr-hideme" @click="vue_window.print()">
             <span class="fa fa-print"></span> طباعة 
