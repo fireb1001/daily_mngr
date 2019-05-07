@@ -153,6 +153,7 @@ class="btn btn-lg  m-1 btn-block"
               <th>السعر</th>
               <th>المبلغ</th>
               <th v-if="detailed ">ملاحظات</th>
+              <th v-if="detailed "></th>
             </tr>
           </thead>
           <tbody>
@@ -171,6 +172,13 @@ class="btn btn-lg  m-1 btn-block"
               <td>{{item.kg_price}}</td>
               <td>{{item.value_calc}}</td>
               <td v-if="detailed ">{{item.notes}}</td>
+              <td v-if="detailed" class="d-print-none">
+                <button class="btn text-danger" @click="discard(item.id)" >
+                  <span class="fa fa-archive "></span> 
+                  <template v-if="! confirm_step[item.id]"> حذف المبيع</template>
+                  <template v-if="confirm_step[item.id]"> تأكيد </template>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -208,7 +216,9 @@ export default {
       selected_inc_hdr: new IncomingsHeaderDAO({}),
       outgoing_form: new OutgoingDAO(OutgoingDAO.INIT_DAO),
       detailed: false,
-      clipboard: clipboard
+      clipboard: clipboard,
+      confirm_step: [],
+      discard_success: false
     }
   },
   computed: {
@@ -275,6 +285,21 @@ export default {
       this.refresh_outgoings()
       this.refresh_incoming_headers()
 
+    },
+    async discard(id) {
+      if( this.confirm_step[id] ) {
+        // Discard Incoming
+        this.discard_success = await OutgoingsDB.discard(id)
+        
+        this.confirm_step = []
+        this.reinit_form()
+        this.refresh_outgoings()
+        this.refresh_incoming_headers()
+      }
+      else {
+        this.confirm_step = []
+        this.confirm_step[id] = true
+      }
     },
     show_details() {
       this.detailed = true

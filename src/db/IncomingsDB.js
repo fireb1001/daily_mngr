@@ -98,7 +98,6 @@ export class IncomingsDB {
     else {
       return false
     }
-    
   }
   
   /**@param {IncomingDAO} data */

@@ -49,6 +49,13 @@ export class CustomerTransDB {
     return
   }
 
+  static async removeById(id) {
+    let update_q = `DELETE FROM  ${this.TABLE_NAME} WHERE id = ${id}`
+    await conn_pool.query(update_q)
+    return 
+  }
+
+
   static async getAll(data) {
     let all = []
     let results = []

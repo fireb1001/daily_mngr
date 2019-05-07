@@ -33,24 +33,24 @@
               -->
               <td v-html="$options.filters.productsFilter(item.products_arr,'<br/> , ')"></td>
               
-              <td>{{item.total_count - item.total_current_rest}}</td>
+              <td>{{ ( item.total_count - item.total_current_rest ) | round}}</td>
               <!--
               <td> 
                 <span class="text-danger" v-if="item.total_current_rest">{{item.total_current_rest}}</span>
               </td>
               -->
-              <td>{{item.total_sell_comm}}</td>
+              <td>{{item.total_sell_comm | round }}</td>
               <td>{{item.recp_comm | round2}}</td>
-              <td>{{item.total_sell_comm + item.recp_comm}}</td>
+              <td>{{ ( item.total_sell_comm + item.recp_comm ) | round}}</td>
               <td >
                 <span v-if="(item.out_sale_value - item.sale_value) > 0">+</span>
-                {{ item.out_sale_value - item.sale_value }}
+                {{ (item.out_sale_value - item.sale_value) | round}}
               </td>
               
-              <td>{{item.total_nolon}}</td>
-              <td>{{item.recp_expenses}}</td>
-              <td>{{item.recp_given}}</td>
-              <td>{{item.net_value}}</td>
+              <td>{{item.total_nolon | round}}</td>
+              <td>{{item.recp_expenses | round}}</td>
+              <td>{{item.recp_given }}</td>
+              <td>{{item.net_value | round}}</td>
             </tr>
             <tr>
               <td></td>
@@ -61,12 +61,12 @@
               <td></td>
               <td></td>
               <td></td>
-              <td>{{recp_sums.total_comms}}</td>
+              <td>{{recp_sums.total_comms | round}}</td>
               <th>
                 <span v-if="recp_sums.diff  > 0">+</span>
-                {{recp_sums.diff}}
+                {{recp_sums.diff | round}}
               </th>
-              <th>{{recp_sums.total_nolons_sum}}</th>
+              <th>{{recp_sums.total_nolons_sum | round}}</th>
               <th></th>
 
             </tr>
@@ -75,12 +75,12 @@
       </div>
         <hr>
         <div>
-          <h4>اجمالي فواتير الرصد فقط : {{recp_sums.total_rasd_net}}</h4>
+          <h4>اجمالي فواتير الرصد فقط : {{recp_sums.total_rasd_net | round }}</h4>
         </div>
 
         <hr>
         <div>
-          <h4>اجمالي ايرادات اليوم : {{recp_sums.total_income}}</h4>
+          <h4>اجمالي ايرادات اليوم : {{recp_sums.total_income | round}}</h4>
         </div>
 
 <h2>مصروفات تخصم من الايراد </h2>
@@ -112,7 +112,7 @@
 
         <hr>
         <div>
-          <h4>صافي ايرادات اليوم : {{recp_sums.total_income - total_exp_out}}</h4>
+          <h4>صافي ايرادات اليوم : {{ ( recp_sums.total_income - total_exp_out ) | round}}</h4>
         </div>
 <hr>
       <h2>زمامات اليوم</h2>
@@ -146,7 +146,7 @@
             </tr>
             -->
             <tr>
-              <th>{{total_oncredit}}</th>
+              <th>{{total_oncredit | round}}</th>
               <th>مجموع الزمام</th>
               <td></td>
               <td></td>
@@ -185,7 +185,7 @@
               </tr>
             </template>
             <tr>
-              <th>{{total_cash_collect}}</th>
+              <th>{{total_cash_collect | round}}</th>
               <th>مجموع تحصيلات اليوم</th>
               
               
@@ -212,7 +212,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in cashflow_arr_in" :key='idx'>
-              <td>{{item.amount}}</td>
+              <td>{{item.amount | round2 }}</td>
               <td>{{item.actor_name}}</td>
               
               <td>{{app_labels[item.state]}}
@@ -253,7 +253,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, idx) in cashflow_arr_out" :key='idx'>
-              <td>{{item.amount}}</td>
+              <td>{{item.amount | round2 }}</td>
               <td>{{item.actor_name}}</td>
               <td>{{app_labels[item.state]}}
                 <span v-if="item.d_product"> - {{ item.d_product | productsFilter }}</span>
@@ -261,7 +261,7 @@
               <td>{{item.notes}}</td>
             </tr>
             <tr>
-              <th>{{total_cash_out}}</th>
+              <th>{{total_cash_out | round2}}</th>
               <th>مجموع</th>
               
             </tr>
@@ -303,7 +303,7 @@ export default {
       this.cashflow_arr_out = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['given','expenses','nolon','payment', 'recp_paid','paid','acc_rest','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
+        states: ['given','expenses','nolon','payment', 'act_pymnt','recp_paid','paid','acc_rest','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       })
 
       this.cashflow_exp_arr_out = await CashflowDB.getAll({

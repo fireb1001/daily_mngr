@@ -13,6 +13,7 @@
               </th>
               <th>نوع</th>
               <th>ملاحظات</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -30,9 +31,17 @@
                 </span>
               </td>
               <td>{{item.notes}}</td>
+              <td>
+                <button class="btn text-danger" @click="removeCashflow(item.id)" >
+                  <span class="fa fa-archive "></span> 
+                  <template v-if="! confirm_step[item.id]"> حذف الحركة</template>
+                  <template v-if="confirm_step[item.id]"> تأكيد </template>
+                </button>
+              </td>
             </tr>
             <tr>
-              <td>{{total_cash}}</td>
+              <td></td>
+              <th>{{total_cash}}</th>
               <th>مجموع</th>
               
             </tr>
@@ -52,6 +61,7 @@
         <select class="form-control " v-model="cashflow_form.state">
           <option value="expenses">مصروفات يومية</option>
           <option value="men_account">حساب الرجالة</option>
+          <option value="act_pymnt">دفعات لا تخصم من الايراد</option>
         </select>
         </div>
       </div>
@@ -99,7 +109,8 @@ export default {
       cashflow_form: {state:this.$route.name , amount: null},
       app_labels : APP_LABELS,
       day_count : 0,
-      men_rate : 1.5
+      men_rate : 1.5,
+      confirm_step:[]
     }
   },
   firestore () {
@@ -109,7 +120,7 @@ export default {
     async refresh_cashflow_arr() {
       let states = null
       if(this.$route.name == 'expenses') {
-        states = ['given','expenses','nolon','payment', 'recp_paid','paid','acc_rest','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
+        states = ['given','expenses','nolon','payment','act_pymnt' ,'recp_paid','paid','acc_rest','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       }
       else if(this.$route.name == 'collecting') {
         states = ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn'] 
@@ -124,6 +135,16 @@ export default {
       })
       
       this.day_count = await DailyDB.getTodayCount(this.store_day.iso)
+    },
+    async removeCashflow(cashflow_id) {
+      if( this.confirm_step[cashflow_id] ) {
+        await CashflowDB.deleteItem(cashflow_id)
+        this.refresh_cashflow_arr()
+      }
+      else {
+        this.confirm_step = []
+        this.confirm_step[cashflow_id] = true
+      }
     },
     async addCashflow(evt) {
       evt.preventDefault()

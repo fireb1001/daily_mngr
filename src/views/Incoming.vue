@@ -139,6 +139,14 @@
                 </button>
               </td>
             </tr>
+            <tr>
+              <td></td>
+              <th>المجموع</th>
+              <td></td>
+              
+              <th>{{inc_sums.c_total_count}}</th>
+              <th>{{inc_sums.c_total_nolons}}</th>
+            </tr>
           </tbody>
         </table>
         <button class="btn btn-primary pr-hideme" v-if="detailed === false" @click="detailed = true"> عرض التفاصيل </button>
@@ -227,6 +235,14 @@ export default {
       return this.incoming_form.supplier_select && this.incoming_form.supplier_select.id &&
         this.incoming_form.product_select && this.incoming_form.product_select.id &&
         this.incoming_form.count
+    },
+    inc_sums: function() {
+      let inc_sums ={c_total_count:0 , c_total_nolons: 0}
+      this.incomings_arr.forEach( item => {
+        inc_sums.c_total_count += item.count
+        inc_sums.c_total_nolons += item.nolon
+      })
+      return inc_sums
     }
   }
 }

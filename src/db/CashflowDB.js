@@ -130,6 +130,11 @@ export class CashflowDB {
     return 
   }
 
+  static async deleteItem(id) {
+    let query = `DELETE FROM ${this.TABLE_NAME} where id=${id}`
+    await conn_pool.query(query)
+  }
+
   static async getAll(data) {
     // console.log(data.state, Array.isArray( data.state))
     let all = []

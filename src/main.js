@@ -32,6 +32,7 @@ export const APP_LABELS = {
   cust_trust: 'امانة بائع',
   repay_cust_trust: 'رد امانة بائع',
   men_account: 'حساب الرجالة',
+  act_pymnt: 'دفعات لا تخصم من الايراد',
   repay_cust_rahn: 'رد رهن لبائع',
   cust_rahn: 'رهن من بائع',
   supp_payment: 'دفعة نقدية',
@@ -193,6 +194,17 @@ Vue.filter('round2' , function(number) {
   let rounded = number? parseFloat(number) : 0
   return roundOf(rounded,2)
 })
+
+Vue.filter('round', function(value, decimals) {
+  if(!value) 
+    value = 0;
+
+  if(!decimals) 
+    decimals = 0;
+
+  value = Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+  return value;
+});
 
 const moment = require('moment')
 moment.locale('ar')

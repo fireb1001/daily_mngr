@@ -179,4 +179,9 @@ export class ReceiptsDB {
     }
   }
 
+  static async deleteItem(id) {
+    let query = `DELETE FROM ${this.TABLE_NAME} where id=${id}`
+    await conn_pool.query(query)
+  }
+
 }

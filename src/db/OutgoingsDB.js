@@ -142,6 +142,29 @@ export class OutgoingsDB {
       }
     }
   
+    static async discard(id) {
+      let outDAO = await this.getDAOById(id)
+      console.log(outDAO)
+
+      let incHeaderDAO = await IncomingsHeaderDB.getDAOById(outDAO.income_head_id)
+      console.log("incHeaderDAO", incHeaderDAO)
+
+      incHeaderDAO.current_count += parseInt(outDAO.count)
+
+      await IncomingsHeaderDB.saveById(incHeaderDAO.id, {
+        current_count: incHeaderDAO.current_count
+      })
+      
+      await this.removeById(id)
+      return true
+    }
+
+    static async removeById(id) {
+      let update_q = `DELETE FROM  ${this.TABLE_NAME} WHERE id = ${id}`
+      await conn_pool.query(update_q)
+      return 
+    }
+
     static async saveById(id, payload) {
       //let updated = await dexie[this.TABLE_NAME].update(id, payload)
       let sets = payloader(payload, new OutgoingDAO())

@@ -53,6 +53,7 @@
               <th>الصنف</th>
               <th>المبلغ</th>
               <th>باقي</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -70,6 +71,15 @@
               <td>{{trans.product_name}} </td>
               <td>{{trans.amount | toAR}}</td>
               <td>{{trans.debt_after | toAR}}</td>
+              <td>
+                
+                <button class="btn text-danger" @click="removeLastTrans(trans)" v-if="idx == customer_trans.length - 1">
+                  <span class="fa fa-archive "></span> 
+                  <template v-if="! confirm_step[trans.id]"> حذف الحركة</template>
+                  <template v-if="confirm_step[trans.id]"> تأكيد </template>
+                </button>
+
+              </td>
             </tr>
             <tr>
               <td></td>
@@ -151,6 +161,8 @@ export default {
       self_rest_products: [],
       customer_id: this.$route.params.id,
       labels: APP_LABELS,
+      confirm_step: [],
+      discard_success: false,
       clipboard: clipboard,
       sell_rest: {actual_sale: 0 , notes: ''}
     }
@@ -171,6 +183,20 @@ export default {
           if(!item.actual_sale && item.product_id && item.count)
             this.self_rest_products.push(item)
         })
+      }
+    },
+    async removeLastTrans(trans) {
+
+      if( this.confirm_step[trans.id] ) {
+        // Discard Incoming
+        this.discard_success = await CustomersDB.discard( trans )
+        
+        this.confirm_step = []
+        this.getCustomerDetails()
+      }
+      else {
+        this.confirm_step = []
+        this.confirm_step[trans.id] = true
       }
     },
     async sellRest(evt) {

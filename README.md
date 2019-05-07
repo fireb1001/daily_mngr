@@ -40,6 +40,7 @@ SELECT *, sum(weight) as sum_weight, sum(count) as sum_count FROM outgoings GROU
 ## Tricks
 
 - increase backup file size from php.ini post_max_size , upload_max_filesize
+- jaf00091
 
 ## Project setup
 ```

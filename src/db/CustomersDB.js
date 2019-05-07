@@ -67,6 +67,22 @@ export class CustomersDB {
     return
   }
 
+  static async discard( transDAO ) {
+
+    let customerDAO = await this.getDAOById(transDAO.customer_id)
+    customerDAO.parseTypes()
+    let amount = parseFloat(transDAO.amount)
+
+    if(transDAO.sum === '+') {
+      customerDAO.debt = parseFloat(customerDAO.debt) - amount
+    } else {
+      customerDAO.debt = parseFloat(customerDAO.debt) + amount
+    }
+
+    await this.saveById(customerDAO.id , {debt: customerDAO.debt})
+    await CustomerTransDB.removeById(transDAO.id)
+  }
+
   static async updateDebt(id, payload) {
     console.log(payload)
     let customerDAO = await this.getDAOById(id)

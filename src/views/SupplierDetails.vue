@@ -151,6 +151,7 @@
               <th>الاصناف</th>
               <th>التاريخ</th>
               <th>حالة الفاتورة</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -165,6 +166,13 @@
               <td>
                 <span v-if="receipt.recp_paid == 1">رصد</span>
                 <span v-if="receipt.recp_paid == 2">صرف</span>
+              </td>
+              <td> 
+                <button class="btn text-danger" @click="removeRecpItself(receipt.id)" >
+                  <span class="fa fa-archive "></span> 
+                  <template v-if="! confirm_step_recp[receipt.id]"> حذف الفاتورة</template>
+                  <template v-if="confirm_step_recp[receipt.id]"> تأكيد </template>
+                </button>
               </td>
 
             </tr>
@@ -480,7 +488,8 @@ export default {
       incomings_headers_today: [],
       supplier_trans: [],
       supplier_receipts: [],
-      labels: APP_LABELS
+      labels: APP_LABELS,
+      confirm_step_recp: []
     }
   },
   methods: {
@@ -505,6 +514,17 @@ export default {
       this.supplier_trans = await SupplierTransDB.getAll({supplier_id: this.supplier.id})
       this.supplier_receipts = await ReceiptsDB.getAll({supplier_id: this.supplier.id})
       
+    },
+    async removeRecpItself(recp_id) {
+      
+      if( this.confirm_step_recp[recp_id] ) {
+        await ReceiptsDB.deleteItem(recp_id)
+        this.getSupplierDetails()
+      }
+      else {
+        this.confirm_step_recp = []
+        this.confirm_step_recp[recp_id] = true
+      }
     },
     async removeRecpDetail(id){
       await ReceiptsDetailsDB.deleteAll({id: id})
@@ -589,7 +609,7 @@ export default {
         this.trans_form.amount = - parseFloat(this.trans_form.amount)
       }
 
-      if(this.trans_form.sum !== '$$')
+      if(this.trans_form.sum !== '$$' && this.trans_form.sum !== '-r')
         await SuppliersDB.updateBalance(this.supplier_id, this.trans_form)
       
       this.trans_form = {sum: '-'}
