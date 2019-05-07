@@ -70,7 +70,7 @@ export class SuppliersDB {
 
   static async updateBalance(id, payload) {
     // CREATE Supplier Trans Row
-    console.log(payload)    
+    console.log("updateBalance payload", payload)    
 
     let supplierDAO = await this.getDAOById(id)
     if(payload.amount){
@@ -113,8 +113,9 @@ export class SuppliersDB {
       
       await SupplierTransDB.addNew(suppTransDAO)
     }
-
-    await this.saveById(id, {balance: supplierDAO.balance})
+    
+    if(payload.sum && payload.sum != '-r')
+      await this.saveById(id, {balance: supplierDAO.balance})
   }
 
   static async getDAOById(id) {

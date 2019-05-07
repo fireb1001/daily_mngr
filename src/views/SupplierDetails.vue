@@ -121,7 +121,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(payment, idx) in supplier_trans" :key='idx'>
+            <template v-for="(payment, idx) in supplier_trans" >
+            <tr :key='idx' v-if="payment.trans_type == 'payment'">
               <th>{{idx +1 | toAR }} </th>
               <td>{{payment.day | arDate }}</td>
               <td>
@@ -131,6 +132,7 @@
               <td>{{payment.amount | toAR}}</td>
               <td>{{payment.balance_after | toAR}}</td>
             </tr>
+            </template>
             <tr>
               <td></td>
               <td>رصيد العميل الحالي</td>
@@ -609,7 +611,7 @@ export default {
         this.trans_form.amount = - parseFloat(this.trans_form.amount)
       }
 
-      if(this.trans_form.sum !== '$$' && this.trans_form.sum !== '-r')
+      if(this.trans_form.sum !== '$$' )
         await SuppliersDB.updateBalance(this.supplier_id, this.trans_form)
       
       this.trans_form = {sum: '-'}

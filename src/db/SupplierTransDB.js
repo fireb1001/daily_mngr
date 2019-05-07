@@ -97,7 +97,7 @@ export class SupplierTransDB {
       */
       if(data.supplier_id) {
         // order by day
-        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where supplier_id=${data.supplier_id} and trans_type = 'payment' `)
+        results = await conn_pool.query(`SELECT * FROM ${this.TABLE_NAME} where supplier_id=${data.supplier_id} `)
       }
     }
     else {

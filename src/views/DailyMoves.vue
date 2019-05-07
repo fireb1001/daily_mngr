@@ -67,8 +67,9 @@
                 {{recp_sums.diff | round}}
               </th>
               <th>{{recp_sums.total_nolons_sum | round}}</th>
-              <th></th>
-
+              <td></td>
+              <th>{{recp_sums.total_rcp_given | round2 }}</th>
+              
             </tr>
           </tbody>
         </table>
@@ -324,7 +325,7 @@ export default {
   computed: {
     recp_sums: function() {
       let recp_sums = {count:0, diff:0, total_nolons_sum: 0  , total_net_value: 0, total_rasd_net: 0
-      , total_income: 0, total_comms: 0 }
+      , total_income: 0, total_comms: 0 , total_rcp_given: 0 }
       this.daily_receipts.forEach( recp => {
         recp_sums.count += parseInt(recp.total_count)
         recp_sums.diff += ( recp.out_sale_value - recp.sale_value )
@@ -332,6 +333,7 @@ export default {
         recp_sums.total_net_value += recp.net_value
         recp_sums.total_income += recp.total_sell_comm + recp.recp_comm + ( recp.out_sale_value - recp.sale_value )
         recp_sums.total_comms += recp.total_sell_comm + recp.recp_comm 
+        recp_sums.total_rcp_given += recp.recp_given
         if(recp.recp_paid == 1)
           recp_sums.total_rasd_net += recp.net_value
       })
