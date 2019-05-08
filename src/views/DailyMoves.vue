@@ -316,7 +316,7 @@ export default {
       this.cashflow_arr_in = await CashflowDB.getAll({
         // state:this.$route.name
         day: this.$store.state.day.iso,
-        states: ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn'] 
+        states: ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn','inc_collect'] 
       })
 
       this.outgoings_today_arr = await OutgoingsDB.getAll({day: this.store_day.iso, customer : '> 0'})

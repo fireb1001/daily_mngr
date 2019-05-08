@@ -37,6 +37,7 @@ export const APP_LABELS = {
   cust_rahn: 'رهن من بائع',
   supp_payment: 'دفعة نقدية',
   out_receipt: 'مصاريف فاتورة',
+  inc_collect: 'نقدية داخل',
   trans: {
     repay_cust_rahn: 'رد رهن لبائع',
     cust_rahn: 'رهن من بائع',

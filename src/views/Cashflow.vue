@@ -118,12 +118,14 @@ export default {
   },
   methods: {
     async refresh_cashflow_arr() {
+      this.cashflow_form = {}
+      this.cashflow_form.state = this.$route.name 
       let states = null
       if(this.$route.name == 'expenses') {
         states = ['given','expenses','nolon','payment','act_pymnt' ,'recp_paid','paid','acc_rest','repay_cust_trust','men_account','repay_cust_rahn','supp_payment','out_receipt']
       }
       else if(this.$route.name == 'collecting') {
-        states = ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn'] 
+        states = ['collecting','outgoing_cash','supp_collect','cust_trust','cust_rahn','inc_collect'] 
       }
       // else if (this.$route.name == 'payments') { states = []   }
       
@@ -150,6 +152,8 @@ export default {
       evt.preventDefault()
       let cashDAO = new CashflowDAO(this.cashflow_form)
       cashDAO.state = (this.cashflow_form.state) ? this.cashflow_form.state : this.$route.name
+      if(cashDAO.state === 'collecting')
+        cashDAO.state = 'inc_collect'
       cashDAO.day = this.store_day.iso
       if(this.$route.name == 'expenses')
       cashDAO.sum = '-'
