@@ -373,6 +373,16 @@ export default {
       this.outgoings_today_arr.forEach(item => {
         sum += parseFloat(item.value_calc)
       })
+      this.cashflow_arr_out.forEach( item => {
+        if(item.state === 'paid' || item.state === 'acc_rest'  ){
+          sum += parseFloat(item.amount)
+        }
+      })
+      this.cashflow_arr_in.forEach( item => {
+        if( item.state === 'cust_rahn' ){
+          sum += parseFloat(item.amount)
+        }
+      })
       return sum
     },
   },

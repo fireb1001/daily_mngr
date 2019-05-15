@@ -73,7 +73,7 @@
      الزمامات 
 
   </h2>
-  <div class="pr-hideme" v-if="false">
+  <div class="pr-hideme" >
     <input v-model="search_term" class="form-control "  placeholder="بحث في البائعين">
   </div>
   <h4 v-if="zm_mode">
