@@ -1,4 +1,4 @@
-import { appConfig , conn_pool } from '../main'
+import { conn_pool } from '../main'
 
 export class ProductDAO {
     id = 0
@@ -62,20 +62,20 @@ export class ProductsDB {
   static async getAll(data) {
     let all = []
     //  all = await dexie[this.TABLE_NAME].toArray()
-    if(appConfig.db_engine == 'mysql') {
-      var results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
-      results.forEach( item => {
-        // console.log(item)
-        if (data && data.active ){
-          // check if item.active
-          if(parseInt(item.active) == 1)
-            all.push(new ProductDAO(item))
-        }
-        else { // all
+
+    var results = await conn_pool.query('SELECT * FROM '+this.TABLE_NAME)
+    results.forEach( item => {
+      // console.log(item)
+      if (data && data.active ){
+        // check if item.active
+        if(parseInt(item.active) == 1)
           all.push(new ProductDAO(item))
-        }
-      })
-    }
+      }
+      else { // all
+        all.push(new ProductDAO(item))
+      }
+    })
+    
     return all
   }
 

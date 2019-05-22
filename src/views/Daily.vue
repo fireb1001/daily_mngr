@@ -2,7 +2,14 @@
   <section class="daily m-3">
     <h2>تغيير اليوم</h2>
 
-    <datetime v-model="luxon_date" @input="change_luxon_date" :auto="true" class="datetime" min-datetime="2019-03-01"></datetime>
+    <datetime 
+    v-model="luxon_date" 
+    @input="change_luxon_date" 
+    :auto="true" 
+    class="datetime" 
+    min-datetime="2019-01-01"
+    :max-datetime="max_datetime">
+    </datetime>
   </section>
 </template>
 
@@ -18,11 +25,9 @@ export default {
   name: 'daily',
   data () {
     return {
-      luxon_date: ''
+      luxon_date: '',
+      max_datetime: ''
     }
-  },
-  firestore () {
-    return {}
   },
   methods: {
     change_luxon_date(date){
@@ -40,6 +45,11 @@ export default {
     }
   },
   mounted () {
+    if(this.$store.state.shader_configs && this.$store.state.shader_configs['demo_till']) {
+      console.log(this.$store.state.shader_configs['demo_till'].config_value)
+      let day = DateTime.fromMillis(parseInt(this.$store.state.shader_configs['demo_till'].config_value) * 1000)
+      this.max_datetime = day.toISODate()
+    }
     // this.luxon_date = DateTime.fromISO(this.$store.state.day.iso).toString()
   },
   components: {

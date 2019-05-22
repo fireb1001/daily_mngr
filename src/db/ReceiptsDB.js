@@ -154,7 +154,7 @@ export class ReceiptsDB {
       results = await conn_pool.query(query)
     }
     else if (data && data.day ) {
-      let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}'`
+      let query = `SELECT * FROM ${this.TABLE_NAME} where day='${data.day}' and recp_paid > -1 `
       results = await conn_pool.query(query)
     }
     else if (data && data.supplier_id) {

@@ -15,10 +15,6 @@ Vue.use(Datetime)
 
 Vue.config.productionTip = false
 
-export const appConfig = {
-  db_engine: 'mysql' // dexie / mysql 
-}
-
 export const APP_LABELS = {
   given: 'وهبة',
   nolon: 'نولون',
@@ -128,6 +124,11 @@ SupplierDX.prototype.save = function () {
 }
 */
 
+export const appConfigs = {
+  db_engine: 'mysql', // dexie / mysql ,
+  shader_name: 'nada'
+}
+
 var mysql      = require('mysql')
 var util = require('util')
 
@@ -135,7 +136,7 @@ var db_config = {
   connectionLimit: 10,
   host: 'localhost',
   user: 'root',
-  database: 'daily_mngr',
+  database: 'shader_demo',
 }
 
 /*
@@ -180,7 +181,6 @@ pool.query = util.promisify(pool.query)
 
 export const conn_pool = pool
 
-
 function roundOf(n, p) {
   const n1 = n * Math.pow(10, p + 1);
   const n2 = Math.floor(n1 / 10);
@@ -190,6 +190,11 @@ function roundOf(n, p) {
   return n2 / Math.pow(10, p);
 }
 
+export const getShaderConfigValue = function (state, config_name) {
+  if(state.shader_configs && state.shader_configs[config_name])
+    return state.shader_configs[config_name].config_value
+  else return null
+}
 
 Vue.filter('round2' , function(number) {
   let rounded = number? parseFloat(number) : 0
@@ -209,6 +214,7 @@ Vue.filter('round', function(value, decimals) {
 
 const moment = require('moment')
 moment.locale('ar')
+
 export { moment }
 
 Vue.filter('arDate' , function(date) {

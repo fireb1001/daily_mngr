@@ -29,6 +29,12 @@
           <input v-model="product_form.name" class="form-control "  placeholder="ادخل اسم الصنف">
         </div>
       </div>
+      <div class="form-group row" v-if="isBoth">
+        <label  class="col-sm-2">نوع الصنف</label>
+        <div class="col-sm-10">
+          <input v-model="product_form.type" class="form-control " >
+        </div>
+      </div>
 <!--
       <div class="form-group row">
         <label for="notes1" class="col-sm-2">ملاحظات</label>
@@ -94,6 +100,7 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import { ProductsDB, ProductDAO} from '../db/ProductsDB.js'
+import { getShaderConfigValue } from '../main'
 export default {
   name: 'products',
   components: {
@@ -103,7 +110,8 @@ export default {
       products_arr: [],
       confirm_step: [],
       show_active: true,
-      product_form: new ProductDAO(ProductDAO.INIT_DAO)
+      product_form: new ProductDAO(ProductDAO.INIT_DAO),
+      isBoth: getShaderConfigValue(this.$store.state , 'work_in') === 'both'
     }
   },
   computed: {

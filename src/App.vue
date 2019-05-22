@@ -1,13 +1,17 @@
 <template>
   <div id="app" >
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow d-print-none">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">ادارة اليوميات</a>
+      <b class="navbar-brand col-sm-3 col-md-2 mr-0" >
+         Shader
+      </b>
+      <!--
       <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="#">Exit</a>
         </li>
       </ul>
+      -->
     </nav>
 
     <div class="container-fluid ">
@@ -163,7 +167,7 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { Settings, DateTime } from 'luxon'
-
+import { AdminCTRL } from '../src/ctrl/AdminCTRL'
 Settings.defaultLocale = 'ar'
 Settings.defaultZoneName = 'UTC'
 
@@ -173,7 +177,7 @@ export default {
 
     }
   },
-  beforeMount () {
+  async beforeMount () {
     const moment = require('moment')
     // to get current local time correctly
     moment.locale('en')
@@ -187,9 +191,11 @@ export default {
           d_week: dateTime.toLocaleString({ weekday: 'long'}),
           arab: moment().format('LL')
         })
-      
     }
-
+    if ( ! this.$store.state.shader_configs || this.$store.state.shader_configs.length < 1 ) {
+      let shader_configs = await AdminCTRL.getShaderConfigs()
+      this.$store.commit('setShaderConfigs', shader_configs)
+    }
 
   },
   methods: {

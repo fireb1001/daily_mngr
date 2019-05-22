@@ -117,7 +117,6 @@ export class CashflowDB {
   /**@param {CashflowDAO} data */
   static async addNew(data) {
     delete data.id
-    data.parseTypes()
     let instert_q = `INSERT INTO ${this.TABLE_NAME} ${inserter(data, new CashflowDAO())}`
     let ok = await conn_pool.query(instert_q)
     return ok.insertId
@@ -146,9 +145,6 @@ export class CashflowDB {
         + `and cashflow.state IN (${data.states})`
       // console.log(query)
       results = await conn_pool.query(query)
-      // all = await table.where({ day: data.day}).and( row => states_arr.includes(row.state) ).toArray()      
-      // else NONE
-      // all = await table.where({state:data.state, day: data.day}).toArray()
     }
     else {
       // NONE

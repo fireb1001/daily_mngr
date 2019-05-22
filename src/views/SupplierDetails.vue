@@ -269,7 +269,12 @@
       </section>
 
       <section v-if="! show_details && show_receipt">
-      <template v-if="print_mode">
+      <template v-if="print_mode" >
+        <p v-html="recp_header"></p>
+      </template>
+<!--
+  <p v-html="recp_header"></p>
+
         <h1 class="text-danger text-center"> أولاد الحاج/ مصطفي ندا مصطفي</h1>
         <h1 class="text-primary text-center">الأستاذ / جمــال نــدا</h1>
         <h3 class="text-danger text-center"> لتجارة وتسويق الفاكهة </h3>
@@ -279,8 +284,7 @@
         <h4 class="text-primary text-center">
           ت : ٤٤٧٧٠١٨٠ المعلم سلامة : ٠١١١٨٣٥٧٧٥٠ الأستاذ محمد : ٠١٠٢٣٩٢٩٢٢٣
         </h4>
-      </template>
-
+-->
         <h2 class="text-danger text-center"> فاتـورة </h2>
         <!-- # {{receipt.id | toAR}} -->
         <p class="pr-me">
@@ -424,7 +428,10 @@
       <button @click="show_details = true; print_mode= false; getSupplierDetails()" class="btn btn-primary m-1 pr-hideme" >
         العودة
       </button> | 
-      <button v-if="! receipt.recp_paid" @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
+      <button v-if=" receipt.recp_paid  < 0" @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
+        فتح الفاتورة
+      </button> |
+      <button v-if="! receipt.recp_paid " @click="saveRecp(0)" class="btn btn-success m-1 pr-hideme" >
         حفظ الفاتورة
       </button> |
       <button v-if="receipt.recp_paid != 2 " @click="discardRecp()" class="btn btn-danger m-1 pr-hideme" >
@@ -482,6 +489,7 @@ export default {
       print_mode: false,
       recp_saved: null,
       store_day: this.$store.state.day,
+      recp_header: this.$store.state.shader_configs['recp_header'].config_value,
       trans_form: {sum: '-'},
       //receipt: {cols: [], comm_rate: 0, nolon: 0 ,recp_given:0, total: 0 },
       receipt: new ReceiptDAO(),
@@ -496,6 +504,7 @@ export default {
   },
   methods: {
     async getSupplierDetails() {
+      console.log("recp_header",this.recp_header)
       let supp_obj = await SuppliersDB.getDAOById(this.supplier_id)
       this.supplier = new SupplierDAO(supp_obj)
       this.incomings_headers_today = await IncomingsHeaderDB.getAll({
@@ -633,7 +642,8 @@ export default {
         outgoings_grpd_sums: this.outgoings_grpd_sums,
         out_sale_value: this.out_sums.calc_outgoings_value,
         total_count: this.inc_sums.c_total_count,
-        recp_expenses: this.c_receipt_ex
+        recp_expenses: this.c_receipt_ex,
+        recp_paid: -1
       })
       
       this.receipts_details = await ReceiptsDetailsDB.getAll({
@@ -651,8 +661,6 @@ export default {
         let receiptDetailDAO = new ReceiptDetailDAO(item)
         receiptDetailDAO.parseTypes()
         // calc comm for daily moves
-        // let recp_comm_value = (out_head_DAO.recp_kg_price * out_head_DAO.recp_weight ) * (this.receipt.comm_rate / 100)
-        //out_head_DAO.recp_comm_rate = (out_head_DAO.recp_comm_rate > 0) ? out_head_DAO.recp_comm_rate : 0
         await ReceiptsDetailsDB.saveById(item.id, {
           kg_price: receiptDetailDAO.kg_price,
           calc_value: receiptDetailDAO.kg_price * receiptDetailDAO.weight,

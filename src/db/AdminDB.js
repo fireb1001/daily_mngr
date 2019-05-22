@@ -1,18 +1,20 @@
-import {  } from '../main'
+import {  conn_pool, appConfigs } from '../main'
 
 export class AdminDB {
-     
-    static async removeDaily() {
-        /*
-        dexie.incomings.clear()
-        dexie.incomings_header.clear()
-        dexie.outgoings.clear()
-        dexie.outgoings_header.clear()
-        dexie.cashflow.clear()
-        */
-    }
 
-    static async removeAll() {
-        //return await dexie.delete()
-    }
+  static async getShaderConfigs(){
+    let query = ` SELECT * FROM shader_configs where shader_name = '${appConfigs.shader_name}' `
+    // console.log(query)
+    let all = []
+    let results = await conn_pool.query(query)
+    results.forEach( item => { 
+        all[item.config_name] = Object.assign({}, item)
+    })
+    return all
   }
+
+  static async saveShaderConfig(){
+
+  }
+
+}

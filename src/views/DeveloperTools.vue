@@ -3,13 +3,15 @@
     <h1 class="m-3">نظام مدير اليومية</h1>
     <h2 class="text-danger"> اصدار رقم {{app_version}}</h2>
     <br/>
-    <!--
+    <h3 class="text-danger" v-if="demo_till">* نسخة تجريبية حتي {{demo_till}}</h3>
+    <h3 class="text-success" v-if="! demo_till">* نسخة مرخصة</h3>
+    <!--1561990955
     <button class="btn btn-danger" type="button" @click="remove('daily')"> Remove Daily </button>
     <button class="btn btn-danger" type="button" @click="remove('all')"> Remove All </button>
     -->
     <button class="btn btn-primary m-2" type="button" @click="bk()"> 
 
-      عمل نسخة احتياطية  
+ نسخ قاعدة البيانات 
     </button>
     <!--
     <router-link class="btn btn-primary m-2" to="/outhead_table">
@@ -22,25 +24,32 @@
 </template>
 
 <script >
-import {AdminDB} from '../db/AdminDB.js'
-const {app} = require('electron').remote
+import { AdminCTRL } from '../ctrl/AdminCTRL';
+import { moment } from '../main'
 
+const {app} = require('electron').remote
 export default {
   name: 'src-views-developer-tools',
   data () {
     return {
-      app_version: app.getVersion()
+      app_version: app.getVersion(),
+      demo_till: ''
     }
   },
-  firestore () {
-    return {}
+  async mounted() {
+    let app_cnfg = await AdminCTRL.getShaderConfigs()
+    if(app_cnfg['demo_till'].config_value !== "open") {
+      this.demo_till = moment.unix(app_cnfg['demo_till'].config_value).format('LL')
+    }
   },
   methods: {
-    async remove(what){
+    async remove(){
+      /*
       if(what ==='daily')
         await AdminDB.removeDaily()
       else if (what === 'all')
         await AdminDB.removeAll()
+      */
     },
     bk() {
       var exec = require('child_process').exec
