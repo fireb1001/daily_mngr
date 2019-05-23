@@ -52,6 +52,15 @@ export const APP_LABELS = {
     receipt_1: 'فاتورة رصد',
     out_receipt: 'مصاريف فاتورة'
   },
+  menu: {
+    incomings: 'الوارد',
+    outgoings: 'المبيعات',
+    daily_moves: 'حركات اليومية',
+    suppliers_receipts: 'عملاء اليوم',
+    customers_accounts: 'بائعين اليوم',
+    expenses: 'مخرجات',
+    collecting: 'مدخلات'
+  },
   recps: {
     0: 'حفظ',
     1: 'رصد',

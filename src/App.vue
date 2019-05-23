@@ -38,51 +38,44 @@
               <li class="nav-item bg-incoming ">
                 <router-link class="nav-link active" to="/">
                   <span class="fa fa-sign-in-alt "></span>
-                  الوارد <span class="sr-only">(current)</span>
+                  {{ menu_labels['incomings'] }} <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item bg-outgoing ">
                 <router-link class="nav-link active" to="/outgoing">
                   <span class="fa fa-sign-out-alt"></span>
-                  المبيعات <span class="sr-only">(current)</span>
+                  {{ menu_labels['outgoings'] }}  <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item bg-dailymoves">
                 <router-link class="nav-link active" to="/daily_moves">
                   <span class="fa fa-dolly"></span>
-                  حركات اليومية <span class="sr-only">(current)</span>
+                  {{ menu_labels['daily_moves'] }} <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item bg-receipts">
                 <router-link class="nav-link active" to="/suppliers_receipts">
                   <span class="fa fa-receipt"></span>
-                  فواتير العملاء  
+                  {{ menu_labels['suppliers_receipts'] }}
                 </router-link>
               </li>
               <li class="nav-item bg-accounts">
                 <router-link class="nav-link active" to="/customers_accounts">
                   <span class="fa fa-cash-register"></span>
-                  حساب البائعين
+                  {{ menu_labels['customers_accounts'] }}
                 </router-link>
               </li>
-              <!--
-              <li class="nav-item">
-                <router-link class="nav-link active" to="/payments">
-                  <span class="fa fa-money-bill-wave"></span>
-                  مدفوعات 
-                </router-link>
-              </li>
-              -->
+
               <li class="nav-item">
                 <router-link class="nav-link active" to="/expenses">
                   <span class="fa fa-money-bill-wave"></span>
-                  مخرجات 
+                  {{ menu_labels['expenses'] }} 
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link class="nav-link active" to="/collecting">
                   <span class="fa fa-credit-card"></span>
-                  مدخلات 
+                  {{ menu_labels['collecting'] }} 
                 </router-link>
               </li>
 
@@ -168,13 +161,15 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { Settings, DateTime } from 'luxon'
 import { AdminCTRL } from '../src/ctrl/AdminCTRL'
+import { APP_LABELS } from './main'
+
 Settings.defaultLocale = 'ar'
 Settings.defaultZoneName = 'UTC'
 
 export default {
   data() {
     return {
-
+      menu_labels: APP_LABELS.menu
     }
   },
   async beforeMount () {
