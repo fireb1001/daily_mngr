@@ -135,13 +135,13 @@ SupplierDX.prototype.save = function () {
 
 export const appConfigs = {
   db_engine: 'mysql', // dexie / mysql ,
-  shader_name: 'nada'
+  shader_name: 'magdy'
 }
 
 var mysql      = require('mysql')
 var util = require('util')
 
-var db_config = {
+export const db_config = {
   connectionLimit: 10,
   host: 'localhost',
   user: 'root',

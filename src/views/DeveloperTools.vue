@@ -25,7 +25,7 @@
 
 <script >
 import { AdminCTRL } from '../ctrl/AdminCTRL';
-import { moment } from '../main'
+import { moment, db_config } from '../main'
 
 const {app} = require('electron').remote
 export default {
@@ -53,7 +53,7 @@ export default {
     },
     bk() {
       var exec = require('child_process').exec
-      exec(`D:\\xampp\\mysql\\bin\\mysqldump.exe --user root daily_mngr | 7z a -si D:\\00_system_backup\\daily_mngr-${Date.now()}.sql.7z`, (err)=>{
+      exec(`D:\\xampp\\mysql\\bin\\mysqldump.exe --user root ${db_config.database} | 7z a -si D:\\00_system_backup\\${db_config.database}-${Date.now()}.sql.7z`, (err)=>{
       //exec('D:\\laragon\\bin\\mysql\\mysql-5.7.24-winx64\\bin\\mysqldump.exe --user root daily_mngr > D:\\daily_mngr.sql', (err)=>{
         if (err) 
           console.error(`exec error: ${err}`)
