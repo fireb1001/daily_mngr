@@ -1,6 +1,6 @@
 <template>
   <section class="src-views-developer-tools m-1 p-3">
-    <h1 class="m-3">نظام مدير اليومية</h1>
+    <h1 class="m-3">نظام مدير يومية الشادر</h1>
     <h2 class="text-danger"> اصدار رقم {{app_version}}</h2>
     <br/>
     <h3 class="text-danger" v-if="demo_till">* نسخة تجريبية حتي {{demo_till}}</h3>

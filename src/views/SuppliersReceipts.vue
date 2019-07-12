@@ -4,7 +4,7 @@
 
 <router-link  v-for="(supplier, idx) in suppliers_arr" 
 :to="{name:'supplier_details', params: {id: supplier.id}}"  :key="idx" 
-class="btn btn-lg btn-primary m-1 btn-block" :class="{'btn-danger':suppliers_headers_arr[supplier.id] > 0}">
+class="btn btn-lg btn-success m-1 btn-block" :class="{'btn-danger':suppliers_headers_arr[supplier.id] > 0}">
   <span class="fa fa-receipt"></span> &nbsp; 
   عرض فواتير العميل - {{supplier.name}} 
   <span v-if="suppliers_headers_arr[supplier.id] > 0">
