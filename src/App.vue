@@ -91,13 +91,13 @@
               <li class="nav-item">
                 <router-link class="nav-link active" to="/suppliers">
                   <span class="fa fa-th-list"></span>
-                  ادارة العملاء <span class="sr-only">(current)</span>
+                  ادارة الفلاحين <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link class="nav-link active" to="/customers">
                   <span class="fa fa-handshake"></span>
-                  الزمامات <span class="sr-only">(current)</span>
+                  ادارة التجار <span class="sr-only">(current)</span>
                 </router-link>
               </li>
               <li class="nav-item">

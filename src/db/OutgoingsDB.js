@@ -187,11 +187,11 @@ export class OutgoingsDB {
       let all = []
 let sql_query = `SELECT income_day,
 supplier_id,
-ANY_VALUE(product_id) as product_id,
-ANY_VALUE(product_name) as product_name,
+product_id as product_id,
+product_name as product_name,
 kg_price,
 income_head_id,
-ANY_VALUE(sell_comm) as sell_comm,
+sell_comm as sell_comm,
 sum(weight) as sum_weight,
 sum(count) as sum_count FROM ${this.TABLE_NAME} 
 where supplier_id =${data.supplier_id} and income_day='${data.income_day}'

@@ -16,7 +16,7 @@ Vue.use(Datetime)
 Vue.config.productionTip = false
 
 export const APP_LABELS = {
-  given: 'وهبة',
+  given: 'دخان السواق',
   nolon: 'نولون',
   outgoing_cash: 'بيع نقدي',
   expenses: 'مصروفات',
@@ -56,8 +56,8 @@ export const APP_LABELS = {
     incomings: 'الوارد',
     outgoings: 'المبيعات',
     daily_moves: 'حركات اليومية',
-    suppliers_receipts: 'عملاء اليوم',
-    customers_accounts: 'بائعين اليوم',
+    suppliers_receipts: 'فلاحين اليوم',
+    customers_accounts: 'تجار اليوم',
     expenses: 'مخرجات',
     collecting: 'مدخلات'
   },

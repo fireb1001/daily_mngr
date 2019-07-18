@@ -364,13 +364,13 @@
           </tr>
           <tr>
             <td>( {{receipt.recp_given | round2 | toAR }} )</td>
-            <th >وهبة الفاتورة</th>
+            <th >مشال الفاتورة</th>
             <td></td>
             <td></td>
             <td ><input v-if="! print_mode && ! receipt.recp_paid" v-model="receipt.recp_given" class="form-control"  ></td>
             <th >
               <span v-if="! print_mode && ! receipt.recp_paid">
-              ادخل مبلغ الوهبة
+              ادخل مبلغ المشال
               </span>
               </th>
           </tr>
