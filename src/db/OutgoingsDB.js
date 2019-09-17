@@ -185,14 +185,14 @@ export class OutgoingsDB {
 
     static async getGroupedSums(data) {
       let all = []
-let sql_query = `SELECT income_day,
+let sql_query = `SELECT ANY_VALUE(income_day),
 supplier_id,
-supplier_name,
-product_id,
-product_name,
+ANY_VALUE(supplier_name),
+ANY_VALUE(product_id),
+ANY_VALUE(product_name),
 kg_price,
 income_head_id,
-sell_comm,
+ANY_VALUE(sell_comm),
 sum(weight) as sum_weight,
 sum(count) as sum_count FROM ${this.TABLE_NAME} 
 where supplier_id =${data.supplier_id} and income_day='${data.income_day}'
