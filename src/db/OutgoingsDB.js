@@ -185,6 +185,7 @@ export class OutgoingsDB {
 
     static async getGroupedSums(data) {
       let all = []
+    /*
 let sql_query = `SELECT ANY_VALUE(income_day),
 supplier_id,
 ANY_VALUE(supplier_name),
@@ -197,8 +198,22 @@ sum(weight) as sum_weight,
 sum(count) as sum_count FROM ${this.TABLE_NAME} 
 where supplier_id =${data.supplier_id} and income_day='${data.income_day}'
 GROUP BY income_head_id, kg_price 
-order by kg_price desc ;
-`
+order by kg_price desc ;`
+*/
+let sql_query = `SELECT income_day,
+supplier_id,
+supplier_name,
+product_id,
+product_name,
+kg_price,
+income_head_id,
+sell_comm,
+sum(weight) as sum_weight,
+sum(count) as sum_count FROM ${this.TABLE_NAME} 
+where supplier_id =${data.supplier_id} and income_day='${data.income_day}'
+GROUP BY income_head_id, kg_price 
+order by kg_price desc ;`
+
       let results = await conn_pool.query(sql_query)
       results.forEach( item => { all.push(new OutgoingDAO(item)) })
       console.log(all)
