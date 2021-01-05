@@ -14,7 +14,7 @@
     "serve:electron": "vue-cli-service serve:electron"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "bootstrap-vue": "^2.0.0-rc.12",
     "dexie": "^2.0.4",
     "luxon": "^1.11.4",
