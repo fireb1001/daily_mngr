@@ -16,7 +16,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.12",
-    "dexie": "^2.0.4",
+    "dexie": "^3.2.2",
     "luxon": "^1.11.4",
     "moment": "^2.24.0",
     "mysql": "^2.16.0",
